@@ -1,0 +1,249 @@
+// Crunch SSA baby names data into a compact JSON payload for the explainer page.
+import fs from 'fs';
+import path from 'path';
+
+const DATA = path.join(process.env.HOME, 'baby-names/mirror/data');
+const Y0 = 1880, Y1 = 2024;
+const YEARS = Y1 - Y0 + 1;
+
+// ---------- load national ----------
+// series: Map "Name|S" -> Int32Array counts indexed by year-Y0
+const series = new Map();
+const totals = { M: new Float64Array(YEARS), F: new Float64Array(YEARS) };
+const distinct = { M: new Int32Array(YEARS), F: new Int32Array(YEARS) };
+
+for (let y = Y0; y <= Y1; y++) {
+  const txt = fs.readFileSync(path.join(DATA, `names/yob${y}.txt`), 'utf8');
+  const i = y - Y0;
+  for (const line of txt.split('\n')) {
+    if (!line.trim()) continue;
+    const [name, sex, cnt] = line.trim().split(',');
+    const c = +cnt;
+    const key = name + '|' + sex;
+    let arr = series.get(key);
+    if (!arr) { arr = new Int32Array(YEARS); series.set(key, arr); }
+    arr[i] = c;
+    totals[sex][i] += c;
+    distinct[sex][i]++;
+  }
+}
+console.log('unique name+sex:', series.size);
+
+// ---------- applicants (true births proxy) ----------
+const app = fs.readFileSync(path.join(DATA, 'applicants/data.csv'), 'utf8')
+  .trim().split('\n').slice(1).map(l => l.split(',').map(Number));
+const births = {}; // year -> {m,f,t}
+for (const [y, m, f, t] of app) births[y] = { m, f, t };
+
+// rate per million (within sex), using name-data totals as denominator
+const rate = (key, i) => {
+  const sex = key.slice(-1);
+  return totals[sex][i] ? (series.get(key)[i] / totals[sex][i]) * 1e6 : 0;
+};
+const avgRate = (key, i0, i1) => {
+  let s = 0; for (let i = i0; i <= i1; i++) s += rate(key, i);
+  return s / (i1 - i0 + 1);
+};
+
+const I95 = 1995 - Y0, I14 = 2014 - Y0, I24 = 2024 - Y0, I23 = 2023 - Y0;
+
+// ---------- movers (gainers/losers) ----------
+// score by change in rate/million between window start (3yr avg) and 2024 (or 3yr end avg)
+function movers(iStart) {
+  const rows = [];
+  for (const key of series.keys()) {
+    const r0 = (rate(key, iStart - 1) + rate(key, iStart) + rate(key, iStart + 1)) / 3;
+    const r1 = (rate(key, I24 - 2) + rate(key, I24 - 1) + rate(key, I24)) / 3;
+    const c24 = series.get(key)[I24];
+    if (r0 < 5 && r1 < 5) continue; // both negligible
+    rows.push({ key, r0: +r0.toFixed(1), r1: +r1.toFixed(1), d: r1 - r0, mult: r0 >= 1 ? r1 / r0 : null, c24 });
+  }
+  rows.sort((a, b) => b.d - a.d);
+  return rows;
+}
+const m30 = movers(I95), m10 = movers(I14);
+
+// ---------- volatility (1995-2024) ----------
+const vol = [];
+for (const key of series.keys()) {
+  const arr = series.get(key);
+  let present = 0, meanR = 0;
+  for (let i = I95; i <= I24; i++) { if (arr[i] > 0) present++; meanR += rate(key, i); }
+  meanR /= 30;
+  if (present < 26 || meanR < 30) continue; // needs steady presence + real size
+  const logs = [];
+  for (let i = I95 + 1; i <= I24; i++) {
+    const a = rate(key, i - 1), b = rate(key, i);
+    if (a > 0 && b > 0) logs.push(Math.log(b / a));
+  }
+  const mu = logs.reduce((s, x) => s + x, 0) / logs.length;
+  const sd = Math.sqrt(logs.reduce((s, x) => s + (x - mu) ** 2, 0) / logs.length);
+  vol.push({ key, sd: +sd.toFixed(3), meanR: +meanR.toFixed(1) });
+}
+vol.sort((a, b) => b.sd - a.sd);
+
+// least volatile (blue chips): high mean rate, low sd
+const blue = vol.filter(v => v.meanR > 800).sort((a, b) => a.sd - b.sd);
+
+// ---------- spikes ("meme stocks", 1990-2024) ----------
+const spikes = [];
+const I90 = 1990 - Y0;
+for (const key of series.keys()) {
+  const arr = series.get(key);
+  let peak = 0, peakI = 0, sum = 0, n = 0;
+  for (let i = I90; i <= I24; i++) { if (arr[i] > peak) { peak = arr[i]; peakI = i; } sum += arr[i]; n++; }
+  if (peak < 400) continue;
+  const vals = [];
+  for (let i = I90; i <= I24; i++) vals.push(arr[i]);
+  vals.sort((a, b) => a - b);
+  const med = vals[Math.floor(n / 2)];
+  const ratio = peak / Math.max(med, 1);
+  if (ratio >= 8) spikes.push({ key, peak, peakYear: Y0 + peakI, med, ratio: +ratio.toFixed(1) });
+}
+spikes.sort((a, b) => b.ratio - a.ratio);
+
+// ---------- crashes: big names that collapsed from their peak (peak 1985-2021) ----------
+const crashes = [];
+const I85 = 1985 - Y0;
+for (const key of series.keys()) {
+  let peakR = 0, peakI = 0;
+  for (let i = I85; i <= 2021 - Y0; i++) { const r = rate(key, i); if (r > peakR) { peakR = r; peakI = i; } }
+  if (peakR < 100) continue;
+  const now = rate(key, I24);
+  if (now > peakR * 0.12) continue;
+  crashes.push({ key, peakR: +peakR.toFixed(0), peakYear: Y0 + peakI, nowR: +now.toFixed(1), dropPct: +((1 - now / peakR) * 100).toFixed(1) });
+}
+crashes.sort((a, b) => (b.peakR * b.dropPct) - (a.peakR * a.dropPct));
+
+// ---------- diversity: top-10 share + effective number of names, per sex/year ----------
+const top10share = { M: [], F: [] }, effNames = { M: [], F: [] };
+for (let i = 0; i < YEARS; i++) {
+  for (const sex of ['M', 'F']) {
+    const counts = [];
+    for (const [key, arr] of series) if (key.endsWith('|' + sex) && arr[i] > 0) counts.push(arr[i]);
+    counts.sort((a, b) => b - a);
+    const tot = totals[sex][i];
+    const t10 = counts.slice(0, 10).reduce((s, x) => s + x, 0);
+    top10share[sex].push(+((t10 / tot) * 100).toFixed(1));
+    let hhi = 0; for (const c of counts) hhi += (c / tot) ** 2;
+    effNames[sex].push(Math.round(1 / hhi));
+  }
+}
+
+// ---------- top names 2024 + rank history helper ----------
+function topNames(i, sex, n) {
+  const rows = [];
+  for (const [key, arr] of series) if (key.endsWith('|' + sex) && arr[i] > 0) rows.push([key.split('|')[0], arr[i]]);
+  rows.sort((a, b) => b[1] - a[1]);
+  return rows.slice(0, n);
+}
+
+// ---------- ticker tape: YoY movers 2023->2024 among established names ----------
+const tape = [];
+for (const key of series.keys()) {
+  const a = rate(key, I23), b = rate(key, I24), c = series.get(key)[I24];
+  if (c < 250 && series.get(key)[I23] < 250) continue;
+  if (a < 20) continue;
+  tape.push({ key, pct: +(((b - a) / a) * 100).toFixed(1), c24: c });
+}
+tape.sort((a, b) => b.pct - a.pct);
+
+// ---------- states (2024): top name per state per sex + most distinctive ----------
+const stateTop = {}; // ST -> {M:[name,c], F:[name,c]}
+const stateRows2024 = []; // for distinctive calc
+const stateFiles = fs.readdirSync(path.join(DATA, 'namesbystate')).filter(f => f.endsWith('.TXT'));
+const stateTotals2024 = {}; // ST -> {M,F}
+for (const f of stateFiles) {
+  const txt = fs.readFileSync(path.join(DATA, 'namesbystate', f), 'utf8');
+  for (const line of txt.split('\n')) {
+    if (!line.trim()) continue;
+    const [st, sex, yr, name, cnt] = line.trim().split(',');
+    if (+yr !== 2024) continue;
+    const c = +cnt;
+    stateTop[st] ??= {};
+    stateTotals2024[st] ??= { M: 0, F: 0 };
+    stateTotals2024[st][sex] += c;
+    if (!stateTop[st][sex] || c > stateTop[st][sex][1]) stateTop[st][sex] = [name, c];
+    stateRows2024.push([st, sex, name, c]);
+  }
+}
+// distinctive: state rate / national rate, min 15 births in state
+const distinctive = {};
+for (const [st, sex, name, c] of stateRows2024) {
+  if (c < 15) continue;
+  const key = name + '|' + sex;
+  if (!series.has(key)) continue;
+  const natR = rate(key, I24);
+  if (natR <= 0) continue;
+  const stR = (c / stateTotals2024[st][sex]) * 1e6;
+  const lift = stR / natR;
+  distinctive[st] ??= [];
+  distinctive[st].push({ name, sex, c, lift: +lift.toFixed(1) });
+}
+for (const st of Object.keys(distinctive)) {
+  distinctive[st].sort((a, b) => b.lift - a.lift);
+  distinctive[st] = distinctive[st].slice(0, 3);
+}
+
+// ---------- lookup DB ----------
+// include names whose peak yearly count >= 150 (either sex entry separate)
+let dbNames = 0, dbEntries = {};
+for (const [key, arr] of series) {
+  let peak = 0; for (let i = 0; i < YEARS; i++) if (arr[i] > peak) peak = arr[i];
+  if (peak < 150) continue;
+  let first = 0; while (arr[first] === 0) first++;
+  let last = YEARS - 1; while (arr[last] === 0) last--;
+  dbEntries[key] = [Y0 + first, Array.from(arr.slice(first, last + 1))];
+  dbNames++;
+}
+console.log('lookup names:', dbNames);
+
+// ---------- all-time uniques ----------
+const uniqueNames = new Set();
+for (const key of series.keys()) uniqueNames.add(key.split('|')[0]);
+const names2024 = new Set();
+for (const [key, arr] of series) if (arr[I24] > 0) names2024.add(key.split('|')[0]);
+
+const fmtMover = m => ({ n: m.key.split('|')[0], s: m.key.split('|')[1], r0: m.r0, r1: m.r1, d: +m.d.toFixed(1), x: m.mult ? +m.mult.toFixed(1) : null, c: m.c24 });
+
+const out = {
+  meta: {
+    y0: Y0, y1: Y1,
+    uniqueAllTime: uniqueNames.size, unique2024: names2024.size,
+    pairsAllTime: series.size,
+    distinct2024: { M: distinct.M[I24], F: distinct.F[I24] },
+    named2024: { M: totals.M[I24], F: totals.F[I24] },
+  },
+  births: app.map(([y, m, f, t]) => [y, m, f, t]),
+  namedTotals: { M: Array.from(totals.M), F: Array.from(totals.F) },
+  distinctByYear: { M: Array.from(distinct.M), F: Array.from(distinct.F) },
+  top10share, effNames,
+  top2024: { M: topNames(I24, 'M', 10), F: topNames(I24, 'F', 10) },
+  topByYear: {
+    M: Array.from({ length: YEARS }, (_, i) => topNames(i, 'M', 10)),
+    F: Array.from({ length: YEARS }, (_, i) => topNames(i, 'F', 10)),
+  },
+  gainers30: m30.slice(0, 15).map(fmtMover),
+  losers30: m30.slice(-15).reverse().map(fmtMover),
+  gainers10: m10.slice(0, 15).map(fmtMover),
+  losers10: m10.slice(-15).reverse().map(fmtMover),
+  volatile: vol.slice(0, 12).map(v => ({ n: v.key.split('|')[0], s: v.key.slice(-1), sd: v.sd, r: v.meanR })),
+  blueChips: blue.slice(0, 8).map(v => ({ n: v.key.split('|')[0], s: v.key.slice(-1), sd: v.sd, r: v.meanR })),
+  spikes: spikes.slice(0, 14).map(s => ({ n: s.key.split('|')[0], s: s.key.slice(-1), peak: s.peak, y: s.peakYear, x: s.ratio })),
+  crashes: crashes.slice(0, 14).map(c => ({ n: c.key.split('|')[0], s: c.key.slice(-1), pr: c.peakR, y: c.peakYear, now: c.nowR, drop: c.dropPct })),
+  tapeUp: tape.slice(0, 20).map(t => ({ n: t.key.split('|')[0], s: t.key.slice(-1), p: t.pct })),
+  tapeDown: tape.slice(-20).reverse().map(t => ({ n: t.key.split('|')[0], s: t.key.slice(-1), p: t.pct })),
+  states: { top: stateTop, distinctive },
+  db: dbEntries,
+};
+
+fs.writeFileSync(path.join(process.env.HOME, 'baby-names/payload.json'), JSON.stringify(out));
+const size = fs.statSync(path.join(process.env.HOME, 'baby-names/payload.json')).size;
+console.log('payload size:', (size / 1e6).toFixed(2), 'MB');
+console.log('births 2024:', births[2024]);
+console.log('top gainers 30y:', out.gainers30.slice(0, 8).map(x => x.n + '/' + x.s + ' +' + x.d).join(', '));
+console.log('top losers 30y:', out.losers30.slice(0, 8).map(x => x.n + '/' + x.s + ' ' + x.d).join(', '));
+console.log('volatile:', out.volatile.slice(0, 8).map(x => x.n + '/' + x.s + ' ' + x.sd).join(', '));
+console.log('spikes:', out.spikes.slice(0, 10).map(x => `${x.n}/${x.s} ${x.y} x${x.x}`).join(', '));
+console.log('top10share F 1880/1950/2024:', top10share.F[0], top10share.F[1950 - Y0], top10share.F[I24]);
+console.log('effNames F 1950/2024:', effNames.F[1950 - Y0], effNames.F[I24]);

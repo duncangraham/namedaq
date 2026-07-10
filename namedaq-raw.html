@@ -1,0 +1,758 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The U.S. Baby Name Market — 145 Years of SSA Data</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0e16; --bg2:#10141f; --bg3:#161b29; --line:#242c40; --line2:#2f3852;
+  --ink:#e9edf5; --dim:#a3adc2; --faint:#6b7690;
+  --hot:#ff64a8; --hot-ink:#ffa8cd; --hot-soft:rgba(255,100,168,.10); --hot-line:rgba(255,100,168,.45);
+  --cool:#58b8ff; --cool-ink:#9fd4ff; --cool-soft:rgba(88,184,255,.10); --cool-line:rgba(88,184,255,.45);
+  --gold:#ffd166; --gold-soft:rgba(255,209,102,.10);
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:'IBM Plex Sans',-apple-system,Segoe UI,sans-serif;
+  --disp:'Space Grotesk',var(--sans);
+  --s1:4px; --s2:8px; --s3:16px; --s4:24px; --s5:40px; --s6:64px; --s7:96px;
+  --max:1200px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+/* grid items default to min-width:auto and refuse to shrink below their widest
+   child (560px charts, nowrap tables) — that kills the inner scroll containers */
+.boards>*,.frag-grid>*,.vol-grid>*,.map-wrap>*,.tm>*{min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--disp);line-height:1.15;margin:0}
+a{color:var(--cool-ink)}
+p{margin:0 0 var(--s3)}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--s4)}
+.prose{max-width:68ch}
+.mono{font-family:var(--mono)}
+.up{color:var(--hot)} .down{color:var(--cool)}
+svg text{font-family:var(--mono)}
+
+/* ---------- tape ---------- */
+.tape{background:#07090f;border-bottom:1px solid var(--line);overflow:hidden;white-space:nowrap;position:relative}
+.tape-track{display:inline-block;padding:7px 0}
+.tk{font-family:var(--mono);font-size:12.5px;margin-right:28px;color:var(--dim)}
+.tk b{color:var(--ink);font-weight:600}
+.tk .up::before{content:"▲ "}.tk .down::before{content:"▼ "}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:0;z-index:50;background:rgba(11,14,22,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:var(--max);margin:0 auto;padding:10px var(--s4);display:flex;align-items:center;gap:var(--s4)}
+.brand{font-family:var(--disp);font-weight:700;font-size:18px;letter-spacing:.06em;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
+.brand .dot{width:8px;height:8px;border-radius:50%;background:var(--hot);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.nav-links{display:flex;gap:var(--s3);margin-left:auto;font-family:var(--mono);font-size:12px}
+.nav-links a{color:var(--dim);text-decoration:none;letter-spacing:.04em}
+.nav-links a:hover{color:var(--ink)}
+@media (max-width:860px){.nav-links{display:none}}
+
+/* ---------- hero ---------- */
+.hero{padding:var(--s7) 0 var(--s6);border-bottom:1px solid var(--line);background:
+  radial-gradient(1200px 500px at 80% -10%,rgba(255,100,168,.07),transparent 60%),
+  radial-gradient(1000px 500px at 10% 110%,rgba(88,184,255,.07),transparent 60%)}
+.kicker{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;margin-bottom:var(--s3)}
+.hero h1{font-size:clamp(38px,6vw,68px);font-weight:700;letter-spacing:-.015em;max-width:18ch}
+.hero .sub{color:var(--dim);font-size:19px;max-width:58ch;margin-top:var(--s4)}
+.stat-row{display:flex;gap:var(--s3);flex-wrap:wrap;margin-top:var(--s5)}
+.stat{border:1px solid var(--line);background:var(--bg2);padding:var(--s3) var(--s4);min-width:180px;flex:1 1 180px;max-width:280px}
+.stat .v{font-family:var(--mono);font-size:26px;font-weight:600;letter-spacing:-.01em}
+.stat .k{font-family:var(--mono);font-size:11.5px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+.stat.hot .v{color:var(--hot)} .stat.cool .v{color:var(--cool)} .stat.gold .v{color:var(--gold)}
+
+/* ---------- sections ---------- */
+section{padding:var(--s7) 0;border-bottom:1px solid var(--line)}
+section.alt{background:var(--bg2)}
+.eyebrow{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:var(--s2)}
+section h2{font-size:clamp(26px,3.4vw,40px);letter-spacing:-.01em;margin-bottom:var(--s3);max-width:24ch}
+.lede{color:var(--dim);font-size:18px}
+
+/* ---------- panels & charts ---------- */
+.panel{border:1px solid var(--line);background:var(--bg2);padding:var(--s4)}
+section.alt .panel{background:var(--bg3)}
+.panel-hd{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s3)}
+.panel-hd .t{font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.chart-box{width:100%;overflow-x:auto}
+.chart-box svg{display:block;width:100%;height:auto;min-width:560px}
+.legend{display:flex;gap:var(--s3);flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--dim)}
+.legend .sw{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+
+details.deeper{border:1px solid var(--line);background:var(--bg2);margin-top:var(--s3);max-width:68ch}
+details.deeper summary{cursor:pointer;padding:12px var(--s3);font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.05em;color:var(--gold)}
+details.deeper[open] summary{border-bottom:1px solid var(--line)}
+details.deeper .body{padding:var(--s3);color:var(--dim);font-size:15.5px}
+details.deeper .body p:last-child{margin-bottom:0}
+
+/* ---------- time machine ---------- */
+.tm{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);margin-top:var(--s4)}
+@media (max-width:860px){.tm{grid-template-columns:1fr}}
+.tm-ctrl{grid-column:1/-1;display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap}
+.tm-year{font-family:var(--mono);font-size:44px;font-weight:600;color:var(--gold);min-width:120px}
+input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cursor:pointer}
+.tm-stats{grid-column:1/-1;display:flex;gap:var(--s3);flex-wrap:wrap}
+.tm-stat{flex:1 1 150px;border:1px solid var(--line);background:var(--bg3);padding:10px var(--s3)}
+.tm-stat .v{font-family:var(--mono);font-size:20px;font-weight:600}
+.tm-stat .k{font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+.tm-board{border:1px solid var(--line);background:var(--bg3);padding:var(--s3)}
+.tm-board h3{font-family:var(--mono);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.tm-board.girls h3{color:var(--hot-ink)} .tm-board.boys h3{color:var(--cool-ink)}
+.tm-row{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13.5px;padding:3px 0}
+.tm-row .rk{color:var(--faint);width:18px;text-align:right}
+.tm-row .nm{width:110px;font-weight:500}
+.tm-row .bar{height:10px;border-radius:2px;flex:1;position:relative;background:var(--bg)}
+.tm-row .bar i{position:absolute;inset:0 auto 0 0;border-radius:2px}
+.girls .bar i{background:var(--hot-line)} .boys .bar i{background:var(--cool-line)}
+.tm-row .ct{color:var(--dim);width:64px;text-align:right;font-size:12px}
+
+/* ---------- big board ---------- */
+.toggle{display:inline-flex;border:1px solid var(--line2);font-family:var(--mono);font-size:12.5px;font-weight:600}
+.toggle button{background:transparent;border:0;color:var(--dim);padding:8px 18px;cursor:pointer;font:inherit;letter-spacing:.06em}
+.toggle button.on{background:var(--gold);color:#141414}
+.boards{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);margin-top:var(--s4)}
+@media (max-width:960px){.boards{grid-template-columns:1fr}}
+.board table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px}
+.board th{text-align:left;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}
+.board td{padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.board tr:last-child td{border-bottom:0}
+.board .nm{font-weight:600;cursor:pointer}
+.board .nm:hover{text-decoration:underline}
+.board .sx{font-size:10px;color:var(--faint);border:1px solid var(--line2);padding:0 4px;border-radius:2px;margin-left:6px}
+.board .num{text-align:right}
+.board .d{font-weight:600;text-align:right}
+.board.hot-b .d{color:var(--hot)} .board.cool-b .d{color:var(--cool)}
+.board .spark path{fill:none;stroke-width:1.5}
+.board.hot-b .spark path{stroke:var(--hot)} .board.cool-b .spark path{stroke:var(--cool)}
+.board-cap{font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:8px}
+
+/* ---------- volatility ---------- */
+.vol-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);margin-top:var(--s4)}
+@media (max-width:960px){.vol-grid{grid-template-columns:1fr}}
+.vlist{font-family:var(--mono);font-size:13.5px}
+.vrow{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
+.vrow:last-child{border-bottom:0}
+.vrow .rk{color:var(--faint);width:20px}
+.vrow .nm{width:120px;font-weight:600;cursor:pointer}
+.vrow .nm:hover{text-decoration:underline}
+.vrow .sx{font-size:10px;color:var(--faint);border:1px solid var(--line2);padding:0 4px;border-radius:2px}
+.vrow .meter{flex:1;height:8px;background:var(--bg);border-radius:2px;position:relative}
+.vrow .meter i{position:absolute;inset:0 auto 0 0;border-radius:2px;background:var(--gold)}
+.vrow .sd{width:62px;text-align:right;color:var(--dim);font-size:12px}
+.memes{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s3);margin-top:var(--s4)}
+@media (max-width:960px){.memes{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.memes{grid-template-columns:1fr}}
+.meme{border:1px solid var(--line);background:var(--bg3);padding:var(--s3);cursor:pointer;text-align:left;color:var(--ink);font:inherit;transition:border-color .15s}
+.meme:hover{border-color:var(--gold)}
+.meme .hd{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono)}
+.meme .hd .nm{font-weight:600;font-size:15px}
+.meme .hd .tag{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase}
+.meme .tag.spike{color:var(--hot)} .meme .tag.crash{color:var(--cool)}
+.meme svg{width:100%;height:auto;margin:8px 0 6px}
+.meme .cap{font-size:13px;color:var(--dim);line-height:1.5}
+
+/* ---------- terminal ---------- */
+.term{border:1px solid var(--line2);background:#0a0d15;box-shadow:0 0 0 4px rgba(255,209,102,.04);margin-top:var(--s4)}
+.term-top{display:flex;gap:var(--s3);align-items:center;padding:var(--s3);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.term-top .prompt{font-family:var(--mono);color:var(--gold);font-weight:600}
+.term-search{position:relative;flex:1;min-width:220px}
+#q{width:100%;background:var(--bg3);border:1px solid var(--line2);color:var(--ink);font-family:var(--mono);font-size:16px;padding:10px 14px;letter-spacing:.03em}
+#q:focus{outline:2px solid var(--gold);outline-offset:-1px}
+.sugg{position:absolute;top:100%;left:0;right:0;background:var(--bg3);border:1px solid var(--line2);border-top:0;z-index:20;max-height:280px;overflow:auto}
+.sugg button{display:flex;justify-content:space-between;width:100%;background:none;border:0;color:var(--ink);font-family:var(--mono);font-size:14px;padding:9px 14px;cursor:pointer;text-align:left}
+.sugg button:hover,.sugg button.sel{background:var(--gold-soft)}
+.sugg .s-sx{color:var(--faint);font-size:11px}
+.btn{background:var(--gold);border:0;color:#141414;font-family:var(--mono);font-size:13.5px;font-weight:600;padding:11px 22px;cursor:pointer;letter-spacing:.05em}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--dim)}
+.btn.ghost:hover{color:var(--ink);border-color:var(--faint)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding:10px var(--s3);border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px;align-items:center}
+.chips .lbl{color:var(--faint);letter-spacing:.06em}
+.chip{background:transparent;border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);font-size:12px;padding:4px 10px;cursor:pointer}
+.chip:hover{color:var(--ink);border-color:var(--gold)}
+.term-body{padding:var(--s3)}
+.quote-hd{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s2)}
+.quote-hd .sym{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.1em}
+.quote-hd .name{font-family:var(--disp);font-size:34px;font-weight:700;letter-spacing:.01em}
+.quote-hd .pill{font-family:var(--mono);font-size:16px;font-weight:600;padding:2px 10px;border-radius:3px}
+.pill.up{background:var(--hot-soft);color:var(--hot)}
+.pill.down{background:var(--cool-soft);color:var(--cool)}
+.seg{display:inline-flex;border:1px solid var(--line2);font-family:var(--mono);font-size:11.5px;margin-left:auto}
+.seg button{background:none;border:0;color:var(--dim);padding:6px 12px;cursor:pointer;font:inherit}
+.seg button.on{background:var(--bg3);color:var(--gold);font-weight:600}
+.qstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:var(--s3)}
+.qstat{background:var(--bg2);padding:10px var(--s3)}
+.qstat .v{font-family:var(--mono);font-size:17px;font-weight:600}
+.qstat .k{font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+.term-msg{font-family:var(--mono);font-size:14px;color:var(--dim);padding:var(--s4) var(--s3)}
+
+/* ---------- states ---------- */
+.map-wrap{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,1fr);gap:var(--s4);margin-top:var(--s4)}
+@media (max-width:960px){.map-wrap{grid-template-columns:1fr}}
+.usmap{display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(8,1fr);gap:5px;aspect-ratio:11/8}
+.st{border:0;border-radius:3px;font-family:var(--mono);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:2px;min-width:0;color:#0d1017;transition:transform .1s}
+.st:hover{transform:scale(1.08);z-index:2}
+.st.sel{outline:3px solid var(--ink);z-index:2}
+.st .ab{font-size:12.5px;font-weight:600;line-height:1}
+.st .top{font-size:8.5px;opacity:.85;line-height:1;overflow:hidden;max-width:100%;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:640px){.st .top{display:none}.st .ab{font-size:10px}}
+.map-side{border:1px solid var(--line);background:var(--bg3);padding:var(--s3)}
+.map-legend{display:flex;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:var(--s3)}
+.map-legend .sw{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:5px}
+.st-detail h3{font-family:var(--disp);font-size:22px;margin-bottom:var(--s2)}
+.st-detail .row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13.5px;padding:6px 0;border-bottom:1px solid var(--line)}
+.st-detail .row:last-child{border-bottom:0}
+.st-detail .k{color:var(--dim)}
+.st-detail .lift{color:var(--gold)}
+.st-detail .hint{font-size:13px;color:var(--dim);margin-top:var(--s2)}
+
+/* ---------- fragmentation ---------- */
+.frag-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);margin-top:var(--s4)}
+@media (max-width:960px){.frag-grid{grid-template-columns:1fr}}
+.big-num{display:flex;gap:var(--s4);flex-wrap:wrap;margin-top:var(--s4)}
+.bn{flex:1 1 200px;border-left:3px solid var(--gold);padding-left:var(--s3)}
+.bn .v{font-family:var(--mono);font-size:30px;font-weight:600}
+.bn .k{color:var(--dim);font-size:14px}
+
+/* ---------- prospectus ---------- */
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);margin-top:var(--s4)}
+@media (max-width:860px){.rules{grid-template-columns:1fr}}
+.rule{border:1px solid var(--line);background:var(--bg2);padding:var(--s3) var(--s4)}
+.rule h3{font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:var(--s2)}
+.rule p{color:var(--dim);font-size:15px;margin:0}
+footer{padding:var(--s5) 0 var(--s7);color:var(--faint);font-family:var(--mono);font-size:12.5px}
+footer a{color:var(--dim)}
+.foot-joke{margin-top:var(--s3);letter-spacing:.04em}
+</style>
+
+<div class="tape" aria-hidden="true"><div class="tape-track" id="tape"></div></div>
+
+<nav class="nav" aria-label="Sections">
+  <div class="nav-in">
+    <a class="brand" href="#top"><span class="dot"></span>NMDQ · THE NURSERY EXCHANGE</a>
+    <div class="nav-links">
+      <a href="#fundamentals">FUNDAMENTALS</a><a href="#board">BIG BOARD</a><a href="#volatility">VOLATILITY</a>
+      <a href="#terminal">TERMINAL</a><a href="#states">STATES</a><a href="#longview">LONG VIEW</a><a href="#prospectus">PROSPECTUS</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="kicker">Market report · Social Security Administration data, 1880–2024</div>
+    <h1>The U.S. baby name market</h1>
+    <p class="sub">Every year, the Social Security Administration publishes the name of nearly every baby born in America. Treat those names like stocks — with parents as the traders — and you get a 145-year market history: blue chips, hot IPOs, slow collapses, and the occasional meme-stock frenzy. On the trading boards, pink marks a name heating up and blue one cooling off; when a chart splits by sex instead, its legend says so.</p>
+    <div class="stat-row">
+      <div class="stat gold"><div class="v">3,612,777</div><div class="k">Babies born, 2024</div></div>
+      <div class="stat"><div class="v">29,225</div><div class="k">Distinct names traded, 2024</div></div>
+      <div class="stat"><div class="v">104,819</div><div class="k">Names listed since 1880</div></div>
+      <div class="stat hot"><div class="v">LIAM ▲</div><div class="k">Top boys’ name, 8 yrs running</div></div>
+      <div class="stat hot"><div class="v">OLIVIA ▲</div><div class="k">Top girls’ name, 6 yrs running</div></div>
+    </div>
+  </div>
+</header>
+
+<section id="fundamentals">
+  <div class="wrap">
+    <div class="eyebrow">§1 · Market fundamentals</div>
+    <h2>How big is the market, and who’s in it?</h2>
+    <div class="prose">
+      <p class="lede">In 2024, 3.61 million babies received Social Security numbers — 51.1% boys, 48.9% girls. That’s the total float of the name market, and it has been shrinking: the all-time peak was 4.33 million in 2007.</p>
+      <p>The chart below is the market’s trading volume since 1880. The early decades undercount badly — Social Security didn’t exist until 1935, so people born in the 1880s only appear if they later applied for a card. The Baby Boom is the huge swell from 1946; the 2008 recession starts the long modern slide.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-hd"><span class="t">Registered births per year · 1880–2024</span>
+        <span class="legend"><span><span class="sw" style="background:var(--cool)"></span>Boys</span><span><span class="sw" style="background:var(--hot)"></span>Girls</span></span>
+      </div>
+      <div class="chart-box" id="birthsChart"></div>
+    </div>
+
+    <div class="tm panel" style="margin-top:var(--s4)">
+      <div class="panel-hd" style="grid-column:1/-1;margin:0"><span class="t">Time machine — drag to any year</span></div>
+      <div class="tm-ctrl">
+        <span class="tm-year" id="tmYear">1990</span>
+        <input type="range" id="tmSlider" min="1880" max="2024" value="1990" aria-label="Select a year">
+      </div>
+      <div class="tm-stats">
+        <div class="tm-stat"><div class="v" id="tmBirths">—</div><div class="k">Babies registered</div></div>
+        <div class="tm-stat"><div class="v" id="tmNames">—</div><div class="k">Distinct names</div></div>
+        <div class="tm-stat"><div class="v" id="tmShareF">—</div><div class="k">Girls with a top-10 name</div></div>
+        <div class="tm-stat"><div class="v" id="tmShareM">—</div><div class="k">Boys with a top-10 name</div></div>
+      </div>
+      <div class="tm-board girls"><h3>Top 10 · Girls</h3><div id="tmGirls"></div></div>
+      <div class="tm-board boys"><h3>Top 10 · Boys</h3><div id="tmBoys"></div></div>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper: how we quote a name’s price</summary>
+      <div class="body">
+        <p>Raw counts mislead across eras — there were twice as many babies in 1957 as in 1935. So every trend on this page uses a name’s <b>rate per million births of that sex</b>. In 2024, 14,718 girls were named Olivia out of 1,613,188 named girls: a rate of 9,124 per million, or about 0.9%.</p>
+        <p>For long windows we compare three-year averages (1994–96 vs. 2022–24) so a single odd year can’t fake a trend.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="board" class="alt">
+  <div class="wrap">
+    <div class="eyebrow">§2 · The big board</div>
+    <h2>Biggest gainers and losers</h2>
+    <div class="prose">
+      <p class="lede">Over 30 years the leaderboard has completely turned over. Liam — a niche pick in 1995 — gained more market share than any name in the country. Michael lost the most of any name on record: 2.2% of all boys in 1995, under 0.5% today.</p>
+      <p>A falling name is still a big name — 8,189 boys were named Michael in 2024, more than all but a dozen names. But in this market, yesterday’s index fund is tomorrow’s “dad name.”</p>
+    </div>
+    <div class="toggle" role="group" aria-label="Time window">
+      <button id="w30" class="on">30-YEAR · SINCE 1995</button><button id="w10">10-YEAR · SINCE 2014</button>
+    </div>
+    <div class="boards">
+      <div class="panel board hot-b">
+        <div class="panel-hd"><span class="t" style="color:var(--hot)">▲ Heating up</span></div>
+        <div style="overflow-x:auto"><table id="tblG" aria-label="Top gainers"></table></div>
+        <div class="board-cap">Δ = change in the annual rate per million births of that sex; × = end rate as a multiple of the start. Click a name to chart it.</div>
+      </div>
+      <div class="panel board cool-b">
+        <div class="panel-hd"><span class="t" style="color:var(--cool)">▼ Cooling off</span></div>
+        <div style="overflow-x:auto"><table id="tblL" aria-label="Top losers"></table></div>
+        <div class="board-cap">Names below 5 births in a year leave the tape entirely — the SSA delists them.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="volatility">
+  <div class="wrap">
+    <div class="eyebrow">§3 · The volatility desk</div>
+    <h2>Steady blue chips, jumpy small caps</h2>
+    <div class="prose">
+      <p class="lede">Some names trade like treasury bonds: James has stayed within a narrow band for a century. Others swing 50% in a single year — usually because a telenovela premiered, a reality-TV star trended, or a song charted.</p>
+      <p>We score volatility the way finance does: the standard deviation of a name’s year-over-year moves since 1995, among names with a steady public listing. The jumpiest names in America are almost all tied to Spanish-language television — Allisson (after actress Allisson Lozz), Litzy, Marely, Yulissa — plus Talan, a spike minted by MTV’s <i>Laguna Beach</i> in 2005.</p>
+    </div>
+    <div class="vol-grid">
+      <div class="panel">
+        <div class="panel-hd"><span class="t" style="color:var(--gold)">Most volatile · 1995–2024</span></div>
+        <div class="vlist" id="volList"></div>
+        <div class="board-cap">σ = standard deviation of year-over-year moves. σ 0.70 means a typical year swings the name’s rate by roughly 70%.</div>
+      </div>
+      <div class="panel">
+        <div class="panel-hd"><span class="t" style="color:var(--gold)">Steadiest blue chips · 1995–2024</span></div>
+        <div class="vlist" id="blueList"></div>
+        <p style="font-family:var(--mono);font-size:12px;color:var(--faint);margin:10px 0 0">Among names averaging 800+ per million. All eight are boys’ classics — girls’ names churn faster at every tier.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:22px;margin-top:var(--s6)">Six legendary trades</h3>
+    <p class="prose" style="color:var(--dim);margin-top:var(--s2)">Real events, real prices. Click any card to open the full chart in the terminal.</p>
+    <div class="memes" id="memes"></div>
+  </div>
+</section>
+
+<section id="terminal" class="alt">
+  <div class="wrap">
+    <div class="eyebrow">§4 · The quote terminal</div>
+    <h2>Look up any name</h2>
+    <p class="prose lede">6,213 names have been liquid enough to list — at least 150 babies in some single year since 1880. Type one and pull its full price history.</p>
+    <div class="term">
+      <div class="term-top">
+        <span class="prompt mono">NMDQ&gt;</span>
+        <div class="term-search">
+          <input id="q" type="search" placeholder="Type a name…" autocomplete="off" spellcheck="false" aria-label="Search a name">
+          <div class="sugg" id="sugg" hidden></div>
+        </div>
+        <button class="btn" id="goBtn">GET QUOTE</button>
+        <button class="btn ghost" id="luckyBtn">RANDOM</button>
+      </div>
+      <div class="chips"><span class="lbl">WATCHLIST:</span></div>
+      <div class="term-body" id="termBody">
+        <div class="term-msg">Awaiting ticker… try your own name, your kid’s, or your grandma’s.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="states">
+  <div class="wrap">
+    <div class="eyebrow">§5 · Regional exchanges</div>
+    <h2>What each state is trading</h2>
+    <div class="prose">
+      <p class="lede">Liam and Olivia dominate coast to coast, but not everywhere — and every state has local specialties that trade far above their national price. Utah loves Mckay at 61× the national rate; in Hawaii, Mahina trades at 259×.</p>
+      <p>Tap a state for its 2024 leaders and its most distinctive names.</p>
+    </div>
+    <div class="toggle" role="group" aria-label="Sex" style="margin-top:var(--s3)">
+      <button id="mapF" class="on">GIRLS</button><button id="mapM">BOYS</button>
+    </div>
+    <div class="map-wrap">
+      <div>
+        <div class="usmap" id="usmap" role="group" aria-label="US states grid map"></div>
+        <div class="map-legend" id="mapLegend"></div>
+      </div>
+      <div class="map-side st-detail" id="stDetail"><h3>Pick a state</h3><p class="hint">Colors show the #1 name of 2024. The side panel adds each state’s “local specialties” — names trading far above their national rate.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="longview" class="alt">
+  <div class="wrap">
+    <div class="eyebrow">§6 · The long view</div>
+    <h2>The great fragmentation</h2>
+    <div class="prose">
+      <p class="lede">The biggest change in this market is concentration. In 1950, a third of American boys had a top-10 name; in 2024 it was 8%, and the girls’ market is even more dispersed.</p>
+      <p>Economists would call it de-concentration. In 1950 the girls’ market behaved like it had roughly 100 names in circulation; by 2024 it behaved like 651. Parents stopped buying the index and started stock-picking — which is exactly why the spikes and crashes above have gotten sharper: with no giant incumbents, a small name can moon in a season.</p>
+    </div>
+    <div class="frag-grid">
+      <div class="panel">
+        <div class="panel-hd"><span class="t">Share of babies with a top-10 name</span>
+          <span class="legend"><span><span class="sw" style="background:var(--cool)"></span>Boys</span><span><span class="sw" style="background:var(--hot)"></span>Girls</span></span>
+        </div>
+        <div class="chart-box" id="shareChart"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-hd"><span class="t">Effective number of names in circulation</span>
+          <span class="legend"><span><span class="sw" style="background:var(--cool)"></span>Boys</span><span><span class="sw" style="background:var(--hot)"></span>Girls</span></span>
+        </div>
+        <div class="chart-box" id="effChart"></div>
+      </div>
+    </div>
+    <div class="big-num">
+      <div class="bn"><div class="v">24.6% → 7.1%</div><div class="k">Girls with a top-10 name, 1880 vs. 2024</div></div>
+      <div class="bn"><div class="v">33.8% → 8.0%</div><div class="k">Boys with a top-10 name, 1950 vs. 2024</div></div>
+      <div class="bn"><div class="v">100 → 651</div><div class="k">Effective girls’ names in circulation, 1950 vs. 2024</div></div>
+    </div>
+    <details class="deeper">
+      <summary>Go deeper: what “effective number of names” means</summary>
+      <div class="body">
+        <p>It’s the inverse of the Herfindahl–Hirschman Index, the same concentration measure antitrust regulators use. If every baby had one of exactly N equally common names, the index would read N. It answers: “the market behaves as if how many names are competing?”</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="prospectus" style="border-bottom:0">
+  <div class="wrap">
+    <div class="eyebrow">§7 · Prospectus &amp; fine print</div>
+    <h2>How this data works</h2>
+    <div class="rules">
+      <div class="rule"><h3>Source</h3><p>The SSA’s public baby-names files: national counts from 1880, state counts from 1910, updated each May. This page uses the 2024 release. <a href="https://www.ssa.gov/oact/babynames/">ssa.gov/oact/babynames</a></p></div>
+      <div class="rule"><h3>The 5-baby rule</h3><p>Names given to fewer than 5 babies of a sex in a year are suppressed for privacy. That’s why “named” totals (3.33M in 2024) run below true births (3.61M) — the gap is thousands of ultra-rare names.</p></div>
+      <div class="rule"><h3>Sex, as recorded</h3><p>The SSA records only M or F at birth registration, so this data has no non-binary category. Counts are tallied per name-sex pair: Jordan-M and Jordan-F trade as separate listings.</p></div>
+      <div class="rule"><h3>Spelling is destiny</h3><p>Every spelling is its own listing. Aiden, Ayden, Aidan, Aden, Aydin and Aaden all charted separately in the 2000s — combined, the Aiden complex was briefly a top-3 “name.”</p></div>
+      <div class="rule"><h3>Early data is thin</h3><p>Social Security began in 1935; earlier birth years only include people who later got a card. Pre-1937 volumes are undercounts, and skew female before 1910.</p></div>
+      <div class="rule"><h3>Quotes</h3><p>Trends use rate per million births of the same sex; long windows compare 3-year averages. Volatility is the standard deviation of year-over-year log changes, 1995–2024, for names listed ≥26 of 30 years averaging ≥30 per million.</p></div>
+    </div>
+    <footer>
+      <div>Data: Social Security Administration, <a href="https://www.ssa.gov/oact/babynames/limits.html">national</a> &amp; <a href="https://www.ssa.gov/oact/babynames/state/">state</a> files (2024 release) · Births = SSN card applications by year of birth · Built July 2026.</div>
+      <div class="foot-joke">Past performance is no guarantee of future nursery results. Any resemblance between our color scheme and gender-reveal balloons is purely intentional.</div>
+    </footer>
+  </div>
+</section>
+
+<script>window.ND=/*PAYLOAD*/null/*ENDPAYLOAD*/;</script>
+<script>
+(function(){
+'use strict';
+const ND=window.ND; if(!ND){document.body.insertAdjacentHTML('afterbegin','<p style="padding:2em;font-family:monospace">Data payload missing — rebuild with inject.mjs</p>');return;}
+const Y0=1880,Y1=2024,YRS=Y1-Y0+1;
+const $=s=>document.querySelector(s);
+const fmt=n=>n.toLocaleString('en-US');
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+// ---- series helpers ----
+function counts(name,sex){const e=ND.db[name+'|'+sex];if(!e)return null;
+  const a=new Array(YRS).fill(0);for(let j=0;j<e[1].length;j++)a[e[0]-Y0+j]=e[1][j];return a;}
+function rates(name,sex){const c=counts(name,sex);if(!c)return null;
+  return c.map((v,i)=>ND.namedTotals[sex][i]?v/ND.namedTotals[sex][i]*1e6:0);}
+const cAt=(name,sex,y)=>{const c=counts(name,sex);return c?c[y-Y0]:0};
+
+// ---- generic SVG line/area chart ----
+// series: [{vals,color,fill,width,dash}], opts: {w,h,yFmt,x0,x1,annots:[{x,y,label,color,dy,dx,anchor}]}
+function chart(series,opts){
+  const o=Object.assign({w:900,h:320,x0:Y0,x1:Y1,yFmt:v=>fmt(Math.round(v)),pad:{l:56,r:16,t:14,b:26}},opts);
+  const P=o.pad,iw=o.w-P.l-P.r,ih=o.h-P.t-P.b;
+  let ymax=0;series.forEach(s=>{for(let i=o.x0-Y0;i<=o.x1-Y0;i++)if(s.vals[i]>ymax)ymax=s.vals[i];});
+  ymax=ymax||1;
+  const mag=Math.pow(10,Math.floor(Math.log10(ymax)));let step=mag;
+  if(ymax/step>5)step*=2;if(ymax/step<2.5)step/=2;
+  const ytop=Math.ceil(ymax/step)*step;
+  const X=y=>P.l+(y-o.x0)/(o.x1-o.x0)*iw, Y=v=>P.t+ih-(v/ytop)*ih;
+  let g='';
+  for(let v=0;v<=ytop+1e-9;v+=step){
+    g+=`<line x1="${P.l}" y1="${Y(v)}" x2="${o.w-P.r}" y2="${Y(v)}" stroke="#242c40" stroke-width="1"/>`;
+    g+=`<text x="${P.l-8}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="#6b7690">${o.yFmt(v)}</text>`;
+  }
+  const span=o.x1-o.x0,xs=span>90?20:span>40?10:5;
+  for(let yr=Math.ceil(o.x0/xs)*xs;yr<=o.x1;yr+=xs)
+    g+=`<text x="${X(yr)}" y="${o.h-6}" text-anchor="middle" font-size="11" fill="#6b7690">${yr}</text>`;
+  series.forEach(s=>{
+    let d='';for(let yr=o.x0;yr<=o.x1;yr++){const v=s.vals[yr-Y0]||0;d+=(d?'L':'M')+X(yr).toFixed(1)+' '+Y(v).toFixed(1);}
+    if(s.fill){g+=`<path d="${d} L${X(o.x1)} ${Y(0)} L${X(o.x0)} ${Y(0)} Z" fill="${s.fill}" stroke="none"/>`;}
+    g+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.width||2}" ${s.dash?`stroke-dasharray="${s.dash}"`:''}/>`;
+  });
+  (o.annots||[]).forEach(a=>{
+    g+=`<circle cx="${X(a.x)}" cy="${Y(a.y)}" r="3.5" fill="${a.color||'#ffd166'}"/>`;
+    const ax=X(a.x)+(a.dx||8),ay=Y(a.y)+(a.dy||-8);
+    g+=`<text x="${ax}" y="${ay}" font-size="11" fill="${a.color||'#ffd166'}" text-anchor="${a.anchor||'start'}">${a.label}</text>`;
+  });
+  return `<svg viewBox="0 0 ${o.w} ${o.h}" xmlns="http://www.w3.org/2000/svg" role="img">${g}</svg>`;
+}
+
+// ---- tape ----
+(function(){
+  const items=[];
+  ND.tapeUp.slice(0,14).forEach(t=>items.push(`<span class="tk"><b>${t.n.toUpperCase()}</b> <span class="up">${t.p}%</span></span>`));
+  ND.tapeDown.slice(0,14).forEach(t=>items.push(`<span class="tk"><b>${t.n.toUpperCase()}</b> <span class="down">${t.p}%</span></span>`));
+  // interleave up/down
+  const mix=[];for(let i=0;i<14;i++){mix.push(items[i],items[i+14]);}
+  const html=mix.join('')+`<span class="tk"><b>NMDQ</b> YoY movers, 2023→24, per-million basis</span>`;
+  $('#tape').innerHTML=html+html; // duplicate for seamless loop
+  // rAF marquee via scrollLeft — a CSS transform here creates a >16k-px composited
+  // layer that blows past GPU texture limits and paints white on some machines
+  const tapeBox=$('.tape');let paused=false,x=0;
+  tapeBox.addEventListener('mouseenter',()=>paused=true);
+  tapeBox.addEventListener('mouseleave',()=>paused=false);
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    (function step(){
+      if(!paused){const half=tapeBox.scrollWidth/2;x=(x+0.6)%(half||1);tapeBox.scrollLeft=x;}
+      requestAnimationFrame(step);
+    })();
+  }
+})();
+
+// ---- births chart ----
+(function(){
+  const M=new Array(YRS).fill(0),F=new Array(YRS).fill(0),T=new Array(YRS).fill(0);
+  ND.births.forEach(([y,m,f,t])=>{if(y>=Y0&&y<=Y1){M[y-Y0]=m;F[y-Y0]=f;T[y-Y0]=t;}});
+  $('#birthsChart').innerHTML=chart([
+    {vals:M,color:'#58b8ff',fill:'rgba(88,184,255,.10)',width:2},
+    {vals:F,color:'#ff64a8',fill:'rgba(255,100,168,.10)',width:2},
+  ],{h:330,yFmt:v=>v>=1e6?(v/1e6)+'M':fmt(v),annots:[
+    {x:1957,y:M[1957-Y0],label:'Baby Boom peak',dy:-12,anchor:'middle'},
+    {x:2007,y:M[2007-Y0],label:'2007: all-time high',dy:-12,anchor:'end',dx:-4},
+    {x:1935,y:M[1935-Y0],label:'Social Security begins',dy:-14},
+  ]});
+})();
+
+// ---- time machine ----
+const tmS=$('#tmSlider');
+function tmRender(){
+  const y=+tmS.value,i=y-Y0;
+  $('#tmYear').textContent=y;
+  const b=ND.births.find(r=>r[0]===y);
+  $('#tmBirths').textContent=b?fmt(b[3]):'—';
+  $('#tmNames').textContent=fmt(ND.distinctByYear.M[i]+ND.distinctByYear.F[i]);
+  $('#tmShareF').textContent=ND.top10share.F[i]+'%';
+  $('#tmShareM').textContent=ND.top10share.M[i]+'%';
+  for(const[sex,el]of[['F','#tmGirls'],['M','#tmBoys']]){
+    const rows=ND.topByYear[sex][i];const max=rows[0][1];
+    document.querySelector(el).innerHTML=rows.map((r,k)=>
+      `<div class="tm-row"><span class="rk">${k+1}</span><span class="nm">${esc(r[0])}</span><span class="bar"><i style="width:${(r[1]/max*100).toFixed(1)}%"></i></span><span class="ct">${fmt(r[1])}</span></div>`).join('');
+  }
+}
+tmS.addEventListener('input',tmRender);tmRender();
+
+// ---- big board ----
+function spark(name,sex,color){
+  const r=rates(name,sex);if(!r)return'';
+  const seg=r.slice(1990-Y0);const max=Math.max(...seg)||1;
+  let d='';seg.forEach((v,i)=>{d+=(d?'L':'M')+(i/(seg.length-1)*80).toFixed(1)+' '+(22-v/max*20).toFixed(1);});
+  return `<svg class="spark" width="84" height="24" viewBox="0 0 84 24" aria-hidden="true"><path d="${d}"/></svg>`;
+}
+function boardRows(list,startYr){
+  const mult=m=>{if(m.r0<1)return'new';const x=m.r1/m.r0;
+    return '×'+(x>=10?Math.round(x):x>=1?x.toFixed(1):x.toFixed(2));};
+  return `<thead><tr><th></th><th>Name</th><th style="text-align:right">${startYr}→2024 /M</th><th style="text-align:right">Δ /M</th><th style="text-align:right">×</th><th>Trend ’90–’24</th></tr></thead><tbody>`+
+  list.slice(0,12).map((m,i)=>`<tr><td style="color:var(--faint)">${i+1}</td>
+    <td><span class="nm" data-open="${m.n}|${m.s}">${esc(m.n)}</span><span class="sx">${m.s}</span></td>
+    <td class="num" style="color:var(--dim)">${fmt(Math.round(m.r0))} → ${fmt(Math.round(m.r1))}</td>
+    <td class="d">${m.d>0?'+':''}${fmt(Math.round(m.d))}</td>
+    <td class="num" style="color:var(--dim)">${mult(m)}</td>
+    <td>${spark(m.n,m.s)}</td></tr>`).join('')+'</tbody>';
+}
+function renderBoards(w){
+  const yr=w==='30'?1995:2014;
+  $('#tblG').innerHTML=boardRows(w==='30'?ND.gainers30:ND.gainers10,yr);
+  $('#tblL').innerHTML=boardRows(w==='30'?ND.losers30:ND.losers10,yr);
+}
+$('#w30').addEventListener('click',()=>{$('#w30').classList.add('on');$('#w10').classList.remove('on');renderBoards('30')});
+$('#w10').addEventListener('click',()=>{$('#w10').classList.add('on');$('#w30').classList.remove('on');renderBoards('10')});
+renderBoards('30');
+
+// ---- volatility lists ----
+(function(){
+  const maxSd=ND.volatile[0].sd;
+  $('#volList').innerHTML=ND.volatile.map((v,i)=>
+    `<div class="vrow"><span class="rk">${i+1}</span><span class="nm" data-open="${v.n}|${v.s}">${esc(v.n)}</span><span class="sx">${v.s}</span><span class="meter"><i style="width:${(v.sd/maxSd*100).toFixed(0)}%"></i></span><span class="sd">σ ${v.sd.toFixed(2)}</span></div>`).join('');
+  const maxB=Math.max(...ND.blueChips.map(b=>b.sd));
+  $('#blueList').innerHTML=ND.blueChips.map((v,i)=>
+    `<div class="vrow"><span class="rk">${i+1}</span><span class="nm" data-open="${v.n}|${v.s}">${esc(v.n)}</span><span class="sx">${v.s}</span><span class="meter"><i style="width:${(v.sd/maxB*100).toFixed(0)}%;background:var(--cool)"></i></span><span class="sd">σ ${v.sd.toFixed(2)}</span></div>`).join('');
+})();
+
+// ---- six legendary trades ----
+const MEMES=[
+  {n:'Linda',s:'F',tag:'spike',y0:1935,y1:1965,cap:'Jack Lawrence’s song “Linda” hit in 1946, and the name went from 41,465 girls in 1945 to 99,693 in 1947. That was 5.6% of every girl born in America; no name before or since has taken that much of the market in one year.'},
+  {n:'Alexa',s:'F',tag:'crash',y0:1990,y1:2024,cap:'Alexa was a steady performer, given to 6,053 girls in 2015. Then Amazon put an Echo on every kitchen counter, and by 2024 only 348 parents chose it — a 94% collapse.'},
+  {n:'Elian',s:'M',tag:'spike',y0:1990,y1:2024,cap:'23 boys in 1999. Then the Elián González custody standoff led every newscast for months — 578 boys in 2000, a 25× overnight rally. It cooled, then quietly climbed to new highs.'},
+  {n:'Nevaeh',s:'F',tag:'spike',y0:1995,y1:2024,cap:'“Heaven” spelled backwards. Essentially invented on MTV in 2000 by singer Sonny Sandoval — from 8 girls in 1999 to 6,441 at the 2010 peak. The greatest IPO in name history.'},
+  {n:'Kylo',s:'M',tag:'spike',y0:2010,y1:2024,cap:'Hundreds of parents a year now name their sons after the Star Wars villain: 8 boys in 2014, the year before the film, and 869 in 2024, with the line still pointing up.'},
+  {n:'Khaleesi',s:'F',tag:'crash',y0:2010,y1:2024,cap:'A title, not even a name, until Game of Thrones. 564 girls in 2018 — then the finale aired and the character torched a city. The name fell by a third over the next two years, though 434 families were still holding in 2024.'},
+];
+$('#memes').innerHTML=MEMES.map((m,idx)=>{
+  const c=counts(m.n,m.s)||[];
+  const seg=[];for(let y=m.y0;y<=m.y1;y++)seg.push(c[y-Y0]||0);
+  const vals=new Array(YRS).fill(0);seg.forEach((v,j)=>vals[m.y0-Y0+j]=v);
+  const sv=chart([{vals,color:'#ffd166',width:2,fill:'rgba(255,209,102,.08)'}],{w:340,h:120,x0:m.y0,x1:m.y1,pad:{l:40,r:22,t:8,b:20},yFmt:v=>v>=1000?(v/1000)+'k':v});
+  return `<button class="meme" data-open="${m.n}|${m.s}"><span class="hd"><span class="nm">${m.n.toUpperCase()} <span style="color:var(--faint);font-size:10px">${m.s}</span></span><span class="tag ${m.tag}">${m.tag==='spike'?'▲ spike':'▼ crash'}</span></span>${sv}<span class="cap">${m.cap}</span></button>`;
+}).join('');
+
+// ---- terminal ----
+const dbKeys=Object.keys(ND.db);
+const byName={};dbKeys.forEach(k=>{const[n,s]=k.split('|');(byName[n]??=[]).push(s);});
+const allNames=Object.keys(byName);
+const sym=n=>{const c=n.toUpperCase().replace(/[AEIOU]/g,'');return (n[0].toUpperCase()+c.slice(1)).slice(0,4).padEnd(3,'X');};
+let cur=null,curRange='MAX';
+function rank(name,sex,y){ // rank among listed names that year
+  const target=cAt(name,sex,y);if(!target)return null;let r=1;
+  for(const k of dbKeys){if(!k.endsWith('|'+sex))continue;const e=ND.db[k];const i=y-e[0];
+    if(i>=0&&i<e[1].length&&e[1][i]>target)r++;}
+  return r;
+}
+function pctCh(rs,y,span){const a=rs[y-span-Y0],b=rs[y-Y0];if(!a)return null;return (b-a)/a*100;}
+function openQuote(name,sex,scroll){
+  const c=counts(name,sex),r=rates(name,sex);if(!c)return;
+  cur={name,sex};
+  const sexes=byName[name]||[sex];
+  let peak=0,peakY=Y0,tot=0,first=null;
+  c.forEach((v,i)=>{tot+=v;if(v>peak){peak=v;peakY=Y0+i;}if(v>0&&first===null)first=Y0+i;});
+  const now=c[YRS-1],nowR=r[YRS-1];
+  const ch10=pctCh(r,2024,10),ch30=pctCh(r,2024,30);
+  const rk=now?rank(name,sex,2024):null;
+  const x0=curRange==='MAX'?Math.max(Y0,first||Y0):curRange==='30Y'?1995:2015;
+  const annots=peakY>=x0?[{x:peakY,y:r[peakY-Y0],label:`peak ${peakY}`,dy:-10,anchor:peakY>2000?'end':'start',dx:peakY>2000?-6:8}]:[];
+  const pill=ch10===null?'':`<span class="pill ${ch10>=0?'up':'down'}">${ch10>=0?'▲':'▼'} ${Math.abs(ch10).toFixed(0)}% / 10Y</span>`;
+  const segBtns=['MAX','30Y','10Y'].map(g=>`<button data-rg="${g}" class="${curRange===g?'on':''}">${g}</button>`).join('');
+  const other=sexes.length>1?`<button class="chip" data-open="${name}|${sex==='F'?'M':'F'}">also trades as ${sex==='F'?'M':'F'} ↗</button>`:'';
+  $('#termBody').innerHTML=`
+    <div class="quote-hd">
+      <span class="sym">NMDQ:${sym(name)}·${sex}</span>
+      <span class="name">${esc(name)}</span>${pill}${other}
+      <span class="seg" role="group" aria-label="Range">${segBtns}</span>
+    </div>
+    <div class="chart-box" data-scroll-end>${chart([{vals:r,color:'#ffd166',width:2.2,fill:'rgba(255,209,102,.07)'}],{h:300,x0,x1:Y1,yFmt:v=>fmt(v),annots})}</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:6px">Rate per million ${sex==='F'?'girls':'boys'} · ${x0}–2024</div>
+    <div class="qstats">
+      <div class="qstat"><div class="v">${now?fmt(now):'delisted'}</div><div class="k">Babies in 2024</div></div>
+      <div class="qstat"><div class="v">${rk?'#'+fmt(rk):'—'}</div><div class="k">2024 rank (${sex})</div></div>
+      <div class="qstat"><div class="v">${fmt(Math.round(nowR))}</div><div class="k">Per million, 2024</div></div>
+      <div class="qstat"><div class="v ${ch10===null?'':ch10>=0?'up':'down'}">${ch10===null?'new':((ch10>=0?'+':'')+ch10.toFixed(0)+'%')}</div><div class="k">10-yr change</div></div>
+      <div class="qstat"><div class="v ${ch30===null?'':ch30>=0?'up':'down'}">${ch30===null?'new':((ch30>=0?'+':'')+ch30.toFixed(0)+'%')}</div><div class="k">30-yr change</div></div>
+      <div class="qstat"><div class="v">${peakY}</div><div class="k">Peak year (${fmt(peak)})</div></div>
+      <div class="qstat"><div class="v">${fmt(tot)}</div><div class="k">All-time ${sex==='F'?'girls':'boys'}</div></div>
+      <div class="qstat"><div class="v">${first}</div><div class="k">First listed</div></div>
+    </div>`;
+  scrollChartsEnd();
+  if(scroll)$('#terminal').scrollIntoView({behavior:'smooth'});
+}
+// on narrow screens wide charts overflow-scroll; land the reader on the recent decades
+function scrollChartsEnd(){
+  document.querySelectorAll('.chart-box').forEach(b=>{if(b.scrollWidth>b.clientWidth+4)b.scrollLeft=b.scrollWidth;});
+}
+$('#termBody').addEventListener('click',e=>{
+  const b=e.target.closest('[data-rg]');if(b&&cur){curRange=b.dataset.rg;openQuote(cur.name,cur.sex);}
+});
+function tryOpen(raw,scroll){
+  const t=raw.trim();if(!t)return false;
+  const name=t[0].toUpperCase()+t.slice(1).toLowerCase();
+  const sx=byName[name];
+  if(!sx){$('#termBody').innerHTML=`<div class="term-msg">“${esc(name)}” isn’t listed on this exchange — it never reached 150 babies in a single year. 104,819 names have appeared in the data at least once, and most stay that small. Try another spelling.</div>`;return false;}
+  const best=sx.length===1?sx[0]:(cAt(name,'F',2024)+0>=cAt(name,'M',2024)?'F':'M');
+  openQuote(name,best,scroll);return true;
+}
+const q=$('#q'),sugg=$('#sugg');let selIdx=-1;
+function renderSugg(){
+  const t=q.value.trim().toLowerCase();
+  if(t.length<2){sugg.hidden=true;return;}
+  const hits=allNames.filter(n=>n.toLowerCase().startsWith(t)).slice(0,8);
+  if(!hits.length){sugg.hidden=true;return;}
+  sugg.innerHTML=hits.map((n,i)=>`<button data-n="${n}" class="${i===selIdx?'sel':''}">${esc(n)}<span class="s-sx">${byName[n].join(' · ')}</span></button>`).join('');
+  sugg.hidden=false;
+}
+q.addEventListener('input',()=>{selIdx=-1;renderSugg();});
+q.addEventListener('keydown',e=>{
+  const btns=sugg.querySelectorAll('button');
+  if(e.key==='ArrowDown'&&!sugg.hidden){selIdx=Math.min(selIdx+1,btns.length-1);renderSugg();e.preventDefault();}
+  else if(e.key==='ArrowUp'&&!sugg.hidden){selIdx=Math.max(selIdx-1,0);renderSugg();e.preventDefault();}
+  else if(e.key==='Enter'){e.preventDefault();
+    if(selIdx>=0&&btns[selIdx]){q.value=btns[selIdx].dataset.n;}
+    sugg.hidden=true;tryOpen(q.value,false);}
+  else if(e.key==='Escape'){sugg.hidden=true;}
+});
+sugg.addEventListener('click',e=>{const b=e.target.closest('button');if(b){q.value=b.dataset.n;sugg.hidden=true;tryOpen(b.dataset.n,false);}});
+document.addEventListener('click',e=>{if(!e.target.closest('.term-search'))sugg.hidden=true;});
+$('#goBtn').addEventListener('click',()=>tryOpen(q.value,false));
+$('#luckyBtn').addEventListener('click',()=>{
+  const n=allNames[Math.floor(Math.random()*allNames.length)];q.value=n;tryOpen(n,false);});
+// trending chips
+(function(){
+  const trend=['Olivia','Liam','Theodore','Luna','Mateo','Jessica','Michael','Wrenley','Khaleesi'];
+  $('.chips').insertAdjacentHTML('beforeend',trend.map(n=>`<button class="chip" data-chip="${n}">${n}</button>`).join(''));
+  $('.chips').addEventListener('click',e=>{const b=e.target.closest('[data-chip]');if(b){q.value=b.dataset.chip;tryOpen(b.dataset.chip,false);}});
+})();
+// global click-to-chart
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-open]');if(!el)return;
+  const[n,s]=el.dataset.open.split('|');q.value=n;openQuote(n,s,true);
+});
+openQuote('Olivia','F');
+
+// ---- state map ----
+const GRID={AK:[0,0],ME:[10,0],VT:[9,1],NH:[10,1],
+WA:[0,2],ID:[1,2],MT:[2,2],ND:[3,2],MN:[4,2],WI:[5,2],MI:[7,2],NY:[8,2],MA:[9,2],RI:[10,2],
+OR:[0,3],NV:[1,3],WY:[2,3],SD:[3,3],IA:[4,3],IL:[5,3],IN:[6,3],OH:[7,3],PA:[8,3],NJ:[9,3],CT:[10,3],
+CA:[0,4],UT:[1,4],CO:[2,4],NE:[3,4],MO:[4,4],KY:[5,4],WV:[6,4],VA:[7,4],MD:[8,4],DE:[9,4],
+AZ:[1,5],NM:[2,5],KS:[3,5],AR:[4,5],TN:[5,5],NC:[6,5],SC:[7,5],DC:[8,5],
+OK:[3,6],LA:[4,6],MS:[5,6],AL:[6,6],GA:[7,6],
+HI:[0,7],TX:[3,7],FL:[9,7]};
+// categorical palette for the map — deliberately avoids the exact hot-pink/cool-blue
+// used for rising/falling so the two encodings don't read as one
+const PAL=['#ffd166','#c792ea','#7fd8e8','#ffab70','#8be9b5','#ff8fbe','#6fa8dc','#f47a7a'];
+let mapSex='F',selSt=null;
+function renderMap(){
+  const top=ND.states.top;
+  const names=[...new Set(Object.keys(GRID).map(st=>top[st]&&top[st][mapSex]?top[st][mapSex][0]:'—'))];
+  const colorOf={};names.forEach((n,i)=>colorOf[n]=PAL[i%PAL.length]);
+  $('#usmap').innerHTML=Object.keys(GRID).map(st=>{
+    const[c,r]=GRID[st];const e=top[st]&&top[st][mapSex];const nm=e?e[0]:'—';
+    return `<button class="st ${selSt===st?'sel':''}" data-st="${st}" style="grid-column:${c+1};grid-row:${r+1};background:${colorOf[nm]}" aria-label="${st}: top name ${nm}"><span class="ab">${st}</span><span class="top">${nm}</span></button>`;
+  }).join('');
+  $('#mapLegend').innerHTML=names.map(n=>`<span><span class="sw" style="background:${colorOf[n]}"></span>${n}</span>`).join('');
+}
+function renderStDetail(st){
+  const t=ND.states.top[st],d=ND.states.distinctive[st]||[];
+  const full={AK:'Alaska',AL:'Alabama',AR:'Arkansas',AZ:'Arizona',CA:'California',CO:'Colorado',CT:'Connecticut',DC:'D.C.',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',IA:'Iowa',ID:'Idaho',IL:'Illinois',IN:'Indiana',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',MA:'Massachusetts',MD:'Maryland',ME:'Maine',MI:'Michigan',MN:'Minnesota',MO:'Missouri',MS:'Mississippi',MT:'Montana',NC:'North Carolina',ND:'North Dakota',NE:'Nebraska',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NV:'Nevada',NY:'New York',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VA:'Virginia',VT:'Vermont',WA:'Washington',WI:'Wisconsin',WV:'West Virginia',WY:'Wyoming'}[st]||st;
+  $('#stDetail').innerHTML=`<h3>${full}</h3>
+    <div class="row"><span class="k">Top girls’ name</span><span><b data-open="${t.F[0]}|F" class="mono" style="cursor:pointer">${t.F[0]}</b> · ${fmt(t.F[1])}</span></div>
+    <div class="row"><span class="k">Top boys’ name</span><span><b data-open="${t.M[0]}|M" class="mono" style="cursor:pointer">${t.M[0]}</b> · ${fmt(t.M[1])}</span></div>
+    ${d.length?`<div class="row" style="border-bottom:0;padding-top:12px"><span class="k" style="letter-spacing:.08em;font-size:11px">LOCAL SPECIALTIES (VS. NATIONAL RATE)</span></div>`+
+      d.map(x=>`<div class="row"><span>${x.name} <span style="color:var(--faint);font-size:10px">${x.sex}</span></span><span class="lift">×${x.lift}</span></div>`).join(''):''}
+    <p class="hint">2024 data. “×61” = the name is 61 times more common there than nationally.</p>`;
+}
+$('#usmap').addEventListener('click',e=>{
+  const b=e.target.closest('.st');if(!b)return;selSt=b.dataset.st;renderMap();renderStDetail(selSt);});
+$('#mapF').addEventListener('click',()=>{mapSex='F';$('#mapF').classList.add('on');$('#mapM').classList.remove('on');renderMap();});
+$('#mapM').addEventListener('click',()=>{mapSex='M';$('#mapM').classList.add('on');$('#mapF').classList.remove('on');renderMap();});
+renderMap();
+
+// ---- fragmentation charts ----
+(function(){
+  const s=x=>x.map(v=>v);
+  $('#shareChart').innerHTML=chart([
+    {vals:ND.top10share.M,color:'#58b8ff',width:2},
+    {vals:ND.top10share.F,color:'#ff64a8',width:2},
+  ],{h:280,yFmt:v=>v+'%',annots:[{x:1950,y:ND.top10share.M[1950-Y0],label:'1950: 1 in 3 boys',dy:-10},{x:2024,y:ND.top10share.M[2024-Y0],label:'8%',dx:-30,dy:-8}]});
+  $('#effChart').innerHTML=chart([
+    {vals:ND.effNames.M,color:'#58b8ff',width:2},
+    {vals:ND.effNames.F,color:'#ff64a8',width:2},
+  ],{h:280,yFmt:v=>fmt(v)});
+})();
+scrollChartsEnd();
+})();
+</script>
