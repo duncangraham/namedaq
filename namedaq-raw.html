@@ -797,24 +797,36 @@ function openQuote(name,sex,scroll){
   const c=counts(name,sex),r=rates(name,sex);if(!c)return;
   cur={name,sex};
   const sexes=byName[name]||[sex];
+  const dual=sexes.length>1;
+  const oSex=sex==='F'?'M':'F';
+  const oc=dual?counts(name,oSex):null,or=dual?rates(name,oSex):null;
+  const colOf=s=>s==='F'?'#ff64a8':'#58b8ff';
   let peak=0,peakY=Y0,tot=0,first=null;
   c.forEach((v,i)=>{tot+=v;if(v>peak){peak=v;peakY=Y0+i;}if(v>0&&first===null)first=Y0+i;});
   const now=c[YRS-1],nowR=r[YRS-1];
   const ch10=pctCh(r,2024,10),ch30=pctCh(r,2024,30);
   const rk=now?rank(name,sex,2024):null;
   const x0=curRange==='MAX'?Math.max(Y0,first||Y0):curRange==='30Y'?1995:2015;
-  const annots=peakY>=x0?[{x:peakY,y:r[peakY-Y0],label:`peak ${peakY}`,dy:-10,anchor:peakY>2000?'end':'start',dx:peakY>2000?-6:8}]:[];
+  const lineCol=dual?colOf(sex):'#ffd166';
+  const annots=peakY>=x0?[{x:peakY,y:r[peakY-Y0],label:`peak ${peakY}`,dy:-10,anchor:peakY>2000?'end':'start',dx:peakY>2000?-6:8,color:dual?lineCol:'#ffd166'}]:[];
+  const seriesArr=dual
+    ?(sex==='F'
+      ?[{vals:or,color:colOf('M'),width:1.7},{vals:r,color:colOf('F'),width:2.4,fill:'rgba(255,100,168,.07)'}]
+      :[{vals:or,color:colOf('F'),width:1.7},{vals:r,color:colOf('M'),width:2.4,fill:'rgba(88,184,255,.07)'}])
+    :[{vals:r,color:'#ffd166',width:2.2,fill:'rgba(255,209,102,.07)'}];
   const pill=ch10===null?'':`<span class="pill ${ch10>=0?'up':'down'}">${ch10>=0?'▲':'▼'} ${Math.abs(ch10).toFixed(0)}% / 10Y</span>`;
   const segBtns=['MAX','30Y','10Y'].map(g=>`<button data-rg="${g}" class="${curRange===g?'on':''}">${g}</button>`).join('');
-  const other=sexes.length>1?`<button class="chip" data-open="${name}|${sex==='F'?'M':'F'}">also trades as <span class="sx ${sex==='F'?'m':'f'}">${sex==='F'?'M':'F'}</span> ↗</button>`:'';
+  const other=dual?`<button class="chip" data-open="${name}|${oSex}">switch stats to <span class="sx ${oSex==='F'?'f':'m'}">${oSex}</span> ↗</button>`:'';
   $('#termBody').innerHTML=`
     <div class="quote-hd">
       <span class="sym">NMDQ:${sym(name)} <span class="sx ${sex==='F'?'f':'m'}">${sex}</span></span>
       <span class="name">${esc(name)}</span>${pill}${other}
       <span class="seg" role="group" aria-label="Range">${segBtns}</span>
     </div>
-    <div class="chart-box" data-scroll-end>${chart([{vals:r,color:'#ffd166',width:2.2,fill:'rgba(255,209,102,.07)'}],{h:300,x0,x1:Y1,yFmt:v=>fmt(v),annots})}</div>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:6px">Rate per million ${sex==='F'?'girls':'boys'} · ${x0}–2024</div>
+    <div class="chart-box" data-scroll-end>${chart(seriesArr,{h:300,x0,x1:Y1,yFmt:v=>fmt(v),annots})}</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:6px">${dual
+      ?`<span style="color:var(--hot-ink)">— girls</span> · <span style="color:var(--cool-ink)">— boys</span> · rate per million of each sex · ${x0}–2024 · stats below: ${sex==='F'?'girls':'boys'}`
+      :`Rate per million ${sex==='F'?'girls':'boys'} · ${x0}–2024`}</div>
     <div class="qstats">
       <div class="qstat"><div class="v">${now?fmt(now):'delisted'}</div><div class="k">Babies in 2024</div></div>
       <div class="qstat"><div class="v">${rk?'#'+fmt(rk):'—'}</div><div class="k">2024 rank (${sex})</div></div>
@@ -826,8 +838,11 @@ function openQuote(name,sex,scroll){
       <div class="qstat"><div class="v">${first}</div><div class="k">First listed</div></div>
     </div>`;
   attachScrub($('#termBody .chart-box'),
-    [{vals:r,color:'#ffd166'}],
-    yr=>`<b>${yr}</b> · ${fmt(c[yr-Y0])} ${c[yr-Y0]===1?'baby':'babies'} · ${fmt(Math.round(r[yr-Y0]))} /M`);
+    dual?[{vals:sex==='F'?or:r,color:colOf('M')},{vals:sex==='F'?r:or,color:colOf('F')}]:[{vals:r,color:'#ffd166'}],
+    dual
+      ?yr=>{const cF=sex==='F'?c[yr-Y0]:oc[yr-Y0],cM=sex==='F'?oc[yr-Y0]:c[yr-Y0];
+        return `<b>${yr}</b> · <span style="color:var(--hot-ink)">girls ${fmt(cF)}</span> · <span style="color:var(--cool-ink)">boys ${fmt(cM)}</span>`;}
+      :yr=>`<b>${yr}</b> · ${fmt(c[yr-Y0])} ${c[yr-Y0]===1?'baby':'babies'} · ${fmt(Math.round(r[yr-Y0]))} /M`);
   scrollChartsEnd();
   if(scroll)$('#terminal').scrollIntoView({behavior:'smooth'});
 }
