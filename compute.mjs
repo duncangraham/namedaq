@@ -185,6 +185,44 @@ for (const st of Object.keys(distinctive)) {
   distinctive[st] = distinctive[st].slice(0, 3);
 }
 
+// ---------- unisex ----------
+const byNameAll = new Map(); // name -> {M:arr|null, F:arr|null}
+for (const [key, arr] of series) {
+  const n = key.slice(0, -2), s = key.slice(-1);
+  let e = byNameAll.get(n); if (!e) { e = { M: null, F: null }; byNameAll.set(n, e); }
+  e[s] = arr;
+}
+// share of babies each year whose name is meaningfully shared (>=20% minority sex)
+const uniShare = [];
+for (let i = 0; i < YEARS; i++) {
+  let tot = 0, neu = 0;
+  for (const e of byNameAll.values()) {
+    const m = e.M ? e.M[i] : 0, f = e.F ? e.F[i] : 0, t = m + f;
+    if (!t) continue; tot += t;
+    if (t >= 10 && Math.min(m, f) / t >= 0.2) neu += t;
+  }
+  uniShare.push(+((neu / tot) * 100).toFixed(2));
+}
+// 2024 leaderboard: 30-70 split, 500+ babies
+const uniTop = [];
+for (const [n, e] of byNameAll) {
+  const m = e.M ? e.M[I24] : 0, f = e.F ? e.F[I24] : 0, t = m + f;
+  if (t < 500) continue;
+  if (Math.min(m, f) / t >= 0.3) uniTop.push({ n, m, f, t, pctF: +((f / t) * 100).toFixed(0) });
+}
+uniTop.sort((a, b) => b.t - a.t);
+// flips: majority-M mid-century -> majority-F now
+const uniFlips = [];
+for (const [n, e] of byNameAll) {
+  let m1 = 0, f1 = 0, m2 = 0, f2 = 0;
+  for (let y = 1940; y <= 1960; y++) { m1 += e.M ? e.M[y - Y0] : 0; f1 += e.F ? e.F[y - Y0] : 0; }
+  for (let y = 2004; y <= 2024; y++) { m2 += e.M ? e.M[y - Y0] : 0; f2 += e.F ? e.F[y - Y0] : 0; }
+  if (m1 + f1 < 3000 || m2 + f2 < 3000) continue;
+  if (m1 / (m1 + f1) > 0.7 && f2 / (m2 + f2) > 0.7)
+    uniFlips.push({ n, then: +((m1 / (m1 + f1)) * 100).toFixed(0), now: +((f2 / (m2 + f2)) * 100).toFixed(0), vol: m2 + f2 });
+}
+uniFlips.sort((a, b) => b.vol - a.vol);
+
 // ---------- lookup DB ----------
 // include names whose peak yearly count >= 150 (either sex entry separate)
 let dbNames = 0, dbEntries = {};
@@ -234,6 +272,7 @@ const out = {
   tapeUp: tape.slice(0, 20).map(t => ({ n: t.key.split('|')[0], s: t.key.slice(-1), p: t.pct })),
   tapeDown: tape.slice(-20).reverse().map(t => ({ n: t.key.split('|')[0], s: t.key.slice(-1), p: t.pct })),
   states: { top: stateTop, distinctive },
+  unisex: { share: uniShare, top: uniTop.slice(0, 12), flips: uniFlips.slice(0, 8) },
   db: dbEntries,
 };
 
