@@ -312,8 +312,9 @@ const out = {
   penny,
   db: dbEntries,
 };
-// make penny picks quotable in the terminal even though they're below the db floor
-for (const p of penny.picks) {
+// make penny picks (and special exhibits) quotable even below the db floor
+const forceDb = penny.picks.map(p => ({ n: p.n, s: p.s })).concat([{ n: 'James', s: 'F' }, { n: 'Barack', s: 'M' }]);
+for (const p of forceDb) {
   const k = p.n + '|' + p.s;
   if (!out.db[k]) {
     const arr = series.get(k);

@@ -427,13 +427,17 @@ footer a{color:var(--dim)}
       <div class="panel">
         <div class="panel-hd"><span class="t" style="color:var(--gold)">Steadiest blue chips · 1995–2024</span></div>
         <div class="vlist" id="blueList"></div>
-        <p style="font-family:var(--mono);font-size:12px;color:var(--faint);margin:10px 0 0">Among names averaging 800+ per million. All eight are boys’ classics — girls’ names churn faster at every tier.</p>
+        <p style="font-family:var(--mono);font-size:12px;color:var(--dim);margin:10px 0 0">Among names averaging 800+ per million. All eight are boys’ classics — girls’ names churn faster at every tier. Steady means predictable, not growing: chart any of these and you’ll see a glacier, melting a few percent a year as the market de-concentrates — that story is <a href="#longview">the great fragmentation</a>.</p>
       </div>
     </div>
 
     <h3 style="font-size:22px;margin-top:var(--s6)">Six legendary trades</h3>
     <p class="prose" style="color:var(--dim);margin-top:var(--s2)">Real events, real prices. Click any card to open the full chart in the terminal.</p>
     <div class="memes" id="memes"></div>
+
+    <h3 id="celebrity" style="font-size:22px;margin-top:var(--s6)">The celebrity ticker</h3>
+    <p class="prose" style="color:var(--dim);margin-top:var(--s2)">One famous person can move this market overnight. Each chart marks the event — a breakout, a premiere, a death — with a dashed line; what follows is the trade.</p>
+    <div class="memes" id="celebs"></div>
   </div>
 </section>
 
@@ -506,6 +510,16 @@ footer a{color:var(--dim)}
         <div id="uniFlips"></div>
         <div class="board-cap">Each row shows the boy/girl split in 1940–60 → in 2004–24; the gold tick is 50/50. The trade almost never runs the other way: once a boys’ name goes majority-girl, parents of boys sell and don’t come back. Leslie, Ashley, and Shannon made the same trip in earlier decades.</div>
       </div>
+    </div>
+
+    <h3 style="font-size:22px;margin-top:var(--s6)">The phantom girl Johns</h3>
+    <p class="prose" style="color:var(--dim);margin-top:var(--s2)">Browse mid-century data and the SSA lists a few hundred girl Johns, boy Jessicas, and boy Marys every single year. That isn’t fashion — it’s typing. Until the late 1980s, Social Security numbers came from handwritten applications keyed by clerks, and roughly 0.3% of records got the sex box wrong; 0.3% of 90,000 boy Johns is a few hundred phantom girls. The chart below is the proof: “girl Johns” ride boy Johns almost perfectly at one-300th scale, because that’s what they were. Then the SSA started assigning numbers straight from hospital birth certificates — Enumeration at Birth, rolled out from 1987 — and the phantoms evaporated: 233 girl Johns in 1985, eight in 2024, and boy Jessicas hit zero. Every number on this desk clears the artifact easily; the 20% shared-name bar sits about fifty times above the old error floor.</p>
+    <div class="panel">
+      <div class="panel-hd"><span class="t">Girl Johns vs. boy Johns ÷ 300 · 1880–2024</span>
+        <span class="legend"><span><span class="sw" style="background:var(--hot)"></span>Girl Johns (recorded)</span><span><span class="sw" style="background:var(--cool)"></span>Boy Johns ÷ 300</span></span>
+      </div>
+      <div class="chart-box" id="phantomChart"></div>
+      <div class="board-cap">While the pink line rides the dashed blue one, you are looking at a constant clerical error rate, not a naming trend. The lines part exactly when the paperwork went digital.</div>
     </div>
   </div>
 </section>
@@ -607,6 +621,13 @@ function chart(series,opts){
     g+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.width||2}" ${s.dash?`stroke-dasharray="${s.dash}"`:''}/>`;
   });
   (o.annots||[]).forEach(a=>{
+    if(a.vline){
+      const x=X(a.x);
+      g+=`<line x1="${x}" y1="${P.t}" x2="${x}" y2="${o.h-P.b}" stroke="${a.color||'#ffd166'}" stroke-dasharray="4 4" stroke-opacity=".55"/>`;
+      const anch=a.anchor||((a.x-o.x0)/(o.x1-o.x0)>.6?'end':'start');
+      if(a.label)g+=`<text x="${x+(anch==='end'?-5:5)}" y="${P.t+11}" font-size="10.5" fill="${a.color||'#ffd166'}" text-anchor="${anch}">${a.label}</text>`;
+      return;
+    }
     if(!a.nodot)g+=`<circle cx="${X(a.x)}" cy="${Y(a.y)}" r="3.5" fill="${a.color||'#ffd166'}"/>`;
     const ax=X(a.x)+(a.dx||8),ay=Y(a.y)+(a.dy||-8);
     g+=`<text x="${ax}" y="${ay}" font-size="11" fill="${a.color||'#ffd166'}" text-anchor="${a.anchor||'start'}">${a.label}</text>`;
@@ -817,6 +838,44 @@ $('#memes').innerHTML=MEMES.map((m,idx)=>{
   const sv=chart([{vals,color:'#ffd166',width:2,fill:'rgba(255,209,102,.08)'}],{w:340,h:120,x0:m.y0,x1:m.y1,pad:{l:40,r:22,t:8,b:20},yFmt:v=>v>=1000?(v/1000)+'k':v});
   return `<button class="meme" data-open="${m.n}|${m.s}"><span class="hd"><span class="nm">${m.n.toUpperCase()} <span class="sx ${m.s==='F'?'f':'m'}">${m.s}</span></span><span class="tag ${m.tag}">${m.tag==='spike'?'▲ spike':'▼ crash'}</span></span>${sv}<span class="cap">${m.cap}</span></button>`;
 }).join('');
+
+// ---- celebrity ticker ----
+const CELEBS=[
+  {n:'Shirley',s:'F',y0:1925,y1:1950,ev:1934,evL:'’34 · Temple’s breakout',cap:'Shirley Temple’s 1934 breakout tripled the name in two years: 14,320 girls in 1933, 42,365 in 1935. The original celebrity trade, and still one of the largest.',x:'×3'},
+  {n:'Farrah',s:'F',y0:1970,y1:1990,ev:1976,evL:'’76 · Charlie’s Angels',cap:'82 girls in 1975. Charlie’s Angels premiered in September 1976; by 1977 there were 1,515. The show faded, and the name went with it.',x:'×18'},
+  {n:'Whitney',s:'F',y0:1978,y1:2000,ev:1985,evL:'’85 · debut album',cap:'Whitney Houston’s 1985 debut moved the name from 2,287 to 9,536 in two years, and it held near the top for a decade before sliding with her charts.',x:'×4'},
+  {n:'Mariah',s:'F',y0:1984,y1:2005,ev:1990,evL:'’90 · Vision of Love',cap:'399 girls in 1989; 5,192 in 1991, the year after “Vision of Love” topped the charts. A thirteen-fold move in twenty-four months.',x:'×13'},
+  {n:'Selena',s:'F',y0:1988,y1:2005,ev:1995,evL:'’95 · her death',cap:'Selena Quintanilla was killed in March 1995. Parents answered immediately: 918 girls in 1994 became 3,825 that same year — a memorial, written into the birth records.',x:'×4'},
+  {n:'Kobe',s:'M',y0:1993,y1:2024,ev:1996,ev2:2020,evL:'’96 · NBA debut',ev2L:'’20',cap:'Nine boys in 1995; 1,104 by 1998. Then the second act: after his death in January 2020, the name tripled again — 506 in 2019, 1,515 in 2020.',x:'×123'},
+  {n:'Aaliyah',s:'F',y0:1996,y1:2015,ev:2001,evL:'’01 · her death',cap:'Already rising before the singer died in August 2001 — then 1,496 became 4,779 in two years, and the name kept climbing for another decade.',x:'×3'},
+  {n:'Miley',s:'F',y0:2003,y1:2018,ev:2006,evL:'’06 · Hannah Montana',cap:'26 girls in 2005. Hannah Montana premiered in March 2006; by 2008 there were 2,652. A ×100 trade in three years, unwound almost as fast.',x:'×102'},
+  {n:'James',s:'F',y0:2008,y1:2024,ev:2015,evL:'’15 · Lively & Reynolds',cap:'Blake Lively and Ryan Reynolds announced a daughter named James in 2015: 42 girls became 85. Small — but in the post-typo era (see “The phantom girl Johns,” §7), even a whisper of real fashion is legible.',x:'×2'},
+];
+$('#celebs').innerHTML=CELEBS.map(m=>{
+  const c=counts(m.n,m.s)||[];
+  const vals=new Array(YRS).fill(0);
+  for(let y=m.y0;y<=m.y1;y++)vals[y-Y0]=c[y-Y0]||0;
+  const annots=[{x:m.ev,vline:true,label:m.evL}];
+  if(m.ev2)annots.push({x:m.ev2,vline:true,label:m.ev2L,anchor:'end'});
+  const sv=chart([{vals,color:m.s==='F'?'#ff64a8':'#58b8ff',width:2,fill:m.s==='F'?'rgba(255,100,168,.07)':'rgba(88,184,255,.07)'}],
+    {w:340,h:130,x0:m.y0,x1:m.y1,pad:{l:40,r:22,t:8,b:20},yFmt:v=>v>=1000?(v/1000)+'k':v,annots});
+  return `<button class="meme" data-open="${m.n}|${m.s}"><span class="hd"><span class="nm">${m.n.toUpperCase()} <span class="sx ${m.s==='F'?'f':'m'}">${m.s}</span></span><span class="tag spike">▲ ${m.x}</span></span>${sv}<span class="cap">${m.cap}</span></button>`;
+}).join('');
+
+// ---- phantom girl Johns ----
+(function(){
+  const jf=counts('John','F'),jm=counts('John','M');
+  if(!jf||!jm)return;
+  const scaled=jm.map(v=>v/300);
+  $('#phantomChart').innerHTML=chart([
+    {vals:scaled,color:'#58b8ff',width:1.8,dash:'5 4'},
+    {vals:jf,color:'#ff64a8',width:2.2},
+  ],{h:280,yFmt:v=>fmt(Math.round(v)),annots:[
+    {x:1987,vline:true,label:'1987 · Enumeration at Birth begins',anchor:'end'},
+  ]});
+  attachScrub($('#phantomChart'),[{vals:scaled,color:'#58b8ff'},{vals:jf,color:'#ff64a8'}],
+    yr=>`<b>${yr}</b> · <span style="color:var(--hot-ink)">girl Johns ${fmt(jf[yr-Y0])}</span> · <span style="color:var(--cool-ink)">boy Johns ÷300 = ${fmt(Math.round(scaled[yr-Y0]))}</span>`);
+})();
 
 // ---- terminal ----
 const dbKeys=Object.keys(ND.db);
