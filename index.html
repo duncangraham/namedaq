@@ -258,6 +258,11 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .rule{border:1px solid var(--line);background:var(--bg2);padding:var(--s3) var(--s4)}
 .rule h3{font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:var(--s2)}
 .rule p{color:var(--dim);font-size:15px;margin:0}
+/* sex badges — global, colored; placed last to win over local gray .sx rules */
+.sx{font-family:var(--mono);font-size:10px;border:1px solid var(--line2);padding:0 4px;border-radius:2px}
+.sx.f{color:var(--hot-ink);border-color:var(--hot-line);background:var(--hot-soft)}
+.sx.m{color:var(--cool-ink);border-color:var(--cool-line);background:var(--cool-soft)}
+
 footer{padding:var(--s5) 0 var(--s7);color:var(--faint);font-family:var(--mono);font-size:12.5px}
 footer a{color:var(--dim)}
 .foot-joke{margin-top:var(--s3);letter-spacing:.04em}
@@ -723,7 +728,7 @@ function boardRows(list,startYr){
     return '×'+(x>=10?Math.round(x):x>=1?x.toFixed(1):x.toFixed(2));};
   return `<thead><tr><th></th><th>Name</th><th style="text-align:right">${startYr}→2024 /M</th><th style="text-align:right">Δ /M</th><th style="text-align:right">×</th><th>Trend ’90–’24</th></tr></thead><tbody>`+
   list.slice(0,12).map((m,i)=>`<tr><td style="color:var(--faint)">${i+1}</td>
-    <td><span class="nm" data-open="${m.n}|${m.s}">${esc(m.n)}</span><span class="sx">${m.s}</span></td>
+    <td><span class="nm" data-open="${m.n}|${m.s}">${esc(m.n)}</span><span class="sx ${m.s==='F'?'f':'m'}">${m.s}</span></td>
     <td class="num" style="color:var(--dim)">${fmt(Math.round(m.r0))} → ${fmt(Math.round(m.r1))}</td>
     <td class="d">${m.d>0?'+':''}${fmt(Math.round(m.d))}</td>
     <td class="num" style="color:var(--dim)">${mult(m)}</td>
@@ -742,10 +747,10 @@ renderBoards('30');
 (function(){
   const maxSd=ND.volatile[0].sd;
   $('#volList').innerHTML=ND.volatile.map((v,i)=>
-    `<div class="vrow"><span class="rk">${i+1}</span><span class="nm" data-open="${v.n}|${v.s}">${esc(v.n)}</span><span class="sx">${v.s}</span><span class="meter"><i style="width:${(v.sd/maxSd*100).toFixed(0)}%"></i></span><span class="sd">σ ${v.sd.toFixed(2)}</span></div>`).join('');
+    `<div class="vrow"><span class="rk">${i+1}</span><span class="nm" data-open="${v.n}|${v.s}">${esc(v.n)}</span><span class="sx ${v.s==='F'?'f':'m'}">${v.s}</span><span class="meter"><i style="width:${(v.sd/maxSd*100).toFixed(0)}%"></i></span><span class="sd">σ ${v.sd.toFixed(2)}</span></div>`).join('');
   const maxB=Math.max(...ND.blueChips.map(b=>b.sd));
   $('#blueList').innerHTML=ND.blueChips.map((v,i)=>
-    `<div class="vrow"><span class="rk">${i+1}</span><span class="nm" data-open="${v.n}|${v.s}">${esc(v.n)}</span><span class="sx">${v.s}</span><span class="meter"><i style="width:${(v.sd/maxB*100).toFixed(0)}%;background:var(--cool)"></i></span><span class="sd">σ ${v.sd.toFixed(2)}</span></div>`).join('');
+    `<div class="vrow"><span class="rk">${i+1}</span><span class="nm" data-open="${v.n}|${v.s}">${esc(v.n)}</span><span class="sx ${v.s==='F'?'f':'m'}">${v.s}</span><span class="meter"><i style="width:${(v.sd/maxB*100).toFixed(0)}%;background:var(--gold)"></i></span><span class="sd">σ ${v.sd.toFixed(2)}</span></div>`).join('');
 })();
 
 // ---- six legendary trades ----
@@ -762,7 +767,7 @@ $('#memes').innerHTML=MEMES.map((m,idx)=>{
   const seg=[];for(let y=m.y0;y<=m.y1;y++)seg.push(c[y-Y0]||0);
   const vals=new Array(YRS).fill(0);seg.forEach((v,j)=>vals[m.y0-Y0+j]=v);
   const sv=chart([{vals,color:'#ffd166',width:2,fill:'rgba(255,209,102,.08)'}],{w:340,h:120,x0:m.y0,x1:m.y1,pad:{l:40,r:22,t:8,b:20},yFmt:v=>v>=1000?(v/1000)+'k':v});
-  return `<button class="meme" data-open="${m.n}|${m.s}"><span class="hd"><span class="nm">${m.n.toUpperCase()} <span style="color:var(--faint);font-size:10px">${m.s}</span></span><span class="tag ${m.tag}">${m.tag==='spike'?'▲ spike':'▼ crash'}</span></span>${sv}<span class="cap">${m.cap}</span></button>`;
+  return `<button class="meme" data-open="${m.n}|${m.s}"><span class="hd"><span class="nm">${m.n.toUpperCase()} <span class="sx ${m.s==='F'?'f':'m'}">${m.s}</span></span><span class="tag ${m.tag}">${m.tag==='spike'?'▲ spike':'▼ crash'}</span></span>${sv}<span class="cap">${m.cap}</span></button>`;
 }).join('');
 
 // ---- terminal ----
@@ -791,10 +796,10 @@ function openQuote(name,sex,scroll){
   const annots=peakY>=x0?[{x:peakY,y:r[peakY-Y0],label:`peak ${peakY}`,dy:-10,anchor:peakY>2000?'end':'start',dx:peakY>2000?-6:8}]:[];
   const pill=ch10===null?'':`<span class="pill ${ch10>=0?'up':'down'}">${ch10>=0?'▲':'▼'} ${Math.abs(ch10).toFixed(0)}% / 10Y</span>`;
   const segBtns=['MAX','30Y','10Y'].map(g=>`<button data-rg="${g}" class="${curRange===g?'on':''}">${g}</button>`).join('');
-  const other=sexes.length>1?`<button class="chip" data-open="${name}|${sex==='F'?'M':'F'}">also trades as ${sex==='F'?'M':'F'} ↗</button>`:'';
+  const other=sexes.length>1?`<button class="chip" data-open="${name}|${sex==='F'?'M':'F'}">also trades as <span class="sx ${sex==='F'?'m':'f'}">${sex==='F'?'M':'F'}</span> ↗</button>`:'';
   $('#termBody').innerHTML=`
     <div class="quote-hd">
-      <span class="sym">NMDQ:${sym(name)}·${sex}</span>
+      <span class="sym">NMDQ:${sym(name)} <span class="sx ${sex==='F'?'f':'m'}">${sex}</span></span>
       <span class="name">${esc(name)}</span>${pill}${other}
       <span class="seg" role="group" aria-label="Range">${segBtns}</span>
     </div>
@@ -837,7 +842,7 @@ function renderSugg(){
   if(t.length<2){sugg.hidden=true;return;}
   const hits=allNames.filter(n=>n.toLowerCase().startsWith(t)).slice(0,8);
   if(!hits.length){sugg.hidden=true;return;}
-  sugg.innerHTML=hits.map((n,i)=>`<button data-n="${n}" class="${i===selIdx?'sel':''}">${esc(n)}<span class="s-sx">${byName[n].join(' · ')}</span></button>`).join('');
+  sugg.innerHTML=hits.map((n,i)=>`<button data-n="${n}" class="${i===selIdx?'sel':''}">${esc(n)}<span class="s-sx">${byName[n].map(s=>`<span class="sx ${s==='F'?'f':'m'}">${s}</span>`).join(' ')}</span></button>`).join('');
   sugg.hidden=false;
 }
 q.addEventListener('input',()=>{selIdx=-1;renderSugg();});
@@ -897,7 +902,7 @@ function renderStDetail(st){
     <div class="row"><span class="k">Top girls’ name</span><span><b data-open="${t.F[0]}|F" class="mono" style="cursor:pointer">${t.F[0]}</b> · ${fmt(t.F[1])}</span></div>
     <div class="row"><span class="k">Top boys’ name</span><span><b data-open="${t.M[0]}|M" class="mono" style="cursor:pointer">${t.M[0]}</b> · ${fmt(t.M[1])}</span></div>
     ${d.length?`<div class="row" style="border-bottom:0;padding-top:12px"><span class="k" style="letter-spacing:.08em;font-size:11px">LOCAL SPECIALTIES (VS. NATIONAL RATE)</span></div>`+
-      d.map(x=>`<div class="row"><span>${x.name} <span style="color:var(--faint);font-size:10px">${x.sex}</span></span><span class="lift">×${x.lift}</span></div>`).join(''):''}
+      d.map(x=>`<div class="row"><span>${x.name} <span class="sx ${x.sex==='F'?'f':'m'}">${x.sex}</span></span><span class="lift">×${x.lift}</span></div>`).join(''):''}
     <p class="hint">2024 data. “×61” = the name is 61 times more common there than nationally.</p>`;
 }
 $('#usmap').addEventListener('click',e=>{
