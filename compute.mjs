@@ -223,6 +223,34 @@ for (const [n, e] of byNameAll) {
 }
 uniFlips.sort((a, b) => b.vol - a.vol);
 
+// ---------- penny stocks ----------
+const penny = { picks: [], winners: [], base: {} };
+const I21 = 2021 - Y0, I14b = 2014 - Y0;
+for (const [key, arr] of series) {
+  const c21 = arr[I21], c22 = arr[I21 + 1], c23 = arr[I21 + 2], c24 = arr[I24];
+  // momentum screen: still tiny, listed 3 yrs ago, rising every year, >=2.5x
+  if (c24 >= 20 && c24 <= 180 && c21 >= 5 && c22 >= c21 && c23 >= c22 && c24 > c23 && c24 >= c21 * 2.5) {
+    const ser = []; for (let y = 2015; y <= 2024; y++) ser.push(arr[y - Y0]);
+    penny.picks.push({ n: key.slice(0, -2), s: key.slice(-1), c21, c24, x: +(c24 / c21).toFixed(1), ser });
+  }
+  // proof: pennies that mooned (5-50 babies in 2014 -> 800+ in 2024)
+  const c14 = arr[I14b];
+  if (c14 >= 5 && c14 <= 50 && c24 >= 800)
+    penny.winners.push({ n: key.slice(0, -2), s: key.slice(-1), c14, c24, x: Math.round(c24 / c14) });
+}
+penny.picks.sort((a, b) => b.x - a.x); penny.picks = penny.picks.slice(0, 12);
+penny.winners.sort((a, b) => b.c24 - a.c24); penny.winners = penny.winners.slice(0, 10);
+// base rate: fate of every 2014 penny name
+let uni = 0, hit = 0, dead = 0;
+for (const arr of series.values()) {
+  const c14 = arr[I14b];
+  if (c14 >= 5 && c14 <= 50) { uni++; if (arr[I24] >= 500) hit++; if (arr[I24] === 0) dead++; }
+}
+penny.base = { universe: uni, hit, dead };
+console.log('penny picks:', penny.picks.map(p => `${p.n}/${p.s} ${p.c21}->${p.c24}`).join(', '));
+console.log('penny winners:', penny.winners.map(w => `${w.n}/${w.s} ${w.c14}->${w.c24}`).join(', '));
+console.log('penny base:', JSON.stringify(penny.base));
+
 // ---------- lookup DB ----------
 // include names whose peak yearly count >= 150 (either sex entry separate)
 let dbNames = 0, dbEntries = {};
@@ -273,8 +301,19 @@ const out = {
   tapeDown: tape.slice(-20).reverse().map(t => ({ n: t.key.split('|')[0], s: t.key.slice(-1), p: t.pct })),
   states: { top: stateTop, distinctive },
   unisex: { share: uniShare, top: uniTop.slice(0, 12), flips: uniFlips.slice(0, 8) },
+  penny,
   db: dbEntries,
 };
+// make penny picks quotable in the terminal even though they're below the db floor
+for (const p of penny.picks) {
+  const k = p.n + '|' + p.s;
+  if (!out.db[k]) {
+    const arr = series.get(k);
+    let first = 0; while (arr[first] === 0) first++;
+    let last = YEARS - 1; while (arr[last] === 0) last--;
+    out.db[k] = [Y0 + first, Array.from(arr.slice(first, last + 1))];
+  }
+}
 
 fs.writeFileSync(path.join(process.env.HOME, 'baby-names/payload.json'), JSON.stringify(out));
 const size = fs.statSync(path.join(process.env.HOME, 'baby-names/payload.json')).size;

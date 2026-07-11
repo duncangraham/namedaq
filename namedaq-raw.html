@@ -274,7 +274,7 @@ footer a{color:var(--dim)}
   <div class="nav-in">
     <a class="brand" href="#top"><span class="dot"></span>NMDQ · THE NURSERY EXCHANGE</a>
     <div class="nav-links">
-      <a href="#fundamentals">FUNDAMENTALS</a><a href="#board">BIG BOARD</a><a href="#volatility">VOLATILITY</a>
+      <a href="#fundamentals">FUNDAMENTALS</a><a href="#board">BIG BOARD</a><a href="#penny">PENNY DESK</a><a href="#volatility">VOLATILITY</a>
       <a href="#terminal">TERMINAL</a><a href="#states">STATES</a><a href="#unisex">UNISEX</a><a href="#longview">LONG VIEW</a><a href="#prospectus">PROSPECTUS</a>
     </div>
   </div>
@@ -387,9 +387,32 @@ footer a{color:var(--dim)}
   </div>
 </section>
 
-<section id="volatility">
+<section id="penny">
   <div class="wrap">
-    <div class="eyebrow">§3 · The volatility desk</div>
+    <div class="eyebrow">§3 · The penny desk</div>
+    <h2>Penny stocks: tiny names with room to run</h2>
+    <div class="prose">
+      <p class="lede">Below the big board is the pink-sheets market: names given to fewer than 200 babies a year, barely above the SSA’s 5-baby listing floor. Most stay obscure forever. A few go vertical — Wrenley traded at 13 babies in 2014 and 1,982 in 2024.</p>
+      <p>The screen on the left hunts for the next Wrenley: names still tiny in 2024 that have risen every single year since 2021, at least 2.5× overall. The board on the right is proof the trade can pay. The fine print under it is proof it usually doesn’t.</p>
+    </div>
+    <div class="boards">
+      <div class="panel board">
+        <div class="panel-hd"><span class="t" style="color:var(--gold)">Momentum screen · rising every year since 2021</span></div>
+        <div style="overflow-x:auto"><table id="tblPenny" aria-label="Penny stock momentum picks"></table></div>
+        <div class="board-cap">Raw babies per year, not per-million — at this size, rates round to dust. Click a name to chart it.</div>
+      </div>
+      <div class="panel board">
+        <div class="panel-hd"><span class="t" style="color:var(--gold)">Pennies that mooned · 2014 → 2024</span></div>
+        <div style="overflow-x:auto"><table id="tblMoon" aria-label="Penny names that became popular"></table></div>
+        <div class="board-cap" id="pennyRisk"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="volatility" class="alt">
+  <div class="wrap">
+    <div class="eyebrow">§4 · The volatility desk</div>
     <h2>Steady blue chips, jumpy small caps</h2>
     <div class="prose">
       <p class="lede">Some names trade like treasury bonds: James has stayed within a narrow band for a century. Others swing 50% in a single year — usually because a telenovela premiered, a reality-TV star trended, or a song charted.</p>
@@ -414,11 +437,11 @@ footer a{color:var(--dim)}
   </div>
 </section>
 
-<section id="terminal" class="alt">
+<section id="terminal">
   <div class="wrap">
-    <div class="eyebrow">§4 · The quote terminal</div>
+    <div class="eyebrow">§5 · The quote terminal</div>
     <h2>Look up any name</h2>
-    <p class="prose lede">6,213 names have been liquid enough to list — at least 150 babies in some single year since 1880. Type one and pull its full price history.</p>
+    <p class="prose lede">6,224 names are listed here — every name that reached 150 babies in a single year since 1880, plus the penny desk’s momentum picks. Type one and pull its full price history.</p>
     <div class="term">
       <div class="term-top">
         <span class="prompt mono">NMDQ&gt;</span>
@@ -437,9 +460,9 @@ footer a{color:var(--dim)}
   </div>
 </section>
 
-<section id="states">
+<section id="states" class="alt">
   <div class="wrap">
-    <div class="eyebrow">§5 · Regional exchanges</div>
+    <div class="eyebrow">§6 · Regional exchanges</div>
     <h2>What each state is trading</h2>
     <div class="prose">
       <p class="lede">Liam and Olivia dominate coast to coast, but not everywhere — and every state has local specialties that trade far above their national price. Utah loves Mckay at 61× the national rate; in Hawaii, Mahina trades at 259×.</p>
@@ -458,9 +481,9 @@ footer a{color:var(--dim)}
   </div>
 </section>
 
-<section id="unisex" class="alt">
+<section id="unisex">
   <div class="wrap">
-    <div class="eyebrow">§6 · The unisex desk</div>
+    <div class="eyebrow">§7 · The unisex desk</div>
     <h2>Names traded on both sides</h2>
     <div class="prose">
       <p class="lede">The SSA has no unisex category; it counts every name separately for boys and girls, so we measure instead of label: a name is shared in a given year when at least 20% of its babies are the minority sex. By that bar, almost no American babies had a shared name for over a century — the share hovered near 2% from 1880 to 1990. It has tripled since, hitting an all-time high of 6.0% in 2024, when just 44 names with 500 or more babies managed even a 30–70 split. The biggest are on the board below, where Charlie trades at a perfect 50/50; click any name to pull the full quote.</p>
@@ -486,9 +509,9 @@ footer a{color:var(--dim)}
   </div>
 </section>
 
-<section id="longview">
+<section id="longview" class="alt">
   <div class="wrap">
-    <div class="eyebrow">§7 · The long view</div>
+    <div class="eyebrow">§8 · The long view</div>
     <h2>The great fragmentation</h2>
     <div class="prose">
       <p class="lede">The biggest change in this market is concentration. In 1950, a third of American boys had a top-10 name; in 2024 it was 8%, and the girls’ market is even more dispersed.</p>
@@ -522,9 +545,9 @@ footer a{color:var(--dim)}
   </div>
 </section>
 
-<section id="prospectus" class="alt" style="border-bottom:0">
+<section id="prospectus" style="border-bottom:0">
   <div class="wrap">
-    <div class="eyebrow">§8 · Prospectus &amp; fine print</div>
+    <div class="eyebrow">§9 · Prospectus &amp; fine print</div>
     <h2>How this data works</h2>
     <div class="rules">
       <div class="rule"><h3>Source</h3><p>The SSA’s public baby-names files: national counts from 1880, state counts from 1910, updated each May. This page uses the 2024 release. <a href="https://www.ssa.gov/oact/babynames/">ssa.gov/oact/babynames</a></p></div>
@@ -752,6 +775,20 @@ function renderBoards(w){
 $('#w30').addEventListener('click',()=>{$('#w30').classList.add('on');$('#w10').classList.remove('on');renderBoards('30')});
 $('#w10').addEventListener('click',()=>{$('#w10').classList.add('on');$('#w30').classList.remove('on');renderBoards('10')});
 renderBoards('30');
+
+// ---- penny desk ----
+(function(){
+  const P=ND.penny;if(!P)return;
+  const pspark=ser=>{const max=Math.max(...ser)||1;let d='';
+    ser.forEach((v,i)=>{d+=(d?'L':'M')+(i/(ser.length-1)*80).toFixed(1)+' '+(22-v/max*20).toFixed(1);});
+    return `<svg class="spark" width="84" height="24" viewBox="0 0 84 24" aria-hidden="true"><path d="${d}" style="stroke:var(--gold)"/></svg>`;};
+  $('#tblPenny').innerHTML=`<thead><tr><th></th><th>Name</th><th style="text-align:right">2021→2024</th><th style="text-align:right">×</th><th>’15–’24</th></tr></thead><tbody>`+
+    P.picks.map((p,i)=>`<tr><td style="color:var(--faint)">${i+1}</td><td><span class="nm" data-open="${p.n}|${p.s}">${esc(p.n)}</span><span class="sx ${p.s==='F'?'f':'m'}">${p.s}</span></td><td class="num" style="color:var(--dim)">${p.c21} → ${p.c24}</td><td class="d" style="color:var(--gain)">×${p.x}</td><td>${pspark(p.ser)}</td></tr>`).join('')+'</tbody>';
+  $('#tblMoon').innerHTML=`<thead><tr><th></th><th>Name</th><th style="text-align:right">2014</th><th style="text-align:right">2024</th><th style="text-align:right">×</th></tr></thead><tbody>`+
+    P.winners.map((w,i)=>`<tr><td style="color:var(--faint)">${i+1}</td><td><span class="nm" data-open="${w.n}|${w.s}">${esc(w.n)}</span><span class="sx ${w.s==='F'?'f':'m'}">${w.s}</span></td><td class="num" style="color:var(--dim)">${fmt(w.c14)}</td><td class="num">${fmt(w.c24)}</td><td class="d" style="color:var(--gain)">×${w.x}</td></tr>`).join('')+'</tbody>';
+  const b=P.base;
+  $('#pennyRisk').innerHTML=`Mandatory risk disclosure: of the ${fmt(b.universe)} names trading between 5 and 50 babies in 2014, <b style="color:var(--ink)">${b.hit}</b> (${(b.hit/b.universe*100).toFixed(2)}%) ever reached 500 — and ${fmt(b.dead)} (${Math.round(b.dead/b.universe*100)}%) were delisted entirely by 2024. Most penny names stay penny names.`;
+})();
 
 // ---- volatility lists ----
 (function(){
