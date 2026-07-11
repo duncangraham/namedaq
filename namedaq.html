@@ -87,6 +87,15 @@ section.alt .panel{background:var(--bg3)}
 .legend{display:flex;gap:var(--s3);flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--dim)}
 .legend .sw{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
 
+/* ---------- regime timeline ---------- */
+.reign-tag{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--dim);margin:14px 0 5px}
+.reign-row{display:flex;height:38px;border:1px solid var(--line);background:var(--bg)}
+.reign{display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--ink);overflow:hidden;white-space:nowrap;cursor:pointer;border-right:1px solid rgba(7,9,15,.7);min-width:0}
+.reign:last-child{border-right:0}
+.reign:hover{filter:brightness(1.35)}
+.reign-ruler{position:relative;height:18px;font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-top:4px}
+.reign-ruler span{position:absolute;transform:translateX(-50%)}
+
 details.deeper{border:1px solid var(--line);background:var(--bg2);margin-top:var(--s3);max-width:68ch}
 details.deeper summary{cursor:pointer;padding:12px var(--s3);font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.05em;color:var(--gold)}
 details.deeper[open] summary{border-bottom:1px solid var(--line)}
@@ -311,6 +320,25 @@ footer a{color:var(--dim)}
       <div class="tm-board girls"><h3>Top 10 · Girls</h3><div id="tmGirls"></div></div>
       <div class="tm-board boys"><h3>Top 10 · Boys</h3><div id="tmBoys"></div></div>
       <div class="board-cap" style="grid-column:1/-1;margin-top:0">▲▼ = places moved vs. the previous year’s top 10 · NEW = entered the top 10 that year.</div>
+    </div>
+
+    <h3 style="font-size:22px;margin-top:var(--s6)">Regime changes</h3>
+    <p class="prose" style="color:var(--dim);margin-top:var(--s2)">Drag the slider for a while and a rhythm shows up: the boards freeze for a generation, then flip almost all at once. The chart counts how many of a year’s top 10 were already in the top 10 a decade earlier. Boys held at 8–10 for nearly a century. Girls broke their market three times — most violently in 1972, when a single name survived from 1962 — and the boys’ turn finally arrived after 2008. It is still running.</p>
+    <div class="panel" style="margin-top:var(--s4)">
+      <div class="panel-hd"><span class="t">Top-10 survival vs. a decade earlier · 1890–2024</span>
+        <span class="legend"><span><span class="sw" style="background:var(--cool)"></span>Boys</span><span><span class="sw" style="background:var(--hot)"></span>Girls</span></span>
+      </div>
+      <div class="chart-box" id="regimeChart"></div>
+      <div class="board-cap">10 = the exact same ten names as ten years before; 1 = nine of ten replaced.</div>
+    </div>
+    <div class="panel" style="margin-top:var(--s4)">
+      <div class="panel-hd"><span class="t">Dynasties — every #1 name since 1880</span></div>
+      <div class="reign-tag">GIRLS</div>
+      <div class="reign-row" id="reignF"></div>
+      <div class="reign-tag">BOYS</div>
+      <div class="reign-row" id="reignM"></div>
+      <div class="reign-ruler" id="reignRuler"></div>
+      <div class="board-cap">Block width = years at #1. Mary held the girls’ top for 67 straight years; between 1985 and 2013 no girls’ name kept it longer than 12. Hover for dates, click to chart.</div>
     </div>
 
     <details class="deeper">
@@ -546,7 +574,7 @@ function chart(series,opts){
     g+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.width||2}" ${s.dash?`stroke-dasharray="${s.dash}"`:''}/>`;
   });
   (o.annots||[]).forEach(a=>{
-    g+=`<circle cx="${X(a.x)}" cy="${Y(a.y)}" r="3.5" fill="${a.color||'#ffd166'}"/>`;
+    if(!a.nodot)g+=`<circle cx="${X(a.x)}" cy="${Y(a.y)}" r="3.5" fill="${a.color||'#ffd166'}"/>`;
     const ax=X(a.x)+(a.dx||8),ay=Y(a.y)+(a.dy||-8);
     g+=`<text x="${ax}" y="${ay}" font-size="11" fill="${a.color||'#ffd166'}" text-anchor="${a.anchor||'start'}">${a.label}</text>`;
   });
@@ -650,6 +678,38 @@ function tmRender(){
   }
 }
 tmS.addEventListener('input',tmRender);tmRender();
+
+// ---- regime changes ----
+(function(){
+  const S={};
+  for(const s of ['M','F']){
+    const t=ND.topByYear[s].map(rows=>rows.map(r=>r[0]));
+    S[s]=t.map((names,i)=>i<10?0:names.filter(n=>t[i-10].includes(n)).length);
+  }
+  $('#regimeChart').innerHTML=chart([
+    {vals:S.M,color:'#58b8ff',width:2},
+    {vals:S.F,color:'#ff64a8',width:2},
+  ],{h:260,x0:1890,x1:Y1,yFmt:v=>v,annots:[
+    {x:1930,y:10,label:'boys: frozen for a century',dy:18,anchor:'middle',nodot:true},
+    {x:1972,y:S.F[1972-Y0],label:'1972: the Jennifer revolution',dy:-10,anchor:'middle'},
+    {x:2020,y:S.M[2020-Y0],label:'the Liam wave',anchor:'end',dx:-8,dy:-24},
+  ]});
+  attachScrub($('#regimeChart'),[{vals:S.M,color:'#58b8ff'},{vals:S.F,color:'#ff64a8'}],
+    yr=>`<b>${yr}</b> · vs ${yr-10}: <span style="color:var(--cool-ink)">boys kept ${S.M[yr-Y0]}/10</span> · <span style="color:var(--hot-ink)">girls kept ${S.F[yr-Y0]}/10</span>`);
+  function reignRow(sex,el){
+    const t=ND.topByYear[sex];const R=[];let cur=null,start=0;
+    t.forEach((rows,i)=>{const n=rows[0][0];if(n!==cur){if(cur!==null)R.push([cur,start,i-1]);cur=n;start=i;}});
+    R.push([cur,start,YRS-1]);
+    const shades=sex==='F'?['rgba(255,100,168,.5)','rgba(255,100,168,.24)']:['rgba(88,184,255,.5)','rgba(88,184,255,.24)'];
+    el.innerHTML=R.map((r,k)=>{
+      const yrs=r[2]-r[1]+1,w=yrs/YRS*100;
+      return `<span class="reign" data-open="${r[0]}|${sex}" title="${r[0]} · ${Y0+r[1]}–${Y0+r[2]} · ${yrs} yr${yrs>1?'s':''} at #1" style="width:${w}%;background:${shades[k%2]}">${w>5?r[0]:''}</span>`;
+    }).join('');
+  }
+  reignRow('F',$('#reignF'));reignRow('M',$('#reignM'));
+  $('#reignRuler').innerHTML=[1880,1920,1960,2000,2024].map(y=>
+    `<span style="left:${((y-Y0)/(YRS-1)*100).toFixed(1)}%">${y}</span>`).join('');
+})();
 
 // ---- big board ----
 function spark(name,sex,color){
