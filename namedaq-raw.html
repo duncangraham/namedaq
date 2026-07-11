@@ -8,8 +8,12 @@
 :root{
   --bg:#0b0e16; --bg2:#10141f; --bg3:#161b29; --line:#242c40; --line2:#2f3852;
   --ink:#e9edf5; --dim:#a3adc2; --faint:#6b7690;
+  /* sex: pink = girls, blue = boys (charts, splits) */
   --hot:#ff64a8; --hot-ink:#ffa8cd; --hot-soft:rgba(255,100,168,.10); --hot-line:rgba(255,100,168,.45);
   --cool:#58b8ff; --cool-ink:#9fd4ff; --cool-soft:rgba(88,184,255,.10); --cool-line:rgba(88,184,255,.45);
+  /* movement: green = heating up, red = cooling off (arrows, deltas, boards) */
+  --gain:#7de8a8; --gain-soft:rgba(125,232,168,.12);
+  --loss:#ff8a80; --loss-soft:rgba(255,138,128,.12);
   --gold:#ffd166; --gold-soft:rgba(255,209,102,.10);
   --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
   --sans:'IBM Plex Sans',-apple-system,Segoe UI,sans-serif;
@@ -29,7 +33,7 @@ p{margin:0 0 var(--s3)}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 var(--s4)}
 .prose{max-width:68ch}
 .mono{font-family:var(--mono)}
-.up{color:var(--hot)} .down{color:var(--cool)}
+.up{color:var(--gain)} .down{color:var(--loss)}
 svg text{font-family:var(--mono)}
 
 /* ---------- tape ---------- */
@@ -43,7 +47,7 @@ svg text{font-family:var(--mono)}
 .nav{position:sticky;top:0;z-index:50;background:rgba(11,14,22,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 .nav-in{max-width:var(--max);margin:0 auto;padding:10px var(--s4);display:flex;align-items:center;gap:var(--s4)}
 .brand{font-family:var(--disp);font-weight:700;font-size:18px;letter-spacing:.06em;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
-.brand .dot{width:8px;height:8px;border-radius:50%;background:var(--hot);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+.brand .dot{width:8px;height:8px;border-radius:50%;background:var(--gain);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .nav-links{display:flex;gap:var(--s3);margin-left:auto;font-family:var(--mono);font-size:12px}
 .nav-links a{color:var(--dim);text-decoration:none;letter-spacing:.04em}
@@ -61,7 +65,7 @@ svg text{font-family:var(--mono)}
 .stat{border:1px solid var(--line);background:var(--bg2);padding:var(--s3) var(--s4);min-width:180px;flex:1 1 180px;max-width:280px}
 .stat .v{font-family:var(--mono);font-size:26px;font-weight:600;letter-spacing:-.01em}
 .stat .k{font-family:var(--mono);font-size:11.5px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
-.stat.hot .v{color:var(--hot)} .stat.cool .v{color:var(--cool)} .stat.gold .v{color:var(--gold)}
+.stat.hot .v{color:var(--gain)} .stat.cool .v{color:var(--loss)} .stat.gold .v{color:var(--gold)}
 
 /* ---------- sections ---------- */
 section{padding:var(--s7) 0;border-bottom:1px solid var(--line)}
@@ -105,7 +109,7 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .tm-row .rk{color:var(--faint);width:18px;text-align:right}
 .tm-row .nm{width:96px;font-weight:500;overflow:hidden;text-overflow:ellipsis}
 .tm-row .mv{width:38px;flex-shrink:0;font-size:11px;text-align:left}
-.tm-row .mv.up{color:var(--hot)} .tm-row .mv.down{color:var(--cool)}
+.tm-row .mv.up{color:var(--gain)} .tm-row .mv.down{color:var(--loss)}
 .tm-row .mv.flat{color:var(--faint)} .tm-row .mv.new{color:var(--gold);font-size:9.5px;letter-spacing:.06em}
 .tm-row .bar{height:10px;border-radius:2px;flex:1;position:relative;background:var(--bg)}
 .tm-row .bar i{position:absolute;inset:0 auto 0 0;border-radius:2px}
@@ -127,9 +131,9 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .board .sx{font-size:10px;color:var(--faint);border:1px solid var(--line2);padding:0 4px;border-radius:2px;margin-left:6px}
 .board .num{text-align:right}
 .board .d{font-weight:600;text-align:right}
-.board.hot-b .d{color:var(--hot)} .board.cool-b .d{color:var(--cool)}
+.board.hot-b .d{color:var(--gain)} .board.cool-b .d{color:var(--loss)}
 .board .spark path{fill:none;stroke-width:1.5}
-.board.hot-b .spark path{stroke:var(--hot)} .board.cool-b .spark path{stroke:var(--cool)}
+.board.hot-b .spark path{stroke:var(--gain)} .board.cool-b .spark path{stroke:var(--loss)}
 .board-cap{font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:8px}
 
 /* ---------- volatility ---------- */
@@ -153,7 +157,7 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .meme .hd{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono)}
 .meme .hd .nm{font-weight:600;font-size:15px}
 .meme .hd .tag{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase}
-.meme .tag.spike{color:var(--hot)} .meme .tag.crash{color:var(--cool)}
+.meme .tag.spike{color:var(--gain)} .meme .tag.crash{color:var(--loss)}
 .meme svg{width:100%;height:auto;margin:8px 0 6px}
 .meme .cap{font-size:13px;color:var(--dim);line-height:1.5}
 
@@ -181,8 +185,8 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .quote-hd .sym{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.1em}
 .quote-hd .name{font-family:var(--disp);font-size:34px;font-weight:700;letter-spacing:.01em}
 .quote-hd .pill{font-family:var(--mono);font-size:16px;font-weight:600;padding:2px 10px;border-radius:3px}
-.pill.up{background:var(--hot-soft);color:var(--hot)}
-.pill.down{background:var(--cool-soft);color:var(--cool)}
+.pill.up{background:var(--gain-soft);color:var(--gain)}
+.pill.down{background:var(--loss-soft);color:var(--loss)}
 .seg{display:inline-flex;border:1px solid var(--line2);font-family:var(--mono);font-size:11.5px;margin-left:auto}
 .seg button{background:none;border:0;color:var(--dim);padding:6px 12px;cursor:pointer;font:inherit}
 .seg button.on{background:var(--bg3);color:var(--gold);font-weight:600}
@@ -263,7 +267,7 @@ footer a{color:var(--dim)}
   <div class="wrap">
     <div class="kicker">Market report · Social Security Administration data, 1880–2024</div>
     <h1>The U.S. baby name market</h1>
-    <p class="sub">Every year, the Social Security Administration publishes the name of nearly every baby born in America. Treat those names like stocks — with parents as the traders — and you get a 145-year market history: blue chips, hot IPOs, slow collapses, and the occasional meme-stock frenzy. On the trading boards, pink marks a name heating up and blue one cooling off; when a chart splits by sex instead, its legend says so.</p>
+    <p class="sub">Every year, the Social Security Administration publishes the name of nearly every baby born in America. Treat those names like stocks — with parents as the traders — and you get a 145-year market history: blue chips, hot IPOs, slow collapses, and the occasional meme-stock frenzy. Green marks a name heating up and red one cooling off; pink and blue are reserved for the girls’ and boys’ sides of the market.</p>
     <div class="stat-row">
       <div class="stat gold"><div class="v">3,612,777</div><div class="k">Babies born, 2024</div></div>
       <div class="stat"><div class="v">29,225</div><div class="k">Distinct names traded, 2024</div></div>
@@ -329,12 +333,12 @@ footer a{color:var(--dim)}
     </div>
     <div class="boards">
       <div class="panel board hot-b">
-        <div class="panel-hd"><span class="t" style="color:var(--hot)">▲ Heating up</span></div>
+        <div class="panel-hd"><span class="t" style="color:var(--gain)">▲ Heating up</span></div>
         <div style="overflow-x:auto"><table id="tblG" aria-label="Top gainers"></table></div>
         <div class="board-cap">Δ = change in the annual rate per million births of that sex; × = end rate as a multiple of the start. Click a name to chart it.</div>
       </div>
       <div class="panel board cool-b">
-        <div class="panel-hd"><span class="t" style="color:var(--cool)">▼ Cooling off</span></div>
+        <div class="panel-hd"><span class="t" style="color:var(--loss)">▼ Cooling off</span></div>
         <div style="overflow-x:auto"><table id="tblL" aria-label="Top losers"></table></div>
         <div class="board-cap">Names below 5 births in a year leave the tape entirely — the SSA delists them.</div>
       </div>
