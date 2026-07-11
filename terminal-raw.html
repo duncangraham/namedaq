@@ -1,0 +1,358 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NMDQ PRO — Baby Name Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0e16; --bg2:#10141f; --bg3:#161b29; --line:#242c40; --line2:#2f3852;
+  --ink:#e9edf5; --dim:#a3adc2; --faint:#6b7690;
+  --hot:#ff64a8; --hot-ink:#ffa8cd; --hot-soft:rgba(255,100,168,.10); --hot-line:rgba(255,100,168,.45);
+  --cool:#58b8ff; --cool-ink:#9fd4ff; --cool-soft:rgba(88,184,255,.10); --cool-line:rgba(88,184,255,.45);
+  --gain:#7de8a8; --loss:#ff8a80; --gold:#ffd166; --gold-soft:rgba(255,209,102,.10);
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:'IBM Plex Sans',-apple-system,Segoe UI,sans-serif;
+  --disp:'Space Grotesk',var(--sans);
+  --s2:8px; --s3:16px; --s4:24px; --s5:40px;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1360px;margin:0 auto;padding:0 var(--s4)}
+.mono{font-family:var(--mono)}
+svg text{font-family:var(--mono)}
+
+.topbar{border-bottom:1px solid var(--line);background:rgba(11,14,22,.95);position:sticky;top:0;z-index:40}
+.topbar-in{max-width:1360px;margin:0 auto;padding:12px var(--s4);display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
+.brand{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:.06em;display:flex;align-items:center;gap:10px}
+.brand .pro{background:var(--gold);color:#141414;font-family:var(--mono);font-size:10.5px;font-weight:600;padding:1px 7px;border-radius:2px;letter-spacing:.1em}
+.brand .dot{width:8px;height:8px;border-radius:50%;background:var(--gain);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.back{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--dim);text-decoration:none;letter-spacing:.04em}
+.back:hover{color:var(--ink)}
+
+.cmd{display:flex;gap:10px;align-items:center;margin-top:var(--s4);flex-wrap:wrap}
+.cmd .prompt{font-family:var(--mono);color:var(--gold);font-weight:600}
+.searchbox{position:relative;flex:1;min-width:220px;max-width:420px}
+#q{width:100%;background:var(--bg3);border:1px solid var(--line2);color:var(--ink);font-family:var(--mono);font-size:15px;padding:9px 13px;letter-spacing:.03em}
+#q:focus{outline:2px solid var(--gold);outline-offset:-1px}
+.sugg{position:absolute;top:100%;left:0;right:0;background:var(--bg3);border:1px solid var(--line2);border-top:0;z-index:30;max-height:280px;overflow:auto}
+.sugg button{display:flex;justify-content:space-between;width:100%;background:none;border:0;color:var(--ink);font-family:var(--mono);font-size:13.5px;padding:8px 13px;cursor:pointer;text-align:left}
+.sugg button:hover,.sugg button.sel{background:var(--gold-soft)}
+.btn{background:var(--gold);border:0;color:#141414;font-family:var(--mono);font-size:12.5px;font-weight:600;padding:10px 18px;cursor:pointer;letter-spacing:.05em}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--dim)}
+.btn.ghost:hover{color:var(--ink);border-color:var(--faint)}
+.seg{display:inline-flex;border:1px solid var(--line2);font-family:var(--mono);font-size:11.5px;margin-left:auto}
+.seg button{background:none;border:0;color:var(--dim);padding:8px 13px;cursor:pointer;font:inherit}
+.seg button.on{background:var(--bg3);color:var(--gold);font-weight:600}
+
+.tickers{display:flex;gap:8px;flex-wrap:wrap;margin-top:var(--s3)}
+.ticker{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:13px;font-weight:600;border:1px solid var(--line2);background:var(--bg2);padding:6px 10px;cursor:pointer}
+.ticker.focused{border-color:var(--gold);background:var(--gold-soft)}
+.ticker .swatch{width:12px;height:12px;border-radius:2px;flex-shrink:0}
+.ticker .rm{border:0;background:none;color:var(--faint);cursor:pointer;font:inherit;padding:0 0 0 4px}
+.ticker .rm:hover{color:var(--loss)}
+.sx{font-family:var(--mono);font-size:10px;border:1px solid var(--line2);padding:0 4px;border-radius:2px;font-weight:600}
+.sx.f{color:var(--hot-ink);border-color:var(--hot-line);background:var(--hot-soft)}
+.sx.m{color:var(--cool-ink);border-color:var(--cool-line);background:var(--cool-soft)}
+.hint{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-top:6px}
+
+.panel{border:1px solid var(--line);background:var(--bg2);padding:var(--s3);margin-top:var(--s3)}
+.panel-hd{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.chart-box{width:100%;overflow-x:auto;position:relative}
+.chart-box svg{display:block;width:100%;height:auto;min-width:640px}
+.scrub-tip{position:absolute;top:6px;display:none;pointer-events:none;background:var(--bg3);border:1px solid var(--line2);font-family:var(--mono);font-size:11.5px;line-height:1.7;padding:6px 10px;white-space:nowrap;z-index:5}
+.scrub-tip b{color:var(--gold)}
+
+.lower{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:var(--s3);margin-top:var(--s3);margin-bottom:80px}
+@media (max-width:1000px){.lower{grid-template-columns:1fr}}
+.lower>*{min-width:0}
+.stats-wrap{overflow-x:auto}
+.stats{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px}
+.stats th{text-align:right;font-size:11px;letter-spacing:.06em;color:var(--dim);font-weight:600;padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.stats th:first-child{text-align:left;color:var(--faint);text-transform:uppercase;font-size:10px}
+.stats td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.stats td:first-child{text-align:left;color:var(--dim);font-size:11.5px}
+.stats tr:last-child td{border-bottom:0}
+.stats .up{color:var(--gain)} .stats .down{color:var(--loss)}
+
+.usmap{display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(8,1fr);gap:4px;aspect-ratio:11/8;margin-top:6px}
+.st{border:0;border-radius:3px;font-family:var(--mono);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:2px;min-width:0;background:var(--bg3);color:var(--dim)}
+.st .ab{font-size:11px;font-weight:600;line-height:1.2}
+.st .lf{font-size:8.5px;line-height:1;opacity:.9}
+.st.hotst{color:#141414}
+.strows{font-family:var(--mono);font-size:12.5px;margin-top:10px}
+.strow{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--line)}
+.strow:last-child{border-bottom:0}
+.strow .lift{color:var(--gold);font-weight:600}
+.empty{font-family:var(--mono);font-size:13px;color:var(--dim);padding:var(--s4) 0}
+</style>
+
+<div class="topbar"><div class="topbar-in">
+  <span class="brand"><span class="dot"></span>NMDQ <span class="pro">PRO</span></span>
+  <a class="back" href="index.html">← BACK TO THE MARKET REPORT</a>
+</div></div>
+
+<div class="wrap">
+  <div class="cmd">
+    <span class="prompt">NMDQ&gt;</span>
+    <div class="searchbox">
+      <input id="q" type="search" placeholder="Add a name… (up to 5)" autocomplete="off" spellcheck="false" aria-label="Add a name">
+      <div class="sugg" id="sugg" hidden></div>
+    </div>
+    <button class="btn" id="addBtn">ADD</button>
+    <button class="btn ghost" id="clearBtn">CLEAR</button>
+    <span class="seg" role="group" aria-label="Range" id="rangeSeg">
+      <button data-rg="MAX" class="on">MAX</button><button data-rg="50Y">50Y</button><button data-rg="30Y">30Y</button><button data-rg="10Y">10Y</button>
+    </span>
+  </div>
+  <div class="tickers" id="tickers"></div>
+  <div class="hint">Click a ticker to focus it (drives the state map). Charts are rate per million births of each name’s own sex. Share this view: the URL updates as you add names.</div>
+
+  <div class="panel">
+    <div class="panel-hd" id="chartHd">Price history</div>
+    <div class="chart-box" id="chartBox"></div>
+  </div>
+
+  <div class="lower">
+    <div class="panel">
+      <div class="panel-hd">Comparison stats</div>
+      <div class="stats-wrap"><table class="stats" id="statsTbl"></table></div>
+    </div>
+    <div class="panel">
+      <div class="panel-hd" id="mapHd">State distribution</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--faint)">2020–24 · tile brightness = rate vs. national (×lift) · gray = under the SSA’s 5-baby state floor</div>
+      <div class="usmap" id="usmap"></div>
+      <div class="strows" id="stRows"></div>
+    </div>
+  </div>
+</div>
+
+<script>window.TD=/*PAYLOAD*/null/*ENDPAYLOAD*/;</script>
+<script>
+(function(){
+'use strict';
+const TD=window.TD;if(!TD){document.body.insertAdjacentHTML('beforeend','<p style="padding:2em;font-family:monospace">Data payload missing.</p>');return;}
+const Y0=TD.y0,Y1=TD.y1,YRS=Y1-Y0+1;
+const $=s=>document.querySelector(s);
+const fmt=n=>n.toLocaleString('en-US');
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const PAL=['#ffd166','#7de8a8','#c792ea','#ff8a80','#7fd8e8'];
+const GRID={AK:[0,0],ME:[10,0],VT:[9,1],NH:[10,1],
+WA:[0,2],ID:[1,2],MT:[2,2],ND:[3,2],MN:[4,2],WI:[5,2],MI:[7,2],NY:[8,2],MA:[9,2],RI:[10,2],
+OR:[0,3],NV:[1,3],WY:[2,3],SD:[3,3],IA:[4,3],IL:[5,3],IN:[6,3],OH:[7,3],PA:[8,3],NJ:[9,3],CT:[10,3],
+CA:[0,4],UT:[1,4],CO:[2,4],NE:[3,4],MO:[4,4],KY:[5,4],WV:[6,4],VA:[7,4],MD:[8,4],DE:[9,4],
+AZ:[1,5],NM:[2,5],KS:[3,5],AR:[4,5],TN:[5,5],NC:[6,5],SC:[7,5],DC:[8,5],
+OK:[3,6],LA:[4,6],MS:[5,6],AL:[6,6],GA:[7,6],
+HI:[0,7],TX:[3,7],FL:[9,7]};
+const dbKeys=Object.keys(TD.db);
+const byName={};dbKeys.forEach(k=>{const[n,s]=k.split('|');(byName[n]??=[]).push(s);});
+const allNames=Object.keys(byName);
+
+function counts(key){const e=TD.db[key];if(!e)return null;
+  const a=new Array(YRS).fill(0);for(let j=0;j<e[1].length;j++)a[e[0]-Y0+j]=e[1][j];return a;}
+function rates(key){const c=counts(key);if(!c)return null;const s=key.slice(-1);
+  return c.map((v,i)=>TD.namedTotals[s][i]?v/TD.namedTotals[s][i]*1e6:0);}
+
+// generic line chart (same scale logic as the main page)
+function chart(series,opts){
+  const o=Object.assign({w:1100,h:400,x0:Y0,x1:Y1,yFmt:v=>fmt(Math.round(v)),pad:{l:60,r:16,t:14,b:26}},opts);
+  const P=o.pad,iw=o.w-P.l-P.r,ih=o.h-P.t-P.b;
+  let ymax=0;series.forEach(s=>{for(let i=o.x0-Y0;i<=o.x1-Y0;i++)if(s.vals[i]>ymax)ymax=s.vals[i];});
+  ymax=ymax||1;
+  const mag=Math.pow(10,Math.floor(Math.log10(ymax)));let step=mag;
+  if(ymax/step>5)step*=2;if(ymax/step<2.5)step/=2;
+  const ytop=Math.ceil(ymax/step)*step;
+  const X=y=>P.l+(y-o.x0)/(o.x1-o.x0)*iw, Y=v=>P.t+ih-(v/ytop)*ih;
+  let g='';
+  for(let v=0;v<=ytop+1e-9;v+=step){
+    g+=`<line x1="${P.l}" y1="${Y(v)}" x2="${o.w-P.r}" y2="${Y(v)}" stroke="#242c40"/>`;
+    g+=`<text x="${P.l-8}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="#6b7690">${o.yFmt(v)}</text>`;
+  }
+  const span=o.x1-o.x0,xs=span>90?20:span>40?10:5;
+  for(let yr=Math.ceil(o.x0/xs)*xs;yr<=o.x1;yr+=xs)
+    g+=`<text x="${X(yr)}" y="${o.h-6}" text-anchor="middle" font-size="11" fill="#6b7690">${yr}</text>`;
+  series.forEach(s=>{
+    let d='';for(let yr=o.x0;yr<=o.x1;yr++){const v=s.vals[yr-Y0]||0;d+=(d?'L':'M')+X(yr).toFixed(1)+' '+Y(v).toFixed(1);}
+    g+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.width||2}"/>`;
+  });
+  return `<svg viewBox="0 0 ${o.w} ${o.h}" xmlns="http://www.w3.org/2000/svg" role="img" data-x0="${o.x0}" data-x1="${o.x1}" data-ytop="${ytop}" data-w="${o.w}" data-h="${o.h}" data-pl="${P.l}" data-pr="${P.r}" data-pt="${P.t}" data-pb="${P.b}">${g}</svg>`;
+}
+function attachScrub(box,seriesList,fmtTip){
+  const svg=box.querySelector('svg');if(!svg)return;
+  const d=svg.dataset,x0=+d.x0,x1=+d.x1,ytop=+d.ytop,w=+d.w,h=+d.h,pl=+d.pl,pr=+d.pr,pt=+d.pt,pb=+d.pb;
+  const iw=w-pl-pr,ih=h-pt-pb,ns='http://www.w3.org/2000/svg';
+  const g=document.createElementNS(ns,'g');g.style.display='none';g.setAttribute('pointer-events','none');
+  const ln=document.createElementNS(ns,'line');
+  ln.setAttribute('stroke','#8a93a8');ln.setAttribute('stroke-dasharray','3 3');
+  ln.setAttribute('y1',pt);ln.setAttribute('y2',h-pb);g.appendChild(ln);
+  const dots=seriesList.map(s=>{const c=document.createElementNS(ns,'circle');
+    c.setAttribute('r','4');c.setAttribute('fill',s.color);c.setAttribute('stroke','#0b0e16');c.setAttribute('stroke-width','1.5');
+    g.appendChild(c);return c;});
+  svg.appendChild(g);
+  const tip=document.createElement('div');tip.className='scrub-tip';box.appendChild(tip);
+  svg.addEventListener('pointermove',ev=>{
+    const r=svg.getBoundingClientRect();
+    const vx=(ev.clientX-r.left)*(w/r.width);
+    const yr=Math.max(x0,Math.min(x1,Math.round(x0+(vx-pl)/iw*(x1-x0))));
+    const X=pl+(yr-x0)/(x1-x0)*iw;
+    ln.setAttribute('x1',X);ln.setAttribute('x2',X);
+    seriesList.forEach((s,i)=>{const v=s.vals[yr-Y0]||0;
+      dots[i].setAttribute('cx',X);dots[i].setAttribute('cy',pt+ih-Math.min(v/ytop,1)*ih);});
+    g.style.display='';
+    tip.innerHTML=fmtTip(yr);tip.style.display='block';
+    const bx=box.getBoundingClientRect();
+    let left=ev.clientX-bx.left+box.scrollLeft+14;
+    if(left+tip.offsetWidth>box.scrollLeft+box.clientWidth-8)left=ev.clientX-bx.left+box.scrollLeft-tip.offsetWidth-14;
+    tip.style.left=Math.max(box.scrollLeft,left)+'px';
+  });
+  svg.addEventListener('pointerleave',()=>{g.style.display='none';tip.style.display='none';});
+}
+
+// ---------- state ----------
+let tickers=[]; // [{key}]
+let focusI=0, range='MAX';
+
+function colorOf(i){return PAL[i%PAL.length];}
+function addTicker(key,silent){
+  if(!TD.db[key]||tickers.some(t=>t.key===key)||tickers.length>=5)return false;
+  tickers.push({key});focusI=tickers.length-1;
+  if(!silent)render();
+  return true;
+}
+function rmTicker(i){tickers.splice(i,1);if(focusI>=tickers.length)focusI=Math.max(0,tickers.length-1);render();}
+
+function pctCh(rs,span){const a=rs[Y1-span-Y0],b=rs[Y1-Y0];if(!a)return null;return (b-a)/a*100;}
+function rank(key){const target=TD.db[key],sex=key.slice(-1);
+  const c=counts(key)[Y1-Y0];if(!c)return null;let r=1;
+  for(const k of dbKeys){if(!k.endsWith('|'+sex))continue;const e=TD.db[k];const i=Y1-e[0];
+    if(i>=0&&i<e[1].length&&e[1][i]>c)r++;}
+  return r;}
+
+function natRate5(key){const c=counts(key),s=key.slice(-1);let n=0,t=0;
+  for(let y=2020;y<=2024;y++){n+=c[y-Y0];t+=TD.namedTotals[s][y-Y0];}
+  return t?n/t*1e6:0;}
+
+function render(){
+  // hash
+  location.hash=tickers.map(t=>t.key.replace('|','-')).join(',');
+  // chips
+  $('#tickers').innerHTML=tickers.map((t,i)=>{
+    const[n,s]=t.key.split('|');
+    return `<span class="ticker ${i===focusI?'focused':''}" data-i="${i}" role="button" tabindex="0" aria-label="Focus ${n}"><span class="swatch" style="background:${colorOf(i)}"></span>${esc(n)}<span class="sx ${s==='F'?'f':'m'}">${s}</span><button class="rm" data-rm="${i}" aria-label="Remove ${n}">×</button></span>`;
+  }).join('')||'<span class="empty">No tickers — add a name above.</span>';
+  // chart
+  if(!tickers.length){$('#chartBox').innerHTML='';$('#statsTbl').innerHTML='';$('#usmap').innerHTML='';$('#stRows').innerHTML='';$('#mapHd').textContent='State distribution';return;}
+  const x0=range==='MAX'?Y0:range==='50Y'?1975:range==='30Y'?1995:2015;
+  const series=tickers.map((t,i)=>({vals:rates(t.key),color:colorOf(i),width:i===focusI?2.6:1.8}));
+  $('#chartHd').textContent=`Price history · rate per million of own sex · ${x0}–${Y1}`;
+  $('#chartBox').innerHTML=chart(series,{x0});
+  attachScrub($('#chartBox'),series,yr=>`<b>${yr}</b> · `+tickers.map((t,i)=>{
+    const r=series[i].vals[yr-Y0];return `<span style="color:${colorOf(i)}">${t.key.split('|')[0]} ${fmt(Math.round(r))}</span>`;}).join(' · '));
+  if($('#chartBox').scrollWidth>$('#chartBox').clientWidth+4)$('#chartBox').scrollLeft=$('#chartBox').scrollWidth;
+  // stats matrix
+  const rows=[
+    ['Babies, 2024',t=>fmt(counts(t.key)[Y1-Y0])],
+    ['Rate /M, 2024',t=>fmt(Math.round(rates(t.key)[Y1-Y0]))],
+    ['2024 rank (own sex)',t=>{const r=rank(t.key);return r?'#'+fmt(r):'—';}],
+    ['Peak year',t=>{const c=counts(t.key);let p=0,py=Y0;c.forEach((v,i)=>{if(v>p){p=v;py=Y0+i;}});return py+' ('+fmt(p)+')';}],
+    ['10-yr change',t=>{const v=pctCh(rates(t.key),10);return v===null?'new':`<span class="${v>=0?'up':'down'}">${v>=0?'+':''}${v.toFixed(0)}%</span>`;}],
+    ['30-yr change',t=>{const v=pctCh(rates(t.key),30);return v===null?'new':`<span class="${v>=0?'up':'down'}">${v>=0?'+':''}${v.toFixed(0)}%</span>`;}],
+    ['First listed',t=>TD.db[t.key][0]],
+    ['All-time babies',t=>fmt(counts(t.key).reduce((a,b)=>a+b,0))],
+    ['Hottest state (lift)',t=>{const s=topStates(t.key,1)[0];return s?`${s.st} ×${s.lift.toFixed(1)}`:'—';}],
+  ];
+  $('#statsTbl').innerHTML='<thead><tr><th>Metric</th>'+tickers.map((t,i)=>{
+    const[n,s]=t.key.split('|');
+    return `<th><span style="color:${colorOf(i)}">${esc(n)}</span> <span class="sx ${s==='F'?'f':'m'}">${s}</span></th>`;}).join('')+'</tr></thead><tbody>'+
+    rows.map(([lbl,fn])=>'<tr><td>'+lbl+'</td>'+tickers.map(t=>'<td>'+fn(t)+'</td>').join('')+'</tr>').join('')+'</tbody>';
+  renderMap();
+}
+
+function topStates(key,n){
+  const sd=TD.sdb[key];if(!sd)return[];
+  const sex=key.slice(-1),nat=natRate5(key);if(!nat)return[];
+  const rows=[];
+  for(const st of Object.keys(sd)){
+    if(!TD.stateTotals5[st]||sd[st]<15)continue;
+    const r=sd[st]/TD.stateTotals5[st][sex]*1e6;
+    rows.push({st,c:sd[st],lift:r/nat});
+  }
+  rows.sort((a,b)=>b.lift-a.lift);
+  return rows.slice(0,n);
+}
+function renderMap(){
+  const t=tickers[focusI];if(!t){return;}
+  const[nm]=t.key.split('|');
+  $('#mapHd').textContent=`State distribution · ${nm}`;
+  const sd=TD.sdb[t.key]||{},sex=t.key.slice(-1),nat=natRate5(t.key);
+  $('#usmap').innerHTML=Object.keys(GRID).map(st=>{
+    const[c,r]=GRID[st];
+    const cnt=sd[st]||0;
+    let style='',lifttxt='',cls='';
+    if(cnt&&nat&&TD.stateTotals5[st]){
+      const lift=(cnt/TD.stateTotals5[st][sex]*1e6)/nat;
+      const a=Math.max(.10,Math.min(.95,lift*.32));
+      style=`background:rgba(255,209,102,${a.toFixed(2)})`;
+      if(lift>=1.7)cls='hotst';
+      lifttxt=`<span class="lf">×${lift.toFixed(1)}</span>`;
+    }
+    return `<span class="st ${cls}" style="grid-column:${c+1};grid-row:${r+1};${style}" title="${st}: ${cnt?fmt(cnt)+' babies 2020–24':'under 5/yr — suppressed'}"><span class="ab">${st}</span>${lifttxt}</span>`;
+  }).join('');
+  const tops=topStates(t.key,6);
+  $('#stRows').innerHTML=tops.length?tops.map(s=>
+    `<div class="strow"><span>${s.st} · ${fmt(s.c)} babies</span><span class="lift">×${s.lift.toFixed(1)} national</span></div>`).join('')
+    :'<div class="empty">Too rare for state-level data — the SSA suppresses names under 5 babies per state-year.</div>';
+}
+
+// ---------- input ----------
+const q=$('#q'),sugg=$('#sugg');let selIdx=-1;
+function bestSex(name){const sx=byName[name];if(sx.length===1)return sx[0];
+  const cF=counts(name+'|F')[Y1-Y0],cM=counts(name+'|M')[Y1-Y0];return cF>=cM?'F':'M';}
+function tryAdd(raw){const t=raw.trim();if(!t)return;
+  const name=t[0].toUpperCase()+t.slice(1).toLowerCase();
+  if(byName[name]){addTicker(name+'|'+bestSex(name));q.value='';sugg.hidden=true;}}
+function renderSugg(){
+  const t=q.value.trim().toLowerCase();
+  if(t.length<2){sugg.hidden=true;return;}
+  const hits=allNames.filter(n=>n.toLowerCase().startsWith(t)).slice(0,8);
+  if(!hits.length){sugg.hidden=true;return;}
+  sugg.innerHTML=hits.map((n,i)=>`<button data-n="${n}" class="${i===selIdx?'sel':''}">${esc(n)}<span>${byName[n].map(s=>`<span class="sx ${s==='F'?'f':'m'}">${s}</span>`).join(' ')}</span></button>`).join('');
+  sugg.hidden=false;
+}
+q.addEventListener('input',()=>{selIdx=-1;renderSugg();});
+q.addEventListener('keydown',e=>{
+  const btns=sugg.querySelectorAll('button');
+  if(e.key==='ArrowDown'&&!sugg.hidden){selIdx=Math.min(selIdx+1,btns.length-1);renderSugg();e.preventDefault();}
+  else if(e.key==='ArrowUp'&&!sugg.hidden){selIdx=Math.max(selIdx-1,0);renderSugg();e.preventDefault();}
+  else if(e.key==='Enter'){e.preventDefault();
+    if(selIdx>=0&&btns[selIdx])q.value=btns[selIdx].dataset.n;
+    tryAdd(q.value);}
+  else if(e.key==='Escape'){sugg.hidden=true;}
+});
+sugg.addEventListener('click',e=>{const b=e.target.closest('button');if(b){q.value=b.dataset.n;tryAdd(b.dataset.n);}});
+document.addEventListener('click',e=>{if(!e.target.closest('.searchbox'))sugg.hidden=true;});
+$('#addBtn').addEventListener('click',()=>tryAdd(q.value));
+$('#clearBtn').addEventListener('click',()=>{tickers=[];focusI=0;render();});
+$('#rangeSeg').addEventListener('click',e=>{
+  const b=e.target.closest('[data-rg]');if(!b)return;
+  range=b.dataset.rg;
+  document.querySelectorAll('#rangeSeg button').forEach(x=>x.classList.toggle('on',x===b));
+  render();
+});
+$('#tickers').addEventListener('click',e=>{
+  const rm=e.target.closest('[data-rm]');
+  if(rm){rmTicker(+rm.dataset.rm);return;}
+  const tk=e.target.closest('.ticker');
+  if(tk){focusI=+tk.dataset.i;render();}
+});
+
+// ---------- boot from hash ----------
+const initial=(location.hash.slice(1)||'').split(',').map(s=>decodeURIComponent(s).replace('-','|')).filter(k=>TD.db[k]);
+if(initial.length)initial.forEach(k=>addTicker(k,true));
+else{addTicker('Olivia|F',true);addTicker('Liam|M',true);addTicker('Charlie|F',true);}
+focusI=0;render();
+})();
+</script>

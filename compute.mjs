@@ -153,13 +153,21 @@ const stateTop = {}; // ST -> {M:[name,c], F:[name,c]}
 const stateRows2024 = []; // for distinctive calc
 const stateFiles = fs.readdirSync(path.join(DATA, 'namesbystate')).filter(f => f.endsWith('.TXT'));
 const stateTotals2024 = {}; // ST -> {M,F}
+const sdb = {}; // "Name|S" -> {ST: count} summed 2020-2024 (for the pro terminal)
+const stateTotals5 = {}; // ST -> {M,F} summed 2020-2024
 for (const f of stateFiles) {
   const txt = fs.readFileSync(path.join(DATA, 'namesbystate', f), 'utf8');
   for (const line of txt.split('\n')) {
     if (!line.trim()) continue;
     const [st, sex, yr, name, cnt] = line.trim().split(',');
-    if (+yr !== 2024) continue;
-    const c = +cnt;
+    const y = +yr, c = +cnt;
+    if (y >= 2020) {
+      const key = name + '|' + sex;
+      (sdb[key] ??= {})[st] = ((sdb[key] ??= {})[st] || 0) + c;
+      stateTotals5[st] ??= { M: 0, F: 0 };
+      stateTotals5[st][sex] += c;
+    }
+    if (y !== 2024) continue;
     stateTop[st] ??= {};
     stateTotals2024[st] ??= { M: 0, F: 0 };
     stateTotals2024[st][sex] += c;
@@ -316,6 +324,19 @@ for (const p of penny.picks) {
 }
 
 fs.writeFileSync(path.join(process.env.HOME, 'baby-names/payload.json'), JSON.stringify(out));
+
+// ---------- pro terminal payload: lookup db + per-name state distribution ----------
+const sdbOut = {};
+for (const k of Object.keys(out.db)) if (sdb[k]) sdbOut[k] = sdb[k];
+const term = {
+  y0: Y0, y1: Y1,
+  namedTotals: out.namedTotals,
+  db: out.db,
+  sdb: sdbOut,
+  stateTotals5,
+};
+fs.writeFileSync(path.join(process.env.HOME, 'baby-names/payload-terminal.json'), JSON.stringify(term));
+console.log('terminal payload:', (fs.statSync(path.join(process.env.HOME, 'baby-names/payload-terminal.json')).size / 1e6).toFixed(2), 'MB');
 const size = fs.statSync(path.join(process.env.HOME, 'baby-names/payload.json')).size;
 console.log('payload size:', (size / 1e6).toFixed(2), 'MB');
 console.log('births 2024:', births[2024]);
