@@ -327,15 +327,6 @@ footer a{color:var(--dim)}
       <div class="board-cap" style="grid-column:1/-1;margin-top:0">▲▼ = places moved vs. the previous year’s top 10 · NEW = entered the top 10 that year.</div>
     </div>
 
-    <h3 style="font-size:22px;margin-top:var(--s6)">Regime changes</h3>
-    <p class="prose" style="color:var(--dim);margin-top:var(--s2)">Drag the slider for a while and a rhythm shows up: the boards freeze for a generation, then flip almost all at once. The chart counts how many of a year’s top 10 were already in the top 10 a decade earlier. Boys held at 8–10 for nearly a century. Girls broke their market three times — most violently in 1972, when a single name survived from 1962 — and the boys’ turn finally arrived after 2008. It is still running.</p>
-    <div class="panel" style="margin-top:var(--s4)">
-      <div class="panel-hd"><span class="t">Top-10 survival vs. a decade earlier · 1890–2024</span>
-        <span class="legend"><span><span class="sw" style="background:var(--cool)"></span>Boys</span><span><span class="sw" style="background:var(--hot)"></span>Girls</span></span>
-      </div>
-      <div class="chart-box" id="regimeChart"></div>
-      <div class="board-cap">10 = the exact same ten names as ten years before; 1 = nine of ten replaced.</div>
-    </div>
     <div class="panel" style="margin-top:var(--s4)">
       <div class="panel-hd"><span class="t">Dynasties — every #1 name since 1880</span></div>
       <div class="reign-tag">GIRLS</div>
@@ -344,6 +335,20 @@ footer a{color:var(--dim)}
       <div class="reign-row" id="reignM"></div>
       <div class="reign-ruler" id="reignRuler"></div>
       <div class="board-cap">Block width = years at #1. Mary held the girls’ top for 67 straight years; between 1985 and 2013 no girls’ name kept it longer than 12. Hover for dates, click to chart.</div>
+    </div>
+
+    <h3 style="font-size:22px;margin-top:var(--s6)">Regime changes: when the whole board flips</h3>
+    <div class="prose" style="margin-top:var(--s2)">
+      <p style="color:var(--dim)">Set the time machine to 1962 and the girls’ board reads Lisa, Mary, Susan, Karen, Linda. Set it to 1972 and the board is Jennifer, Michelle, Kimberly, Amy — of the old ten, only Lisa is left. That is a regime change, and the chart below finds every one of them: for each year it counts <b style="color:var(--ink)">how many of that year’s top 10 were already on the board ten years earlier</b>. A reading near 10 means parents kept buying the same names for a generation. A crater means the board was wiped.</p>
+      <p style="color:var(--dim)">Boys held at 8 or better for almost a century. Girls crashed three times — 1930s, 1972 (the deepest: 1 of 10), late 1980s. The boys’ crash finally came after 2008, and it is still running: just three names on the 2020 board were there in 2010.</p>
+      <p><button class="chip" data-tmyear="1962">Load the 1962 board ↑</button> <button class="chip" data-tmyear="1972">Load 1972 ↑</button> <button class="chip" data-tmyear="2010">Boys: 2010</button> <button class="chip" data-tmyear="2020">→ 2020</button></p>
+    </div>
+    <div class="panel" style="margin-top:var(--s4)">
+      <div class="panel-hd"><span class="t">Names still on the board after a decade · 1890–2024</span>
+        <span class="legend"><span><span class="sw" style="background:var(--cool)"></span>Boys</span><span><span class="sw" style="background:var(--hot)"></span>Girls</span></span>
+      </div>
+      <div class="chart-box" id="regimeChart"></div>
+      <div class="board-cap">Each point: of that year’s top 10, how many were also top-10 exactly ten years earlier. 10 = identical board; 1 = nine names replaced. Hover for the year-by-year count.</div>
     </div>
 
     <details class="deeper">
@@ -683,6 +688,12 @@ function tmRender(){
   }
 }
 tmS.addEventListener('input',tmRender);tmRender();
+// "load the 19xx board" chips jump the time machine
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-tmyear]');if(!b)return;
+  tmS.value=b.dataset.tmyear;tmRender();
+  document.querySelector('.tm').scrollIntoView({behavior:'smooth',block:'center'});
+});
 
 // ---- regime changes ----
 (function(){
