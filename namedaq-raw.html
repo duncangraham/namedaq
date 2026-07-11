@@ -845,13 +845,12 @@ function openQuote(name,sex,scroll){
   const ch10=pctCh(r,2024,10),ch30=pctCh(r,2024,30);
   const rk=now?rank(name,sex,2024):null;
   const x0=curRange==='MAX'?Math.max(Y0,first||Y0):curRange==='30Y'?1995:2015;
-  const lineCol=dual?colOf(sex):'#ffd166';
-  const annots=peakY>=x0?[{x:peakY,y:r[peakY-Y0],label:`peak ${peakY}`,dy:-10,anchor:peakY>2000?'end':'start',dx:peakY>2000?-6:8,color:dual?lineCol:'#ffd166'}]:[];
+  const lineCol=colOf(sex);
+  const softOf=s=>s==='F'?'rgba(255,100,168,.07)':'rgba(88,184,255,.07)';
+  const annots=peakY>=x0?[{x:peakY,y:r[peakY-Y0],label:`peak ${peakY}`,dy:-10,anchor:peakY>2000?'end':'start',dx:peakY>2000?-6:8,color:lineCol}]:[];
   const seriesArr=dual
-    ?(sex==='F'
-      ?[{vals:or,color:colOf('M'),width:1.7},{vals:r,color:colOf('F'),width:2.4,fill:'rgba(255,100,168,.07)'}]
-      :[{vals:or,color:colOf('F'),width:1.7},{vals:r,color:colOf('M'),width:2.4,fill:'rgba(88,184,255,.07)'}])
-    :[{vals:r,color:'#ffd166',width:2.2,fill:'rgba(255,209,102,.07)'}];
+    ?[{vals:or,color:colOf(oSex),width:1.7},{vals:r,color:lineCol,width:2.4,fill:softOf(sex)}]
+    :[{vals:r,color:lineCol,width:2.2,fill:softOf(sex)}];
   const pill=ch10===null?'':`<span class="pill ${ch10>=0?'up':'down'}">${ch10>=0?'▲':'▼'} ${Math.abs(ch10).toFixed(0)}% / 10Y</span>`;
   const segBtns=['MAX','30Y','10Y'].map(g=>`<button data-rg="${g}" class="${curRange===g?'on':''}">${g}</button>`).join('');
   const other=dual?`<button class="chip" data-open="${name}|${oSex}">switch stats to <span class="sx ${oSex==='F'?'f':'m'}">${oSex}</span> ↗</button>`:'';
@@ -876,7 +875,7 @@ function openQuote(name,sex,scroll){
       <div class="qstat"><div class="v">${first}</div><div class="k">First listed</div></div>
     </div>`;
   attachScrub($('#termBody .chart-box'),
-    dual?[{vals:sex==='F'?or:r,color:colOf('M')},{vals:sex==='F'?r:or,color:colOf('F')}]:[{vals:r,color:'#ffd166'}],
+    dual?[{vals:sex==='F'?or:r,color:colOf('M')},{vals:sex==='F'?r:or,color:colOf('F')}]:[{vals:r,color:lineCol}],
     dual
       ?yr=>{const cF=sex==='F'?c[yr-Y0]:oc[yr-Y0],cM=sex==='F'?oc[yr-Y0]:c[yr-Y0];
         return `<b>${yr}</b> · <span style="color:var(--hot-ink)">girls ${fmt(cF)}</span> · <span style="color:var(--cool-ink)">boys ${fmt(cM)}</span>`;}
