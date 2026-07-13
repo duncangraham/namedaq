@@ -337,20 +337,6 @@ footer a{color:var(--dim)}
       <div class="board-cap">Block width = years at #1. Mary held the girls’ top for 67 straight years; between 1985 and 2013 no girls’ name kept it longer than 12. Hover for dates, click to chart.</div>
     </div>
 
-    <h3 style="font-size:22px;margin-top:var(--s6)">Regime changes: when the whole board flips</h3>
-    <div class="prose" style="margin-top:var(--s2)">
-      <p style="color:var(--dim)">Set the time machine to 1962 and the girls’ board reads Lisa, Mary, Susan, Karen, Linda. Set it to 1972 and the board is Jennifer, Michelle, Kimberly, Amy — of the old ten, only Lisa is left. That is a regime change, and the chart below finds every one of them: for each year it counts <b style="color:var(--ink)">how many of that year’s top 10 were already on the board ten years earlier</b>. A reading near 10 means parents kept buying the same names for a generation. A crater means the board was wiped.</p>
-      <p style="color:var(--dim)">Boys held at 8 or better for almost a century. Girls crashed three times — 1930s, 1972 (the deepest: 1 of 10), late 1980s. The boys’ crash finally came after 2008, and it is still running: just three names on the 2020 board were there in 2010.</p>
-      <p><button class="chip" data-tmyear="1962">Load the 1962 board ↑</button> <button class="chip" data-tmyear="1972">Load 1972 ↑</button> <button class="chip" data-tmyear="2010">Boys: 2010</button> <button class="chip" data-tmyear="2020">→ 2020</button></p>
-    </div>
-    <div class="panel" style="margin-top:var(--s4)">
-      <div class="panel-hd"><span class="t">Names still on the board after a decade · 1890–2024</span>
-        <span class="legend"><span><span class="sw" style="background:var(--cool)"></span>Boys</span><span><span class="sw" style="background:var(--hot)"></span>Girls</span></span>
-      </div>
-      <div class="chart-box" id="regimeChart"></div>
-      <div class="board-cap">Each point: of that year’s top 10, how many were also top-10 exactly ten years earlier. 10 = identical board; 1 = nine names replaced. Hover for the year-by-year count.</div>
-    </div>
-
     <details class="deeper">
       <summary>Go deeper: how we quote a name’s price</summary>
       <div class="body">
@@ -731,30 +717,9 @@ function tmRender(){
   }
 }
 tmS.addEventListener('input',tmRender);tmRender();
-// "load the 19xx board" chips jump the time machine
-document.addEventListener('click',e=>{
-  const b=e.target.closest('[data-tmyear]');if(!b)return;
-  tmS.value=b.dataset.tmyear;tmRender();
-  document.querySelector('.tm').scrollIntoView({behavior:'smooth',block:'center'});
-});
 
-// ---- regime changes ----
+// ---- dynasties ----
 (function(){
-  const S={};
-  for(const s of ['M','F']){
-    const t=ND.topByYear[s].map(rows=>rows.map(r=>r[0]));
-    S[s]=t.map((names,i)=>i<10?0:names.filter(n=>t[i-10].includes(n)).length);
-  }
-  $('#regimeChart').innerHTML=chart([
-    {vals:S.M,color:'#58b8ff',width:2},
-    {vals:S.F,color:'#ff64a8',width:2},
-  ],{h:260,x0:1890,x1:Y1,yFmt:v=>v,annots:[
-    {x:1930,y:10,label:'boys: frozen for a century',dy:18,anchor:'middle',nodot:true},
-    {x:1972,y:S.F[1972-Y0],label:'1972: the Jennifer revolution',dy:-10,anchor:'middle'},
-    {x:2020,y:S.M[2020-Y0],label:'the Liam wave',anchor:'end',dx:-8,dy:-24},
-  ]});
-  attachScrub($('#regimeChart'),[{vals:S.M,color:'#58b8ff'},{vals:S.F,color:'#ff64a8'}],
-    yr=>`<b>${yr}</b> · vs ${yr-10}: <span style="color:var(--cool-ink)">boys kept ${S.M[yr-Y0]}/10</span> · <span style="color:var(--hot-ink)">girls kept ${S.F[yr-Y0]}/10</span>`);
   function reignRow(sex,el){
     const t=ND.topByYear[sex];const R=[];let cur=null,start=0;
     t.forEach((rows,i)=>{const n=rows[0][0];if(n!==cur){if(cur!==null)R.push([cur,start,i-1]);cur=n;start=i;}});
