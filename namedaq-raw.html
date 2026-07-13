@@ -870,7 +870,11 @@ function openQuote(name,sex,scroll){
   const x0=curRange==='MAX'?Math.max(Y0,first||Y0):curRange==='30Y'?1995:2015;
   const lineCol=colOf(sex);
   const softOf=s=>s==='F'?'rgba(255,100,168,.07)':'rgba(88,184,255,.07)';
-  const annots=peakY>=x0?[{x:peakY,y:r[peakY-Y0],label:`peak ${peakY}`,dy:-10,anchor:peakY>2000?'end':'start',dx:peakY>2000?-6:8,color:lineCol}]:[];
+  // annotate the peak of the plotted (rate) line within the visible range —
+  // the busiest-year stat below uses raw counts and can differ
+  let rPeak=0,rPeakY=x0;
+  for(let y=x0;y<=Y1;y++){if(r[y-Y0]>rPeak){rPeak=r[y-Y0];rPeakY=y;}}
+  const annots=rPeak>0?[{x:rPeakY,y:rPeak,label:`rate peak ${rPeakY}`,dy:-10,anchor:rPeakY>x0+(Y1-x0)*.7?'end':'start',dx:rPeakY>x0+(Y1-x0)*.7?-6:8,color:lineCol}]:[];
   const seriesArr=dual
     ?[{vals:or,color:colOf(oSex),width:1.7},{vals:r,color:lineCol,width:2.4,fill:softOf(sex)}]
     :[{vals:r,color:lineCol,width:2.2,fill:softOf(sex)}];
@@ -893,7 +897,7 @@ function openQuote(name,sex,scroll){
       <div class="qstat"><div class="v">${fmt(Math.round(nowR))}</div><div class="k">Per million, 2024</div></div>
       <div class="qstat"><div class="v ${ch10===null?'':ch10>=0?'up':'down'}">${ch10===null?'new':((ch10>=0?'+':'')+ch10.toFixed(0)+'%')}</div><div class="k">10-yr change</div></div>
       <div class="qstat"><div class="v ${ch30===null?'':ch30>=0?'up':'down'}">${ch30===null?'new':((ch30>=0?'+':'')+ch30.toFixed(0)+'%')}</div><div class="k">30-yr change</div></div>
-      <div class="qstat"><div class="v">${peakY}</div><div class="k">Peak year (${fmt(peak)})</div></div>
+      <div class="qstat"><div class="v">${peakY}</div><div class="k">Busiest year (${fmt(peak)} babies)</div></div>
       <div class="qstat"><div class="v">${fmt(tot)}</div><div class="k">All-time ${sex==='F'?'girls':'boys'}</div></div>
       <div class="qstat"><div class="v">${first}</div><div class="k">First listed</div></div>
     </div>`;
