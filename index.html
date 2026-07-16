@@ -496,8 +496,14 @@ footer a{color:var(--dim)}
       </div>
     </div>
 
-    <h3 style="font-size:22px;margin-top:var(--s6)">Clerical phantoms (and real ones)</h3>
-    <p class="prose" style="margin-top:var(--s2)">Browse mid-century data and the SSA lists a few hundred girl Johns, boy Jessicas, and boy Marys every single year. Most of these were typing, not fashion. Until the late 1980s, Social Security numbers came from handwritten applications keyed by clerks, and roughly 0.3% of records got the sex box wrong — 0.3% of 90,000 boy Johns is a few hundred phantom girls. The chart shows the tell: recorded girl Johns ride boy Johns at one-300th scale, because most of them <i>were</i> boy Johns. When the SSA began assigning numbers straight from hospital birth certificates (Enumeration at Birth, from 1987), the error component collapsed: 233 girl Johns in 1985, eight in 2024. But watch where the line lands — a floor, not zero. Real girl Johns and boy Jessicas have always existed: family names handed to daughters, the Johnnie tradition, the actress Michael Learned. The thin line that survives the paperwork fix is them. The 20% shared-name bar used on this desk sits far above either component.</p>
+    <h3 style="font-size:22px;margin-top:var(--s6)">Clerical artifacts and genuine exceptions</h3>
+    <div class="prose" style="margin-top:var(--s2)">
+      <p>Browse mid-century SSA data and you’ll find a few hundred girl Johns, boy Jessicas, and boy Marys in almost every year. Most are not naming trends—they’re data artifacts.</p>
+      <p>Until the late 1980s, Social Security numbers were issued from handwritten applications keyed by clerks, and about <b>0.3%</b> of records had the sex field entered incorrectly. Applied to 90,000+ annual boy Johns, that error rate alone produces a few hundred phantom girl Johns. The signature is unmistakable: recorded girl Johns rise and fall almost perfectly in proportion to boy Johns, at roughly <b>1:300</b>.</p>
+      <p>That relationship largely disappears after <b>Enumeration at Birth</b>, introduced beginning in 1987, when Social Security numbers began being assigned directly from hospital birth certificates. Recorded girl Johns fall from <b>233</b> in 1985 to just <b>8</b> in 2024.</p>
+      <p>The line never reaches zero, though, because a small number of these records are genuine. Family surnames become given names, traditions like <i>Johnnie</i> persist, and occasional examples—such as actress Michael Learned—have always existed. Enumeration at Birth removed the clerical artifacts; it revealed the underlying baseline.</p>
+      <p>The <b>20% shared-name threshold</b> used in this analysis sits comfortably above both the historical error rate and the small population of genuinely cross-sex names.</p>
+    </div>
     <div class="panel">
       <div class="panel-hd"><span class="t">Girl Johns vs. boy Johns ÷ 300 · 1880–2024</span>
         <span class="legend"><span><span class="sw" style="background:var(--hot)"></span>Girl Johns (recorded)</span><span><span class="sw" style="background:var(--cool)"></span>Boy Johns ÷ 300</span></span>
@@ -830,7 +836,7 @@ const CELEBS=[
   {n:'Kobe',s:'M',y0:1993,y1:2024,ev:1996,ev2:2020,evL:'’96 · NBA debut',ev2L:'’20',cap:'Nine boys in 1995; 1,104 by 1998. Then the second act: after his death in January 2020, the name tripled again — 506 in 2019, 1,515 in 2020.',x:'×123'},
   {n:'Aaliyah',s:'F',y0:1996,y1:2015,ev:2001,evL:'’01 · her death',cap:'Already rising before the singer died in August 2001 — then 1,496 became 4,779 in two years, and the name kept climbing for another decade.',x:'×3'},
   {n:'Miley',s:'F',y0:2003,y1:2018,ev:2006,evL:'’06 · Hannah Montana',cap:'26 girls in 2005. Hannah Montana premiered in March 2006; by 2008 there were 2,652. A ×100 trade in three years, unwound almost as fast.',x:'×102'},
-  {n:'James',s:'F',y0:2008,y1:2024,ev:2015,evL:'’15 · Lively & Reynolds',cap:'Blake Lively and Ryan Reynolds announced a daughter named James in 2015: 42 girls became 85. Small — but in the post-typo era (see “Clerical phantoms,” §7), even a whisper of real fashion is legible.',x:'×2'},
+  {n:'James',s:'F',y0:2008,y1:2024,ev:2015,evL:'’15 · Lively & Reynolds',cap:'Blake Lively and Ryan Reynolds announced a daughter named James in 2015: 42 girls became 85. Small — but in the post-typo era (see “Clerical artifacts,” §7), even a whisper of real fashion is legible.',x:'×2'},
 ];
 $('#celebs').innerHTML=CELEBS.map(m=>{
   const c=counts(m.n,m.s)||[];
