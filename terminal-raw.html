@@ -99,7 +99,7 @@ svg text{font-family:var(--mono)}
   <div class="cmd">
     <span class="prompt">NMDQ&gt;</span>
     <div class="searchbox">
-      <input id="q" type="search" placeholder="Add a name… (up to 5)" autocomplete="off" spellcheck="false" aria-label="Add a name">
+      <input id="q" type="search" placeholder="Add a name… (up to 8)" autocomplete="off" spellcheck="false" aria-label="Add a name">
       <div class="sugg" id="sugg" hidden></div>
     </div>
     <button class="btn" id="addBtn">ADD</button>
@@ -139,7 +139,7 @@ const Y0=TD.y0,Y1=TD.y1,YRS=Y1-Y0+1;
 const $=s=>document.querySelector(s);
 const fmt=n=>n.toLocaleString('en-US');
 const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
-const PAL=['#ffd166','#7de8a8','#c792ea','#ff8a80','#7fd8e8'];
+const PAL=['#ffd166','#7de8a8','#c792ea','#ff8a80','#7fd8e8','#ff9e3d','#ccd6e8','#c9e265'];
 const GRID={AK:[0,0],ME:[10,0],VT:[9,1],NH:[10,1],
 WA:[0,2],ID:[1,2],MT:[2,2],ND:[3,2],MN:[4,2],WI:[5,2],MI:[7,2],NY:[8,2],MA:[9,2],RI:[10,2],
 OR:[0,3],NV:[1,3],WY:[2,3],SD:[3,3],IA:[4,3],IL:[5,3],IN:[6,3],OH:[7,3],PA:[8,3],NJ:[9,3],CT:[10,3],
@@ -217,7 +217,7 @@ let focusI=0, range='MAX';
 
 function colorOf(i){return PAL[i%PAL.length];}
 function addTicker(key,silent){
-  if(!TD.db[key]||tickers.some(t=>t.key===key)||tickers.length>=5)return false;
+  if(!TD.db[key]||tickers.some(t=>t.key===key)||tickers.length>=8)return false;
   tickers.push({key});focusI=tickers.length-1;
   if(!silent)render();
   return true;
