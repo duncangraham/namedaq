@@ -93,6 +93,9 @@ section.alt .panel{background:var(--bg3)}
 .reign:hover{filter:brightness(1.35)}
 .reign-ruler{position:relative;height:18px;font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-top:4px}
 .reign-ruler span{position:absolute;transform:translateX(-50%)}
+.dyn-tip{position:fixed;display:none;pointer-events:none;background:var(--bg3);border:1px solid var(--line2);font-family:var(--mono);font-size:12px;line-height:1.6;padding:6px 10px;z-index:100;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.dyn-tip b{color:var(--gold)}
+.dyn-tip .yrs{color:var(--dim)}
 
 details.deeper{border:1px solid var(--line);background:var(--bg2);margin-top:var(--s3);max-width:68ch}
 details.deeper summary{cursor:pointer;padding:12px var(--s3);font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.05em;color:var(--gold)}
@@ -722,10 +725,28 @@ tmS.addEventListener('input',tmRender);tmRender();
     const shades=sex==='F'?['rgba(255,100,168,.5)','rgba(255,100,168,.24)']:['rgba(88,184,255,.5)','rgba(88,184,255,.24)'];
     el.innerHTML=R.map((r,k)=>{
       const yrs=r[2]-r[1]+1,w=yrs/YRS*100;
-      return `<span class="reign" data-open="${r[0]}|${sex}" title="${r[0]} · ${Y0+r[1]}–${Y0+r[2]} · ${yrs} yr${yrs>1?'s':''} at #1" style="width:${w}%;background:${shades[k%2]}">${w>5?r[0]:''}</span>`;
+      return `<span class="reign" data-open="${r[0]}|${sex}" data-n="${r[0]}" data-s="${sex}" data-span="${Y0+r[1]}–${Y0+r[2]}" data-yrs="${yrs}" style="width:${w}%;background:${shades[k%2]}">${w>5?r[0]:''}</span>`;
     }).join('');
   }
   reignRow('F',$('#reignF'));reignRow('M',$('#reignM'));
+  // instant hover tooltip (native title is too slow)
+  const tip=document.createElement('div');tip.className='dyn-tip';document.body.appendChild(tip);
+  for(const row of [$('#reignF'),$('#reignM')]){
+    row.addEventListener('pointerover',e=>{
+      const r=e.target.closest('.reign');if(!r)return;
+      const col=r.dataset.s==='F'?'var(--hot-ink)':'var(--cool-ink)';
+      tip.innerHTML=`<b style="color:${col}">${r.dataset.n}</b> <span class="yrs">· ${r.dataset.span} · ${r.dataset.yrs} yr${r.dataset.yrs>1?'s':''} at #1 · click to chart</span>`;
+      tip.style.display='block';
+    });
+    row.addEventListener('pointermove',e=>{
+      let x=e.clientX+14,y=e.clientY-38;
+      if(x+tip.offsetWidth>innerWidth-8)x=e.clientX-tip.offsetWidth-14;
+      if(y<8)y=e.clientY+18;
+      tip.style.left=x+'px';tip.style.top=y+'px';
+    });
+    row.addEventListener('pointerleave',()=>tip.style.display='none');
+    row.addEventListener('click',()=>tip.style.display='none');
+  }
   $('#reignRuler').innerHTML=[1880,1920,1960,2000,2024].map(y=>
     `<span style="left:${((y-Y0)/(YRS-1)*100).toFixed(1)}%">${y}</span>`).join('');
 })();
