@@ -608,7 +608,8 @@ function chart(series,opts){
       const x=X(a.x);
       g+=`<line x1="${x}" y1="${P.t}" x2="${x}" y2="${o.h-P.b}" stroke="${a.color||'#ffd166'}" stroke-dasharray="4 4" stroke-opacity=".55"/>`;
       const anch=a.anchor||((a.x-o.x0)/(o.x1-o.x0)>.6?'end':'start');
-      if(a.label)g+=`<text x="${x+(anch==='end'?-5:5)}" y="${P.t+11}" font-size="10.5" fill="${a.color||'#ffd166'}" text-anchor="${anch}">${a.label}</text>`;
+      const ty=a.labelBottom?o.h-P.b-8:P.t+11;
+      if(a.label)g+=`<text x="${x+(anch==='end'?-5:5)}" y="${ty}" font-size="10.5" fill="${a.color||'#ffd166'}" text-anchor="${anch}">${a.label}</text>`;
       return;
     }
     if(!a.nodot)g+=`<circle cx="${X(a.x)}" cy="${Y(a.y)}" r="3.5" fill="${a.color||'#ffd166'}"/>`;
@@ -892,7 +893,8 @@ function openQuote(name,sex,scroll,evs){
   let rPeak=0,rPeakY=x0;
   for(let y=x0;y<=Y1;y++){if(r[y-Y0]>rPeak){rPeak=r[y-Y0];rPeakY=y;}}
   const annots=rPeak>0?[{x:rPeakY,y:rPeak,label:`rate peak ${rPeakY}`,dy:-10,anchor:rPeakY>x0+(Y1-x0)*.7?'end':'start',dx:rPeakY>x0+(Y1-x0)*.7?-6:8,color:lineCol}]:[];
-  cur.evs.filter(ev=>ev.x>=x0).forEach(ev=>annots.push({x:ev.x,vline:true,label:ev.label}));
+  // event labels sit at the chart floor so they never collide with the peak label
+  cur.evs.filter(ev=>ev.x>=x0).forEach(ev=>annots.push({x:ev.x,vline:true,label:ev.label,labelBottom:true}));
   const seriesArr=dual
     ?[{vals:or,color:colOf(oSex),width:1.7},{vals:r,color:lineCol,width:2.4,fill:softOf(sex)}]
     :[{vals:r,color:lineCol,width:2.2,fill:softOf(sex)}];

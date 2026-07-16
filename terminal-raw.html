@@ -109,7 +109,7 @@ svg text{font-family:var(--mono)}
     </span>
   </div>
   <div class="tickers" id="tickers"></div>
-  <div class="hint">Click a ticker to focus it (drives the state map). Charts are rate per million births of each name’s own sex. Share this view: the URL updates as you add names.</div>
+  <div class="hint">Names listed for both sexes appear twice in the dropdown — pick the pink or blue listing. Click a ticker to focus it (drives the state map). Charts are rate per million births of each name’s own sex. Share this view: the URL updates as you add names.</div>
 
   <div class="panel">
     <div class="panel-hd" id="chartHd">Price history</div>
@@ -317,9 +317,16 @@ function tryAdd(raw){const t=raw.trim();if(!t)return;
 function renderSugg(){
   const t=q.value.trim().toLowerCase();
   if(t.length<2){sugg.hidden=true;return;}
-  const hits=allNames.filter(n=>n.toLowerCase().startsWith(t)).slice(0,8);
+  // one row per name+sex listing so either side can be added directly
+  const hits=[];
+  for(const n of allNames){
+    if(!n.toLowerCase().startsWith(t))continue;
+    for(const s of byName[n])hits.push([n,s]);
+    if(hits.length>=8)break;
+  }
+  hits.length=Math.min(hits.length,8);
   if(!hits.length){sugg.hidden=true;return;}
-  sugg.innerHTML=hits.map((n,i)=>`<button data-n="${n}" class="${i===selIdx?'sel':''}">${esc(n)}<span>${byName[n].map(s=>`<span class="sx ${s==='F'?'f':'m'}">${s}</span>`).join(' ')}</span></button>`).join('');
+  sugg.innerHTML=hits.map(([n,s],i)=>`<button data-k="${n}|${s}" class="${i===selIdx?'sel':''}">${esc(n)}<span><span class="sx ${s==='F'?'f':'m'}">${s}</span></span></button>`).join('');
   sugg.hidden=false;
 }
 q.addEventListener('input',()=>{selIdx=-1;renderSugg();});
@@ -328,11 +335,11 @@ q.addEventListener('keydown',e=>{
   if(e.key==='ArrowDown'&&!sugg.hidden){selIdx=Math.min(selIdx+1,btns.length-1);renderSugg();e.preventDefault();}
   else if(e.key==='ArrowUp'&&!sugg.hidden){selIdx=Math.max(selIdx-1,0);renderSugg();e.preventDefault();}
   else if(e.key==='Enter'){e.preventDefault();
-    if(selIdx>=0&&btns[selIdx])q.value=btns[selIdx].dataset.n;
-    tryAdd(q.value);}
+    if(selIdx>=0&&btns[selIdx]){addTicker(btns[selIdx].dataset.k);q.value='';sugg.hidden=true;}
+    else tryAdd(q.value);}
   else if(e.key==='Escape'){sugg.hidden=true;}
 });
-sugg.addEventListener('click',e=>{const b=e.target.closest('button');if(b){q.value=b.dataset.n;tryAdd(b.dataset.n);}});
+sugg.addEventListener('click',e=>{const b=e.target.closest('button');if(b){addTicker(b.dataset.k);q.value='';sugg.hidden=true;}});
 document.addEventListener('click',e=>{if(!e.target.closest('.searchbox'))sugg.hidden=true;});
 $('#addBtn').addEventListener('click',()=>tryAdd(q.value));
 $('#clearBtn').addEventListener('click',()=>{tickers=[];focusI=0;render();});
