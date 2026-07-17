@@ -894,11 +894,13 @@ function openQuote(name,sex,scroll,evs){
   const x0=curRange==='MAX'?Math.max(Y0,first||Y0):curRange==='30Y'?1995:2015;
   const lineCol=colOf(sex);
   const softOf=s=>s==='F'?'rgba(255,100,168,.07)':'rgba(88,184,255,.07)';
+  // rates are stored per-million; display as % of the sex's births (9,124/M -> 0.91%)
+  const pctOf=v=>{if(!v)return'0%';const p=v/1e4;return (p>=10?p.toFixed(0):p>=1?p.toFixed(1):p>=0.1?p.toFixed(2):p.toFixed(3))+'%';};
   // annotate the peak of the plotted (rate) line within the visible range —
   // the busiest-year stat below uses raw counts and can differ
   let rPeak=0,rPeakY=x0;
   for(let y=x0;y<=Y1;y++){if(r[y-Y0]>rPeak){rPeak=r[y-Y0];rPeakY=y;}}
-  const annots=rPeak>0?[{x:rPeakY,y:rPeak,label:`rate peak ${rPeakY}`,dy:-10,anchor:rPeakY>x0+(Y1-x0)*.7?'end':'start',dx:rPeakY>x0+(Y1-x0)*.7?-6:8,color:lineCol}]:[];
+  const annots=rPeak>0?[{x:rPeakY,y:rPeak,label:`peak ${rPeakY} · ${pctOf(rPeak)}`,dy:-10,anchor:rPeakY>x0+(Y1-x0)*.7?'end':'start',dx:rPeakY>x0+(Y1-x0)*.7?-6:8,color:lineCol}]:[];
   // event labels sit at the chart floor so they never collide with the peak label
   cur.evs.filter(ev=>ev.x>=x0).forEach(ev=>annots.push({x:ev.x,vline:true,label:ev.label,labelBottom:true}));
   const seriesArr=dual
@@ -914,14 +916,14 @@ function openQuote(name,sex,scroll,evs){
       <span class="name">${esc(name)}</span>${pill}${other}
       <span class="seg" role="group" aria-label="Range">${segBtns}</span>
     </div>
-    <div class="chart-box" data-scroll-end>${chart(seriesArr,{h:300,x0,x1:Y1,yFmt:v=>fmt(v),annots})}</div>
+    <div class="chart-box" data-scroll-end>${chart(seriesArr,{h:300,x0,x1:Y1,yFmt:v=>pctOf(v),annots})}</div>
     <div style="font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:6px">${dual
-      ?`<span style="color:var(--hot-ink)">— girls</span> · <span style="color:var(--cool-ink)">— boys</span> · rate per million of each sex · ${x0}–2024 · stats below: ${sex==='F'?'girls':'boys'}`
-      :`Rate per million ${sex==='F'?'girls':'boys'} · ${x0}–2024`}</div>
+      ?`<span style="color:var(--hot-ink)">— girls</span> · <span style="color:var(--cool-ink)">— boys</span> · each line = share of that sex’s births · ${x0}–2024 · stats below: ${sex==='F'?'girls':'boys'}`
+      :`Share of ${sex==='F'?'girls':'boys'} born each year · ${x0}–2024`}</div>
     <div class="qstats">
       <div class="qstat"><div class="v">${now?fmt(now):'delisted'}</div><div class="k">Babies in 2024</div></div>
       <div class="qstat"><div class="v">${rk?'#'+fmt(rk):'—'}</div><div class="k">2024 rank (${sex})</div></div>
-      <div class="qstat"><div class="v">${fmt(Math.round(nowR))}</div><div class="k">Per million, 2024</div></div>
+      <div class="qstat"><div class="v">${pctOf(nowR)}</div><div class="k">Share of ${sex==='F'?'girls':'boys'}, 2024</div></div>
       <div class="qstat"><div class="v ${ch10===null?'':ch10>=0?'up':'down'}">${ch10===null?'new':((ch10>=0?'+':'')+ch10.toFixed(0)+'%')}</div><div class="k">10-yr change</div></div>
       <div class="qstat"><div class="v ${ch30===null?'':ch30>=0?'up':'down'}">${ch30===null?'new':((ch30>=0?'+':'')+ch30.toFixed(0)+'%')}</div><div class="k">30-yr change</div></div>
       <div class="qstat"><div class="v">${peakY}</div><div class="k">Busiest year (${fmt(peak)} babies)</div></div>
@@ -931,9 +933,11 @@ function openQuote(name,sex,scroll,evs){
   attachScrub($('#termBody .chart-box'),
     dual?[{vals:sex==='F'?or:r,color:colOf('M')},{vals:sex==='F'?r:or,color:colOf('F')}]:[{vals:r,color:lineCol}],
     dual
-      ?yr=>{const cF=sex==='F'?c[yr-Y0]:oc[yr-Y0],cM=sex==='F'?oc[yr-Y0]:c[yr-Y0];
-        return `<b>${yr}</b> · <span style="color:var(--hot-ink)">girls ${fmt(cF)}</span> · <span style="color:var(--cool-ink)">boys ${fmt(cM)}</span>`;}
-      :yr=>`<b>${yr}</b> · ${fmt(c[yr-Y0])} ${c[yr-Y0]===1?'baby':'babies'} · ${fmt(Math.round(r[yr-Y0]))} /M`);
+      ?yr=>{const i=yr-Y0;
+        const cF=sex==='F'?c[i]:oc[i],cM=sex==='F'?oc[i]:c[i];
+        const rF=sex==='F'?r[i]:or[i],rM=sex==='F'?or[i]:r[i];
+        return `<b>${yr}</b> · <span style="color:var(--hot-ink)">girls ${fmt(cF)} (${pctOf(rF)})</span> · <span style="color:var(--cool-ink)">boys ${fmt(cM)} (${pctOf(rM)})</span>`;}
+      :yr=>`<b>${yr}</b> · ${fmt(c[yr-Y0])} ${c[yr-Y0]===1?'baby':'babies'} · ${pctOf(r[yr-Y0])} of ${sex==='F'?'girls':'boys'}`);
   scrollChartsEnd();
   if(scroll)$('#terminal').scrollIntoView({behavior:'smooth'});
 }
