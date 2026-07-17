@@ -66,9 +66,11 @@ svg text{font-family:var(--mono)}
 .scrub-tip{position:absolute;top:6px;display:none;pointer-events:none;background:var(--bg3);border:1px solid var(--line2);font-family:var(--mono);font-size:11.5px;line-height:1.7;padding:6px 10px;white-space:nowrap;z-index:5}
 .scrub-tip b{color:var(--gold)}
 
-.lower{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:var(--s3);margin-top:var(--s3);margin-bottom:80px}
-@media (max-width:1000px){.lower{grid-template-columns:1fr}}
+.lower{display:grid;grid-template-columns:1fr;gap:var(--s3);margin-top:var(--s3);margin-bottom:80px}
 .lower>*{min-width:0}
+.st-inner{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(260px,1fr);gap:var(--s4);align-items:start}
+@media (max-width:840px){.st-inner{grid-template-columns:1fr}}
+.st-inner>*{min-width:0}
 .stats-wrap{overflow-x:auto}
 .stats{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px}
 .stats th{text-align:right;font-size:11px;letter-spacing:.06em;color:var(--dim);font-weight:600;padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
@@ -124,8 +126,10 @@ svg text{font-family:var(--mono)}
     <div class="panel">
       <div class="panel-hd" id="mapHd">State distribution</div>
       <div style="font-family:var(--mono);font-size:11px;color:var(--faint)">2020–24 · tile brightness = rate vs. national (×lift) · gray = under the SSA’s 5-baby state floor</div>
-      <div class="usmap" id="usmap"></div>
-      <div class="strows" id="stRows"></div>
+      <div class="st-inner">
+        <div class="usmap" id="usmap"></div>
+        <div class="strows" id="stRows"></div>
+      </div>
     </div>
   </div>
 </div>
