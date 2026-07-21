@@ -102,6 +102,9 @@ details.deeper summary{cursor:pointer;padding:12px var(--s3);font-family:var(--m
 details.deeper[open] summary{border-bottom:1px solid var(--line)}
 details.deeper .body{padding:var(--s3);color:var(--dim);font-size:15.5px}
 details.deeper .body p:last-child{margin-bottom:0}
+details.deeper .body ul{margin:0 0 var(--s3);padding-left:22px}
+details.deeper .body li{margin:3px 0}
+details.deeper .body h4{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:20px 0 8px}
 
 /* ---------- time machine ---------- */
 .tm{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);margin-top:var(--s4)}
@@ -310,6 +313,26 @@ footer a{color:var(--dim)}
       </div>
       <div class="chart-box" id="birthsChart"></div>
     </div>
+
+    <details class="deeper">
+      <summary>Go deeper: why more boys?</summary>
+      <div class="body">
+        <p>The human sex ratio at birth is typically around 105 boys for every 100 girls, which works out to about:</p>
+        <ul><li>51.2% male</li><li>48.8% female</li></ul>
+        <p>This has been observed across populations for centuries, although it varies a bit by country and over time. The natural follow-up is: why?</p>
+        <p>The leading explanation is that it’s an evolutionary compensation for the fact that males have higher mortality throughout life, especially early in life. Historically, boys were more likely than girls to:</p>
+        <ul><li>die in infancy,</li><li>die from childhood diseases,</li><li>die from accidents,</li><li>and later die from violence, warfare, and risky behavior.</li></ul>
+        <p>By producing a slight surplus of males at birth, the number of men and women who survive to reproductive age ends up closer to equal. This idea traces back to the statistician Ronald Fisher and what’s now called Fisher’s principle. The basic argument is elegant:</p>
+        <ul><li>If one sex became too rare, individuals producing that sex would have more grandchildren on average.</li><li>Natural selection would therefore favor genes producing the rarer sex.</li><li>The system stabilizes near parity.</li></ul>
+        <p>That explains why it’s close to 50:50. The persistent 105:100 bias is thought to reflect the extra mortality faced by males before reproduction.</p>
+        <h4>Why are boys more fragile?</h4>
+        <p>Male fetuses and infants are, on average, biologically more vulnerable. Compared with females, they have higher rates of miscarriage later in pregnancy, stillbirth, premature birth, birth complications, and infant mortality. Part of this appears to be genetic:</p>
+        <ul><li>Females have two X chromosomes, providing a backup copy for many genes.</li><li>Males have only one X chromosome, so harmful recessive mutations are more likely to have effects.</li><li>Male fetal development also appears somewhat more sensitive to maternal stress and adverse conditions.</li></ul>
+        <p>In other words, nature starts with a few extra boys because more boys are lost before adulthood.</p>
+        <h4>Is it always 105:100?</h4>
+        <p>Not exactly. Typical natural populations fall between about 103 and 107 boys per 100 girls. The ratio can be nudged slightly by parental age, environmental stress, severe famines, and some environmental toxins. After major disasters or prolonged stress, researchers have sometimes observed a small dip in the proportion of male births, though the effect is modest and not universal.</p>
+      </div>
+    </details>
 
     <div class="tm panel" style="margin-top:var(--s4)">
       <div class="panel-hd" style="grid-column:1/-1;margin:0"><span class="t">Time machine — drag to any year</span></div>
