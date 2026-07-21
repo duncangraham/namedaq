@@ -196,6 +196,9 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .quote-hd .sym{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.1em}
 .quote-hd .name{font-family:var(--disp);font-size:34px;font-weight:700;letter-spacing:.01em}
 .quote-hd .pill{font-family:var(--mono);font-size:16px;font-weight:600;padding:2px 10px;border-radius:3px}
+.q-mean{font-family:var(--mono);font-size:12.5px;color:var(--dim);margin:2px 0 6px;line-height:1.6}
+.q-mean .lbl{color:var(--gold);font-size:10.5px;letter-spacing:.1em;margin-right:8px}
+.q-mean .src{color:var(--faint);font-size:10px;margin-left:8px;letter-spacing:.06em}
 .pill.up{background:var(--gain-soft);color:var(--gain)}
 .pill.down{background:var(--loss-soft);color:var(--loss)}
 .seg{display:inline-flex;border:1px solid var(--line2);font-family:var(--mono);font-size:11.5px;margin-left:auto}
@@ -555,7 +558,7 @@ footer a{color:var(--dim)}
     <div class="eyebrow">§9 · Prospectus &amp; fine print</div>
     <h2>How this data works</h2>
     <div class="rules">
-      <div class="rule"><h3>Source</h3><p>The SSA’s public baby-names files: national counts from 1880, state counts from 1910, updated each May. This page uses the 2024 release. <a href="https://www.ssa.gov/oact/babynames/">ssa.gov/oact/babynames</a></p></div>
+      <div class="rule"><h3>Source</h3><p>The SSA’s public baby-names files: national counts from 1880, state counts from 1910, updated each May. This page uses the 2024 release. <a href="https://www.ssa.gov/oact/babynames/">ssa.gov/oact/babynames</a>. Name origins draw on <a href="https://en.wiktionary.org/">Wiktionary</a> (CC BY-SA 4.0), plus NAMEDAQ spelling-matches and desk notes.</p></div>
       <div class="rule"><h3>The 5-baby rule</h3><p>Names given to fewer than 5 babies of a sex in a year are suppressed for privacy. That’s why “named” totals (3.33M in 2024) run below true births (3.61M) — the gap is thousands of ultra-rare names.</p></div>
       <div class="rule"><h3>Spelling is destiny</h3><p>Every spelling is its own listing. Aiden, Ayden, Aidan, Aden, Aydin and Aaden all charted separately in the 2000s — combined, the Aiden complex was briefly a top-3 “name.”</p></div>
       <div class="rule"><h3>Early data is thin</h3><p>Social Security began in 1935; earlier birth years only include people who later got a card. Pre-1937 volumes are undercounts, and skew female before 1910.</p></div>
@@ -569,6 +572,7 @@ footer a{color:var(--dim)}
 </section>
 
 <script>window.ND=/*PAYLOAD*/null/*ENDPAYLOAD*/;</script>
+<script>window.NDM=/*MEANINGS*/null/*ENDMEANINGS*/;</script>
 <script>
 (function(){
 'use strict';
@@ -916,6 +920,10 @@ function openQuote(name,sex,scroll,evs){
       <span class="name">${esc(name)}</span>${pill}${other}
       <span class="seg" role="group" aria-label="Range">${segBtns}</span>
     </div>
+    ${(()=>{const M=(window.NDM||{})[name];
+      if(!M)return `<div class="q-mean"><span class="lbl">ORIGIN</span>no etymology on record — likely a modern coinage</div>`;
+      const src=M.s==='w'?'WIKTIONARY':M.s==='e'?'DESK NOTE':'SPELLING MATCH';
+      return `<div class="q-mean"><span class="lbl">ORIGIN</span>${M.t[0].toUpperCase()+M.t.slice(1)}<span class="src">${src}</span></div>`;})()}
     <div class="chart-box" data-scroll-end>${chart(seriesArr,{h:300,x0,x1:Y1,yFmt:v=>pctOf(v),annots})}</div>
     <div style="font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:6px">${dual
       ?`<span style="color:var(--hot-ink)">— girls</span> · <span style="color:var(--cool-ink)">— boys</span> · each line = share of that sex’s births · ${x0}–2024 · stats below: ${sex==='F'?'girls':'boys'}`

@@ -79,6 +79,7 @@ svg text{font-family:var(--mono)}
 .stats td:first-child{text-align:left;color:var(--dim);font-size:11.5px}
 .stats tr:last-child td{border-bottom:0}
 .stats .up{color:var(--gain)} .stats .down{color:var(--loss)}
+.stats tr.wrap td{white-space:normal;line-height:1.5;min-width:130px;vertical-align:top}
 
 .usmap{display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(8,1fr);gap:4px;aspect-ratio:11/8;margin-top:6px}
 .st{border:0;border-radius:3px;font-family:var(--mono);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:2px;min-width:0;background:var(--bg3);color:var(--dim)}
@@ -111,7 +112,7 @@ svg text{font-family:var(--mono)}
     </span>
   </div>
   <div class="tickers" id="tickers"></div>
-  <div class="hint">Names listed for both sexes appear twice in the dropdown — pick the pink or blue listing. Click a ticker to focus it (drives the state map). Charts are rate per million births of each name’s own sex. Share this view: the URL updates as you add names.</div>
+  <div class="hint">Names listed for both sexes appear twice in the dropdown — pick the pink or blue listing. Click a ticker to focus it (drives the state map). Charts are rate per million births of each name’s own sex. Share this view: the URL updates as you add names. Origins: Wiktionary (CC BY-SA 4.0) + NAMEDAQ desk notes.</div>
 
   <div class="panel">
     <div class="panel-hd" id="chartHd">Price history</div>
@@ -135,6 +136,7 @@ svg text{font-family:var(--mono)}
 </div>
 
 <script>window.TD=/*PAYLOAD*/null/*ENDPAYLOAD*/;</script>
+<script>window.NDM=/*MEANINGS*/null/*ENDMEANINGS*/;</script>
 <script>
 (function(){
 'use strict';
@@ -267,11 +269,12 @@ function render(){
     ['First listed',t=>TD.db[t.key][0]],
     ['All-time babies',t=>fmt(counts(t.key).reduce((a,b)=>a+b,0))],
     ['Hottest state (lift)',t=>{const s=topStates(t.key,1)[0];return s?`${s.st} ×${s.lift.toFixed(1)}`:'—';}],
+    ['Origin',t=>{const m=(window.NDM||{})[t.key.split('|')[0]];return m?m.t[0].toUpperCase()+m.t.slice(1):'—';},true],
   ];
   $('#statsTbl').innerHTML='<thead><tr><th>Metric</th>'+tickers.map((t,i)=>{
     const[n,s]=t.key.split('|');
     return `<th><span style="color:${colorOf(i)}">${esc(n)}</span> <span class="sx ${s==='F'?'f':'m'}">${s}</span></th>`;}).join('')+'</tr></thead><tbody>'+
-    rows.map(([lbl,fn])=>'<tr><td>'+lbl+'</td>'+tickers.map(t=>'<td>'+fn(t)+'</td>').join('')+'</tr>').join('')+'</tbody>';
+    rows.map(([lbl,fn,wrap])=>'<tr'+(wrap?' class="wrap"':'')+'><td>'+lbl+'</td>'+tickers.map(t=>'<td>'+fn(t)+'</td>').join('')+'</tr>').join('')+'</tbody>';
   renderMap();
 }
 

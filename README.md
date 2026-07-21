@@ -11,7 +11,8 @@ Source: Social Security Administration [national](https://www.ssa.gov/oact/babyn
 ## Rebuilding
 
 1. Get the SSA data files (e.g. the [dcadata/name-finder](https://github.com/dcadata/name-finder) LFS mirror) into `mirror/data/`.
-2. `node compute.mjs` → writes `payload.json`.
-3. Inject the payload into `namedaq-raw.html` (replace the `/*PAYLOAD*/null/*ENDPAYLOAD*/` token) and save as `index.html`.
+2. `node compute.mjs` → writes `payload.json` + `payload-terminal.json`.
+3. Optionally refresh name origins: `node fetch-meanings.mjs` (Wiktionary, CC BY-SA) then `node build-meanings.mjs` → `meanings.json`.
+4. `node build.mjs` → injects payloads + meanings into both raw pages; save the results as `index.html` and `terminal.html`.
 
-`namedaq-raw.html` is the editable source; `index.html` is the built page.
+`namedaq-raw.html` and `terminal-raw.html` are the editable sources; `index.html` and `terminal.html` are the built pages. Name origins: Wiktionary contributors (CC BY-SA 4.0) plus project spelling-matches and editorial notes.
