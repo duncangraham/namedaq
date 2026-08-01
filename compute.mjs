@@ -259,6 +259,47 @@ console.log('penny picks:', penny.picks.map(p => `${p.n}/${p.s} ${p.c21}->${p.c2
 console.log('penny winners:', penny.winners.map(w => `${w.n}/${w.s} ${w.c14}->${w.c24}`).join(', '));
 console.log('penny base:', JSON.stringify(penny.base));
 
+// ---------- nature/landscape names: per-state lift (2020-24, both sexes) ----------
+const stTotAll = {}, natSd = {};
+const NATURE = ['Ocean', 'Canyon', 'River', 'Forest', 'Aspen', 'Sierra', 'Cypress', 'Reef'];
+const natSet = new Set(NATURE);
+for (const f of fs.readdirSync(path.join(DATA, 'namesbystate')).filter(x => x.endsWith('.TXT'))) {
+  const st = f.slice(0, 2);
+  for (const line of fs.readFileSync(path.join(DATA, 'namesbystate', f), 'utf8').split('\n')) {
+    if (!line.trim()) continue;
+    const [S, sex, yr, n, c] = line.trim().split(',');
+    if (+yr < 2020) continue;
+    stTotAll[st] = (stTotAll[st] || 0) + +c;
+    if (natSet.has(n)) { (natSd[n] ??= {})[st] = ((natSd[n] ??= {})[st] || 0) + +c; }
+  }
+}
+const totAllStates = Object.values(stTotAll).reduce((a, b) => a + b, 0);
+const NAT_CAP = {
+  Ocean: 'A coastal name — strong in Hawaii and Florida, all but absent across the landlocked Midwest.',
+  Canyon: 'Pure desert Southwest: Utah and Arizona lead by a mile.',
+  River: 'Runs through the Mountain West and Appalachia — Montana, West Virginia, Alaska.',
+  Forest: 'A Pacific Northwest name, densest in Oregon and Washington.',
+  Aspen: 'Rocky Mountain ski country — Wyoming, Montana, Idaho, Colorado.',
+  Sierra: 'Follows the Hispanic Southwest: New Mexico, Nevada, California.',
+  Cypress: 'A Deep South bayou name, peaking hard in Louisiana.',
+  Reef: 'The most concentrated of all — ninety times more common in Hawaii than nationally.',
+};
+const nature = NATURE.map(n => {
+  const sd = natSd[n] || {};
+  const natCount = Object.values(sd).reduce((a, b) => a + b, 0);
+  const natRate = natCount / totAllStates;
+  const lifts = {};
+  const top = [];
+  for (const st of Object.keys(sd)) {
+    if (sd[st] < 5) continue;
+    const lift = (sd[st] / stTotAll[st]) / natRate;
+    lifts[st] = +lift.toFixed(1);
+    if (sd[st] >= 15) top.push([st, +lift.toFixed(1)]);
+  }
+  top.sort((a, b) => b[1] - a[1]);
+  return { n, tot: natCount, cap: NAT_CAP[n], top: top.slice(0, 3), sd: lifts };
+});
+
 // ---------- lookup DB ----------
 // include names whose peak yearly count >= 150 (either sex entry separate)
 let dbNames = 0, dbEntries = {};
@@ -308,6 +349,7 @@ const out = {
   tapeUp: tape.slice(0, 20).map(t => ({ n: t.key.split('|')[0], s: t.key.slice(-1), p: t.pct })),
   tapeDown: tape.slice(-20).reverse().map(t => ({ n: t.key.split('|')[0], s: t.key.slice(-1), p: t.pct })),
   states: { top: stateTop, distinctive },
+  nature,
   unisex: { share: uniShare, top: uniTop.slice(0, 12), flips: uniFlips.slice(0, 8) },
   penny,
   db: dbEntries,

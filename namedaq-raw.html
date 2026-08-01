@@ -235,6 +235,19 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .st-detail .k{color:var(--dim)}
 .st-detail .lift{color:var(--gold)}
 .st-detail .hint{font-size:13px;color:var(--dim);margin-top:var(--s2)}
+/* nature minimaps */
+.nat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s3);margin-top:var(--s4)}
+@media (max-width:960px){.nat-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.nat-grid{grid-template-columns:1fr}}
+.nat-card{border:1px solid var(--line);background:var(--bg3);padding:var(--s3)}
+.nat-card .nh{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}
+.nat-card .nn{font-family:var(--disp);font-size:17px;font-weight:700}
+.nat-card .npk{font-family:var(--mono);font-size:11px;color:var(--gold)}
+.minimap{display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(8,1fr);gap:2px;aspect-ratio:11/8}
+.minimap .mt{border-radius:1px;background:#0c0f18;min-width:0}
+.nat-card .ncap{font-family:var(--sans);font-size:12.5px;color:var(--dim);line-height:1.5;margin-top:10px}
+.nat-scale{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:var(--s3)}
+.nat-scale .bar{height:9px;width:120px;border-radius:2px;background:linear-gradient(90deg,#1a1f2e,#8a6a1f,var(--gold))}
 
 /* ---------- unisex desk ---------- */
 .uni-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:var(--s4);margin-top:var(--s4)}
@@ -503,6 +516,11 @@ footer a{color:var(--dim)}
       </div>
       <div class="map-side st-detail" id="stDetail"><h3>Pick a state</h3><p class="hint">Colors show the #1 name of 2024. The side panel adds each state’s “local specialties” — names trading far above their national rate.</p></div>
     </div>
+
+    <h3 id="landscape" style="font-size:22px;margin-top:var(--s6)">Names shaped like the land</h3>
+    <p class="prose" style="margin-top:var(--s2)">Some names map the country’s geography. Parents reach for what’s outside the window: Ocean clusters on the coasts and vanishes across the landlocked Midwest, Canyon belongs to the desert Southwest, Forest to the rainy Pacific Northwest. Each mini-map shades every state by how much more common the name is there than nationally — bright gold for the strongholds, near-black where it’s barely used.</p>
+    <div class="nat-grid" id="natGrid"></div>
+    <div class="nat-scale"><span>rare</span><span class="bar"></span><span>×8+ national</span><span style="margin-left:auto">2020–24 · states with fewer than 5 are shown empty</span></div>
   </div>
 </section>
 
@@ -1075,6 +1093,24 @@ $('#usmap').addEventListener('click',e=>{
 $('#mapF').addEventListener('click',()=>{mapSex='F';$('#mapF').classList.add('on');$('#mapM').classList.remove('on');renderMap();});
 $('#mapM').addEventListener('click',()=>{mapSex='M';$('#mapM').classList.add('on');$('#mapF').classList.remove('on');renderMap();});
 renderMap();
+
+// ---- nature minimaps ----
+(function(){
+  if(!ND.nature)return;
+  const FULL={AK:'Alaska',AL:'Alabama',AR:'Arkansas',AZ:'Arizona',CA:'California',CO:'Colorado',CT:'Connecticut',DC:'D.C.',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',IA:'Iowa',ID:'Idaho',IL:'Illinois',IN:'Indiana',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',MA:'Massachusetts',MD:'Maryland',ME:'Maine',MI:'Michigan',MN:'Minnesota',MO:'Missouri',MS:'Mississippi',MT:'Montana',NC:'North Carolina',ND:'North Dakota',NE:'Nebraska',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NV:'Nevada',NY:'New York',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VA:'Virginia',VT:'Vermont',WA:'Washington',WI:'Wisconsin',WV:'West Virginia',WY:'Wyoming'};
+  $('#natGrid').innerHTML=ND.nature.map(item=>{
+    const cells=Object.keys(GRID).map(st=>{
+      const[c,r]=GRID[st];const lift=item.sd[st];
+      let style='',title=(FULL[st]||st)+': under 5 births — not listed';
+      if(lift){const a=Math.max(.12,Math.min(1,lift/8));
+        style=`background:rgba(255,209,102,${a.toFixed(2)})`;
+        title=`${FULL[st]||st}: ×${lift} national rate`;}
+      return `<span class="mt" style="grid-column:${c+1};grid-row:${r+1};${style}" title="${title}"></span>`;
+    }).join('');
+    const pk=item.top[0]?`${FULL[item.top[0][0]]||item.top[0][0]} ×${item.top[0][1]}`:'';
+    return `<div class="nat-card"><div class="nh"><span class="nn">${esc(item.n)}</span><span class="npk">${pk}</span></div><div class="minimap">${cells}</div><div class="ncap">${item.cap}</div></div>`;
+  }).join('');
+})();
 
 // ---- unisex desk ----
 (function(){
