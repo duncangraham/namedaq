@@ -1,0 +1,19 @@
+# Only the built, self-contained pages + fonts need to be served.
+# Everything below is source or build input (payloads are inlined into the HTML at build time).
+namedaq.html
+*-raw.html
+*-injected.html
+compute.mjs
+build.mjs
+build-meanings.mjs
+fetch-meanings.mjs
+shoot.mjs
+icons-patch*.mjs
+payload*.json
+meanings*.json
+package.json
+package-lock.json
+node_modules
+mirror
+shots
+shots-final
