@@ -6,6 +6,7 @@ const meanings = fs.readFileSync('meanings.json', 'utf8');
 for (const [raw, payloadFile, outFile] of [
   ['namedaq-raw.html', 'payload.json', 'namedaq-injected.html'],
   ['terminal-raw.html', 'payload-terminal.json', 'terminal-injected.html'],
+  ['rankings-raw.html', 'payload-rankings.json', 'rankings-injected.html'],
 ]) {
   let html = fs.readFileSync(raw, 'utf8');
   html = html.replace('/*PAYLOAD*/null/*ENDPAYLOAD*/', fs.readFileSync(payloadFile, 'utf8'));

@@ -15,4 +15,4 @@ Source: Social Security Administration [national](https://www.ssa.gov/oact/babyn
 3. Optionally refresh name origins: `node fetch-meanings.mjs` (Wiktionary, CC BY-SA) then `node build-meanings.mjs` → `meanings.json`.
 4. `node build.mjs` → injects payloads + meanings into both raw pages; save the results as `index.html` and `terminal.html`.
 
-`namedaq-raw.html` and `terminal-raw.html` are the editable sources; `index.html` and `terminal.html` are the built pages. Name origins: Wiktionary contributors (CC BY-SA 4.0) plus project spelling-matches and editorial notes.
+`namedaq-raw.html`, `terminal-raw.html`, and `rankings-raw.html` are the editable sources; `index.html`, `terminal.html`, and `rankings.html` are the built pages. Name origins: Wiktionary contributors (CC BY-SA 4.0) plus project spelling-matches and editorial notes.
