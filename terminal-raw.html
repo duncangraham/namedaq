@@ -3,8 +3,10 @@
 <title>NMDQ PRO — Baby Name Terminal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+@font-face{font-family:'Suisse Intl';src:url('fonts/SuisseIntl-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Suisse Intl';src:url('fonts/SuisseIntl-RegularItalic.woff2') format('woff2');font-weight:400;font-style:italic;font-display:swap}
 :root{
   --bg:#050505; --bg2:#101313; --bg3:#1e2020; --line:#252827; --line2:#323534;
   --ink:#e9ece9; --dim:#98a29e; --faint:#606864;
@@ -12,8 +14,8 @@
   --cool:#58b8ff; --cool-ink:#9fd4ff; --cool-soft:rgba(88,184,255,.10); --cool-line:rgba(88,184,255,.45);
   --gain:#7de8a8; --loss:#ff8a80; --accent:#eef2ef; --accent-soft:rgba(238,242,239,.07); --r:2px; --gold:var(--accent); --gold-soft:var(--accent-soft);
   --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
-  --sans:'Inter',-apple-system,Segoe UI,sans-serif;
-  --disp:'Inter',var(--sans);
+  --sans:'Suisse Intl',-apple-system,Segoe UI,sans-serif;
+  --disp:'Suisse Intl',var(--sans);
   --s2:8px; --s3:16px; --s4:24px; --s5:40px;
 }
 *{box-sizing:border-box}
@@ -26,7 +28,7 @@ svg text{font-family:var(--mono)}
 
 .nav{position:sticky;top:0;z-index:50;background:rgba(5,5,5,.90);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 .nav-in{position:relative;max-width:1360px;margin:0 auto;padding:10px var(--s4);display:flex;align-items:center;gap:14px}
-.brand{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:.06em;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
+.brand{font-family:var(--disp);font-weight:400;font-size:17px;letter-spacing:.06em;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
 .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--gain);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .nav-list{margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--dim);text-decoration:none;letter-spacing:.06em;padding:7px 4px;flex-shrink:0}
@@ -214,12 +216,12 @@ function chart(series,opts){
   const X=y=>P.l+(y-o.x0)/(o.x1-o.x0)*iw, Y=v=>P.t+ih-(v/ytop)*ih;
   let g='';
   for(let v=0;v<=ytop+1e-9;v+=step){
-    g+=`<line x1="${P.l}" y1="${Y(v)}" x2="${o.w-P.r}" y2="${Y(v)}" stroke="#242c40"/>`;
-    g+=`<text x="${P.l-8}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="#6b7690">${o.yFmt(v)}</text>`;
+    g+=`<line x1="${P.l}" y1="${Y(v)}" x2="${o.w-P.r}" y2="${Y(v)}" stroke="#222625"/>`;
+    g+=`<text x="${P.l-8}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="#6f7873">${o.yFmt(v)}</text>`;
   }
   const span=o.x1-o.x0,xs=span>90?20:span>40?10:5;
   for(let yr=Math.ceil(o.x0/xs)*xs;yr<=o.x1;yr+=xs)
-    g+=`<text x="${X(yr)}" y="${o.h-6}" text-anchor="middle" font-size="11" fill="#6b7690">${yr}</text>`;
+    g+=`<text x="${X(yr)}" y="${o.h-6}" text-anchor="middle" font-size="11" fill="#6f7873">${yr}</text>`;
   series.forEach(s=>{
     let d='';for(let yr=o.x0;yr<=o.x1;yr++){const v=s.vals[yr-Y0]||0;d+=(d?'L':'M')+X(yr).toFixed(1)+' '+Y(v).toFixed(1);}
     g+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.width||2}"/>`;
@@ -232,10 +234,10 @@ function attachScrub(box,seriesList,fmtTip){
   const iw=w-pl-pr,ih=h-pt-pb,ns='http://www.w3.org/2000/svg';
   const g=document.createElementNS(ns,'g');g.style.display='none';g.setAttribute('pointer-events','none');
   const ln=document.createElementNS(ns,'line');
-  ln.setAttribute('stroke','#8a93a8');ln.setAttribute('stroke-dasharray','3 3');
+  ln.setAttribute('stroke','#8a938e');ln.setAttribute('stroke-dasharray','3 3');
   ln.setAttribute('y1',pt);ln.setAttribute('y2',h-pb);g.appendChild(ln);
   const dots=seriesList.map(s=>{const c=document.createElementNS(ns,'circle');
-    c.setAttribute('r','4');c.setAttribute('fill',s.color);c.setAttribute('stroke','#0b0e16');c.setAttribute('stroke-width','1.5');
+    c.setAttribute('r','4');c.setAttribute('fill',s.color);c.setAttribute('stroke','#050505');c.setAttribute('stroke-width','1.5');
     g.appendChild(c);return c;});
   svg.appendChild(g);
   const tip=document.createElement('div');tip.className='scrub-tip';box.appendChild(tip);

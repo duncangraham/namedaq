@@ -3,8 +3,10 @@
 <title>The U.S. Baby Name Market — 145 Years of SSA Data</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+@font-face{font-family:'Suisse Intl';src:url('fonts/SuisseIntl-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Suisse Intl';src:url('fonts/SuisseIntl-RegularItalic.woff2') format('woff2');font-weight:400;font-style:italic;font-display:swap}
 :root{
   --bg:#050505; --bg2:#101313; --bg3:#1e2020; --line:#252827; --line2:#323534;
   --ink:#e9ece9; --dim:#98a29e; --faint:#606864;
@@ -18,8 +20,8 @@
   --accent:#eef2ef; --accent-soft:rgba(238,242,239,.07); --r:2px;
   --gold:var(--accent); --gold-soft:var(--accent-soft);
   --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
-  --sans:'Inter',-apple-system,Segoe UI,sans-serif;
-  --disp:'Inter',var(--sans);
+  --sans:'Suisse Intl',-apple-system,Segoe UI,sans-serif;
+  --disp:'Suisse Intl',var(--sans);
   --s1:4px; --s2:8px; --s3:16px; --s4:24px; --s5:40px; --s6:64px; --s7:96px;
   --max:1200px;
 }
@@ -29,8 +31,9 @@ html{scroll-behavior:smooth;background:var(--bg)}
    child (560px charts, nowrap tables) — that kills the inner scroll containers */
 .boards>*,.frag-grid>*,.vol-grid>*,.map-wrap>*,.tm>*{min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased}
-h1,h2,h3{font-family:var(--disp);line-height:1.1;letter-spacing:-.02em;margin:0;font-weight:600}
-a{color:var(--cool-ink)}
+h1,h2,h3{font-family:var(--disp);line-height:1.1;letter-spacing:-.02em;margin:0;font-weight:400}
+a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line2);text-underline-offset:2px}
+a:hover{text-decoration-color:var(--dim)}
 p{margin:0 0 var(--s3)}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 var(--s4)}
 .prose{max-width:68ch;color:var(--dim)}
@@ -50,7 +53,7 @@ svg text{font-family:var(--mono)}
 .nav{position:sticky;top:0;z-index:50;background:rgba(5,5,5,.90);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 .nav-in{position:relative}
 .nav-in{max-width:var(--max);margin:0 auto;padding:10px var(--s4);display:flex;align-items:center;gap:14px}
-.brand{font-family:var(--disp);font-weight:700;font-size:18px;letter-spacing:.06em;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
+.brand{font-family:var(--disp);font-weight:400;font-size:18px;letter-spacing:.06em;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
 .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--gain);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .nav-list{margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--dim);text-decoration:none;letter-spacing:.06em;padding:7px 4px;flex-shrink:0}
@@ -73,7 +76,7 @@ svg text{font-family:var(--mono)}
   radial-gradient(1200px 500px at 80% -10%,rgba(255,100,168,.07),transparent 60%),
   radial-gradient(1000px 500px at 10% 110%,rgba(88,184,255,.07),transparent 60%)}
 .kicker{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:var(--s3)}
-.hero h1{font-size:clamp(38px,6vw,68px);font-weight:700;letter-spacing:-.015em;max-width:18ch}
+.hero h1{font-size:clamp(32px,4.6vw,50px);font-weight:400;letter-spacing:-.02em;line-height:1.05;max-width:18ch}
 .hero .sub{color:var(--dim);font-size:19px;max-width:58ch;margin-top:var(--s4)}
 .stat-row{display:flex;gap:var(--s3);flex-wrap:wrap;margin-top:var(--s5)}
 .stat{border:1px solid var(--line);background:var(--bg2);padding:var(--s3) var(--s4);min-width:180px;flex:1 1 180px;max-width:280px;border-radius:var(--r)}
@@ -86,7 +89,7 @@ svg text{font-family:var(--mono)}
 section{padding:var(--s7) 0;border-bottom:1px solid var(--line)}
 section.alt{background:var(--bg2)}
 .eyebrow{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:var(--s2)}
-section h2{font-size:clamp(26px,3.4vw,40px);letter-spacing:-.01em;margin-bottom:var(--s3);max-width:24ch}
+section h2{font-size:clamp(24px,3vw,33px);letter-spacing:-.015em;margin-bottom:var(--s3);max-width:24ch}
 .lede{color:var(--dim);font-size:18px}
 
 /* ---------- panels & charts ---------- */
@@ -213,7 +216,7 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .term-body{padding:var(--s3)}
 .quote-hd{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s2)}
 .quote-hd .sym{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.1em}
-.quote-hd .name{font-family:var(--disp);font-size:34px;font-weight:700;letter-spacing:.01em}
+.quote-hd .name{font-family:var(--disp);font-size:32px;font-weight:400;letter-spacing:-.01em}
 .quote-hd .pill{font-family:var(--mono);font-size:16px;font-weight:600;padding:2px 10px;border-radius:3px}
 .q-mean{font-family:var(--mono);font-size:12.5px;color:var(--dim);margin:2px 0 6px;line-height:1.6}
 .q-mean .lbl{color:var(--dim);font-size:10.5px;letter-spacing:.1em;margin-right:8px}
@@ -254,13 +257,13 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 @media (max-width:520px){.nat-grid{grid-template-columns:1fr}}
 .nat-card{border:1px solid var(--line);background:var(--bg3);padding:var(--s3);border-radius:var(--r)}
 .nat-card .nh{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}
-.nat-card .nn{font-family:var(--disp);font-size:17px;font-weight:700}
+.nat-card .nn{font-family:var(--disp);font-size:18px;font-weight:400}
 .nat-card .npk{font-family:var(--mono);font-size:11px;color:var(--dim)}
 .minimap{display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(8,1fr);gap:2px;aspect-ratio:11/8}
 .minimap .mt{border-radius:1px;background:#0c0f18;min-width:0}
 .nat-card .ncap{font-family:var(--sans);font-size:12.5px;color:var(--dim);line-height:1.5;margin:0 0 12px}
 .nat-scale{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:var(--s3)}
-.nat-scale .bar{height:9px;width:120px;border-radius:2px;background:linear-gradient(90deg,#1a1f2e,#6b7690,var(--accent))}
+.nat-scale .bar{height:9px;width:120px;border-radius:2px;background:linear-gradient(90deg,#1a1c1c,#606864,var(--accent))}
 
 /* ---------- unisex desk ---------- */
 .uni-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:var(--s4);margin-top:var(--s4)}
@@ -676,12 +679,12 @@ function chart(series,opts){
   const X=y=>P.l+(y-o.x0)/(o.x1-o.x0)*iw, Y=v=>P.t+ih-(v/ytop)*ih;
   let g='';
   for(let v=0;v<=ytop+1e-9;v+=step){
-    g+=`<line x1="${P.l}" y1="${Y(v)}" x2="${o.w-P.r}" y2="${Y(v)}" stroke="#242c40" stroke-width="1"/>`;
-    g+=`<text x="${P.l-8}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="#6b7690">${o.yFmt(v)}</text>`;
+    g+=`<line x1="${P.l}" y1="${Y(v)}" x2="${o.w-P.r}" y2="${Y(v)}" stroke="#222625" stroke-width="1"/>`;
+    g+=`<text x="${P.l-8}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="#6f7873">${o.yFmt(v)}</text>`;
   }
   const span=o.x1-o.x0,xs=span>90?20:span>40?10:5;
   for(let yr=Math.ceil(o.x0/xs)*xs;yr<=o.x1;yr+=xs)
-    g+=`<text x="${X(yr)}" y="${o.h-6}" text-anchor="middle" font-size="11" fill="#6b7690">${yr}</text>`;
+    g+=`<text x="${X(yr)}" y="${o.h-6}" text-anchor="middle" font-size="11" fill="#6f7873">${yr}</text>`;
   series.forEach(s=>{
     let d='';for(let yr=o.x0;yr<=o.x1;yr++){const v=s.vals[yr-Y0]||0;d+=(d?'L':'M')+X(yr).toFixed(1)+' '+Y(v).toFixed(1);}
     if(s.fill){g+=`<path d="${d} L${X(o.x1)} ${Y(0)} L${X(o.x0)} ${Y(0)} Z" fill="${s.fill}" stroke="none"/>`;}
@@ -710,10 +713,10 @@ function attachScrub(box,seriesList,fmtTip){
   const iw=w-pl-pr,ih=h-pt-pb,ns='http://www.w3.org/2000/svg';
   const g=document.createElementNS(ns,'g');g.style.display='none';g.setAttribute('pointer-events','none');
   const ln=document.createElementNS(ns,'line');
-  ln.setAttribute('stroke','#8a93a8');ln.setAttribute('stroke-dasharray','3 3');
+  ln.setAttribute('stroke','#8a938e');ln.setAttribute('stroke-dasharray','3 3');
   ln.setAttribute('y1',pt);ln.setAttribute('y2',h-pb);g.appendChild(ln);
   const dots=seriesList.map(s=>{const c=document.createElementNS(ns,'circle');
-    c.setAttribute('r','4');c.setAttribute('fill',s.color);c.setAttribute('stroke','#0b0e16');c.setAttribute('stroke-width','1.5');
+    c.setAttribute('r','4');c.setAttribute('fill',s.color);c.setAttribute('stroke','#050505');c.setAttribute('stroke-width','1.5');
     g.appendChild(c);return c;});
   svg.appendChild(g);
   const tip=document.createElement('div');tip.className='scrub-tip';box.appendChild(tip);
