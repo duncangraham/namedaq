@@ -3,11 +3,11 @@
 <title>The U.S. Baby Name Market — 145 Years of SSA Data</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0b0e16; --bg2:#10141f; --bg3:#161b29; --line:#242c40; --line2:#2f3852;
-  --ink:#e9edf5; --dim:#a3adc2; --faint:#6b7690;
+  --bg:#050505; --bg2:#101313; --bg3:#1e2020; --line:#252827; --line2:#323534;
+  --ink:#e9ece9; --dim:#98a29e; --faint:#606864;
   /* sex: pink = girls, blue = boys (charts, splits) */
   --hot:#ff64a8; --hot-ink:#ffa8cd; --hot-soft:rgba(255,100,168,.10); --hot-line:rgba(255,100,168,.45);
   --cool:#58b8ff; --cool-ink:#9fd4ff; --cool-soft:rgba(88,184,255,.10); --cool-line:rgba(88,184,255,.45);
@@ -15,11 +15,11 @@
   --gain:#7de8a8; --gain-soft:rgba(125,232,168,.12);
   --loss:#ff8a80; --loss-soft:rgba(255,138,128,.12);
   /* neutral accent (replaces the old gold) — color is reserved for data */
-  --accent:#eef1f7; --accent-soft:rgba(238,241,247,.07);
+  --accent:#eef2ef; --accent-soft:rgba(238,242,239,.07); --r:2px;
   --gold:var(--accent); --gold-soft:var(--accent-soft);
   --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
-  --sans:'IBM Plex Sans',-apple-system,Segoe UI,sans-serif;
-  --disp:'Space Grotesk',var(--sans);
+  --sans:'Inter',-apple-system,Segoe UI,sans-serif;
+  --disp:'Inter',var(--sans);
   --s1:4px; --s2:8px; --s3:16px; --s4:24px; --s5:40px; --s6:64px; --s7:96px;
   --max:1200px;
 }
@@ -29,13 +29,14 @@ html{scroll-behavior:smooth;background:var(--bg)}
    child (560px charts, nowrap tables) — that kills the inner scroll containers */
 .boards>*,.frag-grid>*,.vol-grid>*,.map-wrap>*,.tm>*{min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased}
-h1,h2,h3{font-family:var(--disp);line-height:1.15;margin:0}
+h1,h2,h3{font-family:var(--disp);line-height:1.1;letter-spacing:-.02em;margin:0;font-weight:600}
 a{color:var(--cool-ink)}
 p{margin:0 0 var(--s3)}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 var(--s4)}
 .prose{max-width:68ch;color:var(--dim)}
 .mono{font-family:var(--mono)}
 .up{color:var(--gain)} .down{color:var(--loss)}
+.ic{width:1em;height:1em;vertical-align:-.13em;flex-shrink:0}
 svg text{font-family:var(--mono)}
 
 /* ---------- tape ---------- */
@@ -43,23 +44,23 @@ svg text{font-family:var(--mono)}
 .tape-track{display:inline-block;padding:7px 0}
 .tk{font-family:var(--mono);font-size:12.5px;margin-right:28px;color:var(--dim)}
 .tk b{color:var(--ink);font-weight:600}
-.tk .up::before{content:"▲ "}.tk .down::before{content:"▼ "}
+.tk .ic{margin-right:3px}
 
 /* ---------- nav ---------- */
-.nav{position:sticky;top:0;z-index:50;background:rgba(11,14,22,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav{position:sticky;top:0;z-index:50;background:rgba(5,5,5,.90);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 .nav-in{position:relative}
-.nav-in{max-width:var(--max);margin:0 auto;padding:10px var(--s4);display:flex;align-items:center;gap:var(--s4)}
+.nav-in{max-width:var(--max);margin:0 auto;padding:10px var(--s4);display:flex;align-items:center;gap:14px}
 .brand{font-family:var(--disp);font-weight:700;font-size:18px;letter-spacing:.06em;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
 .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--gain);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .nav-list{margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--dim);text-decoration:none;letter-spacing:.06em;padding:7px 4px;flex-shrink:0}
 .nav-list:hover{color:var(--ink)}
-.nav-pro{margin-left:var(--s3);background:var(--gold);color:#141414;font-family:var(--mono);font-size:11.5px;font-weight:600;padding:7px 14px;text-decoration:none;letter-spacing:.06em;flex-shrink:0;border-radius:7px}
+.nav-pro{margin-left:10px;background:var(--gold);color:#050505;font-family:var(--mono);font-size:11.5px;font-weight:600;padding:7px 14px;text-decoration:none;letter-spacing:.06em;flex-shrink:0;border-radius:var(--r)}
 .nav-pro:hover{filter:brightness(.94)}
-.nav-menu{margin-left:var(--s3);width:34px;height:30px;background:transparent;border:1px solid var(--line2);cursor:pointer;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;flex-shrink:0;padding:0;border-radius:7px}
-.nav-menu span{display:block;width:16px;height:1.5px;background:var(--dim)}
-.nav-menu:hover span{background:var(--ink)}
-.nav-menu[aria-expanded="true"] span{background:var(--gold)}
+.nav-menu{margin-left:10px;width:34px;height:30px;background:transparent;border:1px solid var(--line2);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;border-radius:var(--r);color:var(--dim)}
+
+.nav-menu:hover{color:var(--ink)}
+.nav-menu[aria-expanded="true"]{color:var(--accent)}
 .nav-toc{position:absolute;right:var(--s4);top:100%;margin-top:6px;background:var(--bg2);border:1px solid var(--line2);min-width:230px;padding:6px;box-shadow:0 10px 34px rgba(0,0,0,.5);display:flex;flex-direction:column;z-index:60}
 .nav-toc[hidden]{display:none}
 .nav-toc a{font-family:var(--mono);font-size:12.5px;color:var(--dim);text-decoration:none;padding:8px 10px;letter-spacing:.03em}
@@ -75,7 +76,7 @@ svg text{font-family:var(--mono)}
 .hero h1{font-size:clamp(38px,6vw,68px);font-weight:700;letter-spacing:-.015em;max-width:18ch}
 .hero .sub{color:var(--dim);font-size:19px;max-width:58ch;margin-top:var(--s4)}
 .stat-row{display:flex;gap:var(--s3);flex-wrap:wrap;margin-top:var(--s5)}
-.stat{border:1px solid var(--line);background:var(--bg2);padding:var(--s3) var(--s4);min-width:180px;flex:1 1 180px;max-width:280px}
+.stat{border:1px solid var(--line);background:var(--bg2);padding:var(--s3) var(--s4);min-width:180px;flex:1 1 180px;max-width:280px;border-radius:var(--r)}
 .stat .v{font-family:var(--mono);font-size:26px;font-weight:600;letter-spacing:-.01em}
 .stat .k{font-family:var(--mono);font-size:11.5px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
 .stat.hot .v{color:var(--gain)} .stat.cool .v{color:var(--loss)} .stat.gold .v{color:var(--gold)}
@@ -89,7 +90,7 @@ section h2{font-size:clamp(26px,3.4vw,40px);letter-spacing:-.01em;margin-bottom:
 .lede{color:var(--dim);font-size:18px}
 
 /* ---------- panels & charts ---------- */
-.panel{border:1px solid var(--line);background:var(--bg2);padding:var(--s4)}
+.panel{border:1px solid var(--line);background:var(--bg2);padding:var(--s4);border-radius:var(--r)}
 section.alt .panel{background:var(--bg3)}
 .panel-hd{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s3)}
 .panel-hd .t{font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
@@ -132,7 +133,7 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .tm-stat{flex:1 1 150px;border:1px solid var(--line);background:var(--bg3);padding:10px var(--s3)}
 .tm-stat .v{font-family:var(--mono);font-size:20px;font-weight:600}
 .tm-stat .k{font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
-.tm-board{border:1px solid var(--line);background:var(--bg3);padding:var(--s3)}
+.tm-board{border:1px solid var(--line);background:var(--bg3);padding:var(--s3);border-radius:var(--r)}
 .tm-board h3{font-family:var(--mono);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
 .tm-board.girls h3{color:var(--hot-ink)} .tm-board.boys h3{color:var(--cool-ink)}
 .tm-row{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13.5px;padding:3px 0}
@@ -147,9 +148,9 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .tm-row .ct{color:var(--dim);width:64px;text-align:right;font-size:12px}
 
 /* ---------- big board ---------- */
-.toggle{display:inline-flex;border:1px solid var(--line2);font-family:var(--mono);font-size:12.5px;font-weight:600}
+.toggle{display:inline-flex;border:1px solid var(--line2);font-family:var(--mono);font-size:12.5px;font-weight:600;border-radius:var(--r);overflow:hidden}
 .toggle button{background:transparent;border:0;color:var(--dim);padding:8px 18px;cursor:pointer;font:inherit;letter-spacing:.06em}
-.toggle button.on{background:var(--gold);color:#141414}
+.toggle button.on{background:var(--gold);color:#050505}
 .boards{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);margin-top:var(--s4)}
 @media (max-width:960px){.boards{grid-template-columns:1fr}}
 .board table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px}
@@ -182,7 +183,7 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .memes{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s3);margin-top:var(--s4)}
 @media (max-width:960px){.memes{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:640px){.memes{grid-template-columns:1fr}}
-.meme{border:1px solid var(--line);background:var(--bg3);padding:var(--s3);cursor:pointer;text-align:left;color:var(--ink);font:inherit;transition:border-color .15s}
+.meme{border:1px solid var(--line);background:var(--bg3);padding:var(--s3);cursor:pointer;text-align:left;color:var(--ink);font:inherit;transition:border-color .15s;border-radius:var(--r)}
 .meme:hover{border-color:var(--gold)}
 .meme .hd{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono)}
 .meme .hd .nm{font-weight:600;font-size:15px}
@@ -192,22 +193,22 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .meme .cap{font-size:13px;color:var(--dim);line-height:1.5}
 
 /* ---------- terminal ---------- */
-.term{border:1px solid var(--line2);background:#0a0d15;box-shadow:0 0 0 4px rgba(238,241,247,.04);margin-top:var(--s4)}
+.term{border:1px solid var(--line2);background:#080a0a;box-shadow:0 0 0 4px rgba(238,242,239,.03);margin-top:var(--s4);border-radius:var(--r)}
 .term-top{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:var(--s3);border-bottom:1px solid var(--line)}
 .term-searchrow{display:flex;width:100%;align-items:stretch}
 .term-search{position:relative;flex:1;min-width:0}
-#q{width:100%;background:var(--bg3);border:1px solid var(--line2);border-right:0;color:var(--ink);font-family:var(--mono);font-size:16px;padding:11px 14px;letter-spacing:.03em;border-radius:7px 0 0 7px}
+#q{width:100%;background:var(--bg3);border:1px solid var(--line2);border-right:0;color:var(--ink);font-family:var(--mono);font-size:16px;padding:11px 14px;letter-spacing:.03em;border-radius:var(--r) 0 0 7px}
 #q:focus{outline:none;border-color:var(--accent)}
-.term-searchrow .btn{border-radius:0 7px 7px 0;flex-shrink:0}
+.term-searchrow .btn{border-radius:0 var(--r) var(--r) 0;flex-shrink:0}
 .sugg{position:absolute;top:100%;left:0;right:0;background:var(--bg3);border:1px solid var(--line2);border-top:0;z-index:20;max-height:280px;overflow:auto}
 .sugg button{display:flex;justify-content:space-between;width:100%;background:none;border:0;color:var(--ink);font-family:var(--mono);font-size:14px;padding:9px 14px;cursor:pointer;text-align:left}
 .sugg button:hover,.sugg button.sel{background:var(--accent-soft)}
 .sugg .s-sx{color:var(--faint);font-size:11px}
-.btn{background:var(--accent);border:1px solid var(--accent);color:#0b0e16;font-family:var(--mono);font-size:13px;font-weight:600;padding:10px 20px;cursor:pointer;letter-spacing:.04em;border-radius:7px;transition:filter .12s,border-color .12s,color .12s}
+.btn{background:var(--accent);border:1px solid var(--accent);color:#050505;font-family:var(--mono);font-size:13px;font-weight:600;padding:10px 20px;cursor:pointer;letter-spacing:.04em;border-radius:var(--r);transition:filter .12s,border-color .12s,color .12s}
 .btn:hover{filter:brightness(.94)}
 .btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--dim)}
 .btn.ghost:hover{color:var(--ink);border-color:var(--faint);filter:none}
-.chip{background:transparent;border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);font-size:12px;padding:4px 10px;cursor:pointer;border-radius:5px}
+.chip{background:transparent;border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);font-size:12px;padding:4px 10px;cursor:pointer;border-radius:var(--r)}
 .chip:hover{color:var(--ink);border-color:var(--accent)}
 .term-body{padding:var(--s3)}
 .quote-hd{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s2)}
@@ -219,7 +220,7 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .q-mean .src{color:var(--faint);font-size:10px;margin-left:8px;letter-spacing:.06em}
 .pill.up{background:var(--gain-soft);color:var(--gain)}
 .pill.down{background:var(--loss-soft);color:var(--loss)}
-.seg{display:inline-flex;border:1px solid var(--line2);font-family:var(--mono);font-size:11.5px;margin-left:auto}
+.seg{display:inline-flex;border:1px solid var(--line2);font-family:var(--mono);font-size:11.5px;margin-left:auto;border-radius:var(--r);overflow:hidden}
 .seg button{background:none;border:0;color:var(--dim);padding:6px 12px;cursor:pointer;font:inherit}
 .seg button.on{background:var(--bg3);color:var(--gold);font-weight:600}
 .qstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:var(--s3)}
@@ -251,7 +252,7 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .nat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s3);margin-top:var(--s4)}
 @media (max-width:960px){.nat-grid{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:520px){.nat-grid{grid-template-columns:1fr}}
-.nat-card{border:1px solid var(--line);background:var(--bg3);padding:var(--s3)}
+.nat-card{border:1px solid var(--line);background:var(--bg3);padding:var(--s3);border-radius:var(--r)}
 .nat-card .nh{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}
 .nat-card .nn{font-family:var(--disp);font-size:17px;font-weight:700}
 .nat-card .npk{font-family:var(--mono);font-size:11px;color:var(--dim)}
@@ -290,7 +291,7 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 /* ---------- prospectus ---------- */
 .rules{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);margin-top:var(--s4)}
 @media (max-width:860px){.rules{grid-template-columns:1fr}}
-.rule{border:1px solid var(--line);background:var(--bg2);padding:var(--s3) var(--s4)}
+.rule{border:1px solid var(--line);background:var(--bg2);padding:var(--s3) var(--s4);border-radius:var(--r)}
 .rule h3{font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:var(--s2)}
 .rule p{color:var(--dim);font-size:15px;margin:0}
 /* sex badges — global, colored; placed last to win over local gray .sx rules */
@@ -310,7 +311,7 @@ footer a{color:var(--dim)}
     <a class="brand" href="#top"><span class="dot"></span>NMDQ · THE NURSERY EXCHANGE</a>
     <a class="nav-list" href="rankings.html">2024 FULL LIST</a>
     <a class="nav-pro" href="terminal.html">PRO TERMINAL</a>
-    <button class="nav-menu" id="menuBtn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <button class="nav-menu" id="menuBtn" aria-label="Open menu" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></button>
   </div>
   <div class="nav-toc" id="navToc" hidden>
     <a href="#fundamentals">§1 · Market fundamentals</a>
@@ -323,8 +324,8 @@ footer a{color:var(--dim)}
     <a href="#longview">§8 · The long view</a>
     <a href="#prospectus">§9 · Prospectus</a>
     <div class="toc-div"></div>
-    <a href="rankings.html">Every name of 2024 →</a>
-    <a href="terminal.html">Pro terminal →</a>
+    <a href="rankings.html">Every name of 2024 <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    <a href="terminal.html">Pro terminal <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
   </div>
 </nav>
 
@@ -337,8 +338,8 @@ footer a{color:var(--dim)}
       <div class="stat gold"><div class="v">3,612,777</div><div class="k">Babies born, 2024</div></div>
       <div class="stat"><div class="v">29,225</div><div class="k">Distinct names traded, 2024</div></div>
       <div class="stat"><div class="v">104,819</div><div class="k">Names listed since 1880</div></div>
-      <div class="stat boy"><div class="v">LIAM <span class="up">▲</span></div><div class="k">Top boys’ name, 8 yrs running</div></div>
-      <div class="stat girl"><div class="v">OLIVIA <span class="up">▲</span></div><div class="k">Top girls’ name, 6 yrs running</div></div>
+      <div class="stat boy"><div class="v">LIAM <span class="up"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span></div><div class="k">Top boys’ name, 8 yrs running</div></div>
+      <div class="stat girl"><div class="v">OLIVIA <span class="up"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span></div><div class="k">Top girls’ name, 6 yrs running</div></div>
     </div>
   </div>
 </header>
@@ -398,7 +399,7 @@ footer a{color:var(--dim)}
       </div>
       <div class="tm-board girls"><h3>Top 10 · Girls</h3><div id="tmGirls"></div></div>
       <div class="tm-board boys"><h3>Top 10 · Boys</h3><div id="tmBoys"></div></div>
-      <div class="board-cap" style="grid-column:1/-1;margin-top:0">▲▼ = places moved vs. the previous year’s top 10 · NEW = entered the top 10 that year.</div>
+      <div class="board-cap" style="grid-column:1/-1;margin-top:0"><span class="up"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span><span class="down"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 17h6v-6"/><path d="m22 17-8.5-8.5-5 5L2 7"/></svg></span> = places moved vs. the previous year’s top 10 · NEW = entered the top 10 that year.</div>
     </div>
 
     <div class="panel" style="margin-top:var(--s4)">
@@ -434,12 +435,12 @@ footer a{color:var(--dim)}
     </div>
     <div class="boards">
       <div class="panel board hot-b">
-        <div class="panel-hd"><span class="t" style="color:var(--gain)">▲ Heating up</span></div>
+        <div class="panel-hd"><span class="t" style="color:var(--gain)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg> Heating up</span></div>
         <div style="overflow-x:auto"><table id="tblG" aria-label="Top gainers"></table></div>
         <div class="board-cap">Δ = change in the annual rate per million births of that sex; × = end rate as a multiple of the start. Click a name to chart it.</div>
       </div>
       <div class="panel board cool-b">
-        <div class="panel-hd"><span class="t" style="color:var(--loss)">▼ Cooling off</span></div>
+        <div class="panel-hd"><span class="t" style="color:var(--loss)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 17h6v-6"/><path d="m22 17-8.5-8.5-5 5L2 7"/></svg> Cooling off</span></div>
         <div style="overflow-x:auto"><table id="tblL" aria-label="Top losers"></table></div>
         <div class="board-cap">Names below 5 births in a year leave the tape entirely — the SSA delists them.</div>
       </div>
@@ -648,6 +649,7 @@ footer a{color:var(--dim)}
   document.addEventListener('click',e=>{if(!e.target.closest('.nav'))set(false);});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')set(false);});
 })();
+const TU="<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16 7h6v6\"/><path d=\"m22 7-8.5 8.5-5-5L2 17\"/></svg>",TD="<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16 17h6v-6\"/><path d=\"m22 17-8.5-8.5-5 5L2 7\"/></svg>";
 const ND=window.ND; if(!ND){document.body.insertAdjacentHTML('afterbegin','<p style="padding:2em;font-family:monospace">Data payload missing — rebuild with inject.mjs</p>');return;}
 const Y0=1880,Y1=2024,YRS=Y1-Y0+1;
 const $=s=>document.querySelector(s);
@@ -736,8 +738,8 @@ function attachScrub(box,seriesList,fmtTip){
 // ---- tape ----
 (function(){
   const items=[];
-  ND.tapeUp.slice(0,14).forEach(t=>items.push(`<span class="tk"><b>${t.n.toUpperCase()}</b> <span class="up">${t.p}%</span></span>`));
-  ND.tapeDown.slice(0,14).forEach(t=>items.push(`<span class="tk"><b>${t.n.toUpperCase()}</b> <span class="down">${t.p}%</span></span>`));
+  ND.tapeUp.slice(0,14).forEach(t=>items.push(`<span class="tk"><b>${t.n.toUpperCase()}</b> <span class="up">${TU}${t.p}%</span></span>`));
+  ND.tapeDown.slice(0,14).forEach(t=>items.push(`<span class="tk"><b>${t.n.toUpperCase()}</b> <span class="down">${TD}${t.p}%</span></span>`));
   // interleave up/down
   const mix=[];for(let i=0;i<14;i++){mix.push(items[i],items[i+14]);}
   const html=mix.join('')+`<span class="tk"><b>NMDQ</b> YoY movers, 2023→24, per-million basis</span>`;
@@ -791,7 +793,7 @@ function tmRender(){
       if(i>0){
         if(!(r[0] in prevRank))mv='<span class="mv new">NEW</span>';
         else{const d=prevRank[r[0]]-k;
-          mv=d>0?`<span class="mv up">▲${d}</span>`:d<0?`<span class="mv down">▼${-d}</span>`:'<span class="mv flat">–</span>';}
+          mv=d>0?`<span class="mv up">${TU}${d}</span>`:d<0?`<span class="mv down">${TD}${-d}</span>`:'<span class="mv flat">–</span>';}
       }
       return `<div class="tm-row"><span class="rk">${k+1}</span><span class="nm">${esc(r[0])}</span>${mv}<span class="bar"><i style="width:${(r[1]/max*100).toFixed(1)}%"></i></span><span class="ct">${fmt(r[1])}</span></div>`;
     }).join('');
@@ -889,7 +891,7 @@ $('#memes').innerHTML=MEMES.map((m,idx)=>{
   const seg=[];for(let y=m.y0;y<=m.y1;y++)seg.push(c[y-Y0]||0);
   const vals=new Array(YRS).fill(0);seg.forEach((v,j)=>vals[m.y0-Y0+j]=v);
   const sv=chart([{vals,color:'#eef1f7',width:2,fill:'rgba(238,241,247,.08)'}],{w:340,h:120,x0:m.y0,x1:m.y1,pad:{l:40,r:22,t:8,b:20},yFmt:v=>v>=1000?(v/1000)+'k':v});
-  return `<button class="meme" data-open="${m.n}|${m.s}"><span class="hd"><span class="nm">${m.n.toUpperCase()} <span class="sx ${m.s==='F'?'f':'m'}">${m.s}</span></span><span class="tag ${m.tag}">${m.tag==='spike'?'▲ spike':'▼ crash'}</span></span>${sv}<span class="cap">${m.cap}</span></button>`;
+  return `<button class="meme" data-open="${m.n}|${m.s}"><span class="hd"><span class="nm">${m.n.toUpperCase()} <span class="sx ${m.s==='F'?'f':'m'}">${m.s}</span></span><span class="tag ${m.tag}">${m.tag==='spike'?TU+' spike':TD+' crash'}</span></span>${sv}<span class="cap">${m.cap}</span></button>`;
 }).join('');
 
 // ---- celebrity ticker ----
@@ -913,7 +915,7 @@ $('#celebs').innerHTML=CELEBS.map(m=>{
   const sv=chart([{vals,color:m.s==='F'?'#ff64a8':'#58b8ff',width:2,fill:m.s==='F'?'rgba(255,100,168,.07)':'rgba(88,184,255,.07)'}],
     {w:340,h:130,x0:m.y0,x1:m.y1,pad:{l:40,r:22,t:8,b:20},yFmt:v=>v>=1000?(v/1000)+'k':v,annots});
   const evAttrs=`data-ev="${m.ev}" data-evl="${esc(m.evL)}"${m.ev2?` data-ev2="${m.ev2}" data-ev2l="${esc(m.ev2L)}"`:''}`;
-  return `<button class="meme" data-open="${m.n}|${m.s}" ${evAttrs}><span class="hd"><span class="nm">${m.n.toUpperCase()} <span class="sx ${m.s==='F'?'f':'m'}">${m.s}</span></span><span class="tag spike">▲ ${m.x}</span></span>${sv}<span class="cap">${m.cap}</span></button>`;
+  return `<button class="meme" data-open="${m.n}|${m.s}" ${evAttrs}><span class="hd"><span class="nm">${m.n.toUpperCase()} <span class="sx ${m.s==='F'?'f':'m'}">${m.s}</span></span><span class="tag spike">${TU} ${m.x}</span></span>${sv}<span class="cap">${m.cap}</span></button>`;
 }).join('');
 
 // ---- phantom girl Johns ----
@@ -972,7 +974,7 @@ function openQuote(name,sex,scroll,evs){
   const seriesArr=dual
     ?[{vals:or,color:colOf(oSex),width:1.7},{vals:r,color:lineCol,width:2.4,fill:softOf(sex)}]
     :[{vals:r,color:lineCol,width:2.2,fill:softOf(sex)}];
-  const pill=ch10===null?'':`<span class="pill ${ch10>=0?'up':'down'}">${ch10>=0?'▲':'▼'} ${Math.abs(ch10).toFixed(0)}% / 10Y</span>`;
+  const pill=ch10===null?'':`<span class="pill ${ch10>=0?'up':'down'}">${ch10>=0?TU:TD} ${Math.abs(ch10).toFixed(0)}% / 10Y</span>`;
   const segBtns=['MAX','30Y','10Y'].map(g=>`<button data-rg="${g}" class="${curRange===g?'on':''}">${g}</button>`).join('');
   const evAttrs=cur.evs.length?` data-ev="${cur.evs[0].x}" data-evl="${esc(cur.evs[0].label)}"${cur.evs[1]?` data-ev2="${cur.evs[1].x}" data-ev2l="${esc(cur.evs[1].label)}"`:''}`:'';
   const other=dual?`<button class="chip" data-open="${name}|${oSex}"${evAttrs}>switch stats to <span class="sx ${oSex==='F'?'f':'m'}">${oSex}</span> ↗</button>`:'';

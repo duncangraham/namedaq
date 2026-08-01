@@ -3,17 +3,17 @@
 <title>NMDQ PRO — Baby Name Terminal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0b0e16; --bg2:#10141f; --bg3:#161b29; --line:#242c40; --line2:#2f3852;
-  --ink:#e9edf5; --dim:#a3adc2; --faint:#6b7690;
+  --bg:#050505; --bg2:#101313; --bg3:#1e2020; --line:#252827; --line2:#323534;
+  --ink:#e9ece9; --dim:#98a29e; --faint:#606864;
   --hot:#ff64a8; --hot-ink:#ffa8cd; --hot-soft:rgba(255,100,168,.10); --hot-line:rgba(255,100,168,.45);
   --cool:#58b8ff; --cool-ink:#9fd4ff; --cool-soft:rgba(88,184,255,.10); --cool-line:rgba(88,184,255,.45);
-  --gain:#7de8a8; --loss:#ff8a80; --accent:#eef1f7; --accent-soft:rgba(238,241,247,.07); --gold:var(--accent); --gold-soft:var(--accent-soft);
+  --gain:#7de8a8; --loss:#ff8a80; --accent:#eef2ef; --accent-soft:rgba(238,242,239,.07); --r:2px; --gold:var(--accent); --gold-soft:var(--accent-soft);
   --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
-  --sans:'IBM Plex Sans',-apple-system,Segoe UI,sans-serif;
-  --disp:'Space Grotesk',var(--sans);
+  --sans:'Inter',-apple-system,Segoe UI,sans-serif;
+  --disp:'Inter',var(--sans);
   --s2:8px; --s3:16px; --s4:24px; --s5:40px;
 }
 *{box-sizing:border-box}
@@ -21,21 +21,22 @@ html{background:var(--bg)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1360px;margin:0 auto;padding:0 var(--s4)}
 .mono{font-family:var(--mono)}
+.ic{width:1em;height:1em;vertical-align:-.13em;flex-shrink:0}
 svg text{font-family:var(--mono)}
 
-.nav{position:sticky;top:0;z-index:50;background:rgba(11,14,22,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-.nav-in{position:relative;max-width:1360px;margin:0 auto;padding:10px var(--s4);display:flex;align-items:center;gap:var(--s4)}
+.nav{position:sticky;top:0;z-index:50;background:rgba(5,5,5,.90);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-in{position:relative;max-width:1360px;margin:0 auto;padding:10px var(--s4);display:flex;align-items:center;gap:14px}
 .brand{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:.06em;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
 .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--gain);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .nav-list{margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--dim);text-decoration:none;letter-spacing:.06em;padding:7px 4px;flex-shrink:0}
 .nav-list:hover,.nav-list.active{color:var(--ink)}
-.nav-pro{margin-left:var(--s3);background:var(--accent);color:#0b0e16;font-family:var(--mono);font-size:11.5px;font-weight:600;padding:7px 14px;text-decoration:none;letter-spacing:.06em;flex-shrink:0;border-radius:7px}
+.nav-pro{margin-left:10px;background:var(--accent);color:#050505;font-family:var(--mono);font-size:11.5px;font-weight:600;padding:7px 14px;text-decoration:none;letter-spacing:.06em;flex-shrink:0;border-radius:var(--r)}
 .nav-pro:hover{filter:brightness(.94)}
-.nav-menu{margin-left:var(--s3);width:34px;height:30px;background:transparent;border:1px solid var(--line2);cursor:pointer;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;flex-shrink:0;padding:0;border-radius:7px}
-.nav-menu span{display:block;width:16px;height:1.5px;background:var(--dim)}
-.nav-menu:hover span{background:var(--ink)}
-.nav-menu[aria-expanded="true"] span{background:var(--accent)}
+.nav-menu{margin-left:10px;width:34px;height:30px;background:transparent;border:1px solid var(--line2);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;border-radius:var(--r);color:var(--dim)}
+
+.nav-menu:hover{color:var(--ink)}
+.nav-menu[aria-expanded="true"]{color:var(--accent)}
 .nav-toc{position:absolute;right:var(--s4);top:100%;margin-top:6px;background:var(--bg2);border:1px solid var(--line2);min-width:230px;padding:6px;box-shadow:0 10px 34px rgba(0,0,0,.5);display:flex;flex-direction:column;z-index:60}
 .nav-toc[hidden]{display:none}
 .nav-toc a{font-family:var(--mono);font-size:12.5px;color:var(--dim);text-decoration:none;padding:8px 10px;letter-spacing:.03em}
@@ -46,21 +47,21 @@ svg text{font-family:var(--mono)}
 .cmd{display:flex;gap:10px;align-items:center;margin-top:var(--s4);flex-wrap:wrap}
 .cmd .prompt{font-family:var(--mono);color:var(--gold);font-weight:600}
 .searchbox{position:relative;flex:1;min-width:220px;max-width:420px}
-#q{width:100%;background:var(--bg3);border:1px solid var(--line2);color:var(--ink);font-family:var(--mono);font-size:15px;padding:9px 13px;letter-spacing:.03em}
+#q{width:100%;background:var(--bg3);border:1px solid var(--line2);color:var(--ink);font-family:var(--mono);font-size:15px;padding:9px 13px;letter-spacing:.03em;border-radius:var(--r)}
 #q:focus{outline:2px solid var(--gold);outline-offset:-1px}
 .sugg{position:absolute;top:100%;left:0;right:0;background:var(--bg3);border:1px solid var(--line2);border-top:0;z-index:30;max-height:280px;overflow:auto}
 .sugg button{display:flex;justify-content:space-between;width:100%;background:none;border:0;color:var(--ink);font-family:var(--mono);font-size:13.5px;padding:8px 13px;cursor:pointer;text-align:left}
 .sugg button:hover,.sugg button.sel{background:var(--gold-soft)}
-.btn{background:var(--accent);border:1px solid var(--accent);color:#0b0e16;font-family:var(--mono);font-size:12.5px;font-weight:600;padding:9px 16px;cursor:pointer;letter-spacing:.04em;border-radius:7px;transition:filter .12s}
+.btn{background:var(--accent);border:1px solid var(--accent);color:#050505;font-family:var(--mono);font-size:12.5px;font-weight:600;padding:9px 16px;cursor:pointer;letter-spacing:.04em;border-radius:var(--r);transition:filter .12s}
 .btn:hover{filter:brightness(.94)}
 .btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--dim)}
 .btn.ghost:hover{color:var(--ink);border-color:var(--faint);filter:none}
-.seg{display:inline-flex;border:1px solid var(--line2);font-family:var(--mono);font-size:11.5px;margin-left:auto;border-radius:7px;overflow:hidden}
+.seg{display:inline-flex;border:1px solid var(--line2);font-family:var(--mono);font-size:11.5px;margin-left:auto;border-radius:var(--r);overflow:hidden}
 .seg button{background:none;border:0;color:var(--dim);padding:8px 13px;cursor:pointer;font:inherit}
 .seg button.on{background:var(--bg3);color:var(--gold);font-weight:600}
 
 .tickers{display:flex;gap:8px;flex-wrap:wrap;margin-top:var(--s3)}
-.ticker{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:13px;font-weight:600;border:1px solid var(--line2);background:var(--bg2);padding:6px 10px;cursor:pointer}
+.ticker{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:13px;font-weight:600;border:1px solid var(--line2);background:var(--bg2);padding:6px 10px;cursor:pointer;border-radius:var(--r)}
 .ticker.focused{border-color:var(--gold);background:var(--gold-soft)}
 .ticker .swatch{width:12px;height:12px;border-radius:2px;flex-shrink:0}
 .ticker .rm{border:0;background:none;color:var(--faint);cursor:pointer;font:inherit;padding:0 0 0 4px}
@@ -70,7 +71,7 @@ svg text{font-family:var(--mono)}
 .sx.m{color:var(--cool-ink);border-color:var(--cool-line);background:var(--cool-soft)}
 .hint{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-top:6px}
 
-.panel{border:1px solid var(--line);background:var(--bg2);padding:var(--s3);margin-top:var(--s3)}
+.panel{border:1px solid var(--line);background:var(--bg2);padding:var(--s3);margin-top:var(--s3);border-radius:var(--r)}
 .panel-hd{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
 .chart-box{width:100%;overflow-x:auto;position:relative}
 .chart-box svg{display:block;width:100%;height:auto;min-width:640px}
@@ -93,10 +94,10 @@ svg text{font-family:var(--mono)}
 .stats tr.wrap td{white-space:normal;line-height:1.5;min-width:130px;vertical-align:top}
 
 .usmap{display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(8,1fr);gap:4px;aspect-ratio:11/8;margin-top:6px}
-.st{border:0;border-radius:3px;font-family:var(--mono);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:2px;min-width:0;background:var(--bg3);color:var(--dim)}
+.st{border:0;border-radius:var(--r);font-family:var(--mono);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:2px;min-width:0;background:var(--bg3);color:var(--dim)}
 .st .ab{font-size:11px;font-weight:600;line-height:1.2}
 .st .lf{font-size:8.5px;line-height:1;opacity:.9}
-.st.hotst{color:#141414}
+.st.hotst{color:#050505}
 .strows{font-family:var(--mono);font-size:12.5px;margin-top:10px}
 .strow{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--line)}
 .strow:last-child{border-bottom:0}
@@ -109,7 +110,7 @@ svg text{font-family:var(--mono)}
     <a class="brand" href="index.html"><span class="dot"></span>NMDQ · THE NURSERY EXCHANGE</a>
     <a class="nav-list" href="rankings.html">2024 FULL LIST</a>
     <a class="nav-pro" href="terminal.html">PRO TERMINAL</a>
-    <button class="nav-menu" id="menuBtn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <button class="nav-menu" id="menuBtn" aria-label="Open menu" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></button>
   </div>
   <div class="nav-toc" id="navToc" hidden>
     <a href="index.html#fundamentals">§1 · Market fundamentals</a>
@@ -122,8 +123,8 @@ svg text{font-family:var(--mono)}
     <a href="index.html#longview">§8 · The long view</a>
     <a href="index.html#prospectus">§9 · Prospectus</a>
     <div class="toc-div"></div>
-    <a href="rankings.html">Every name of 2024 →</a>
-    <a href="terminal.html">Pro terminal →</a>
+    <a href="rankings.html">Every name of 2024 <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    <a href="terminal.html">Pro terminal <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
   </div>
 </nav>
 
@@ -286,7 +287,7 @@ function render(){
   // chips
   $('#tickers').innerHTML=tickers.map((t,i)=>{
     const[n,s]=t.key.split('|');
-    return `<span class="ticker ${i===focusI?'focused':''}" data-i="${i}" role="button" tabindex="0" aria-label="Focus ${n}"><span class="swatch" style="background:${colorOf(i)}"></span>${esc(n)}<span class="sx ${s==='F'?'f':'m'}">${s}</span><button class="rm" data-rm="${i}" aria-label="Remove ${n}">×</button></span>`;
+    return `<span class="ticker ${i===focusI?'focused':''}" data-i="${i}" role="button" tabindex="0" aria-label="Focus ${n}"><span class="swatch" style="background:${colorOf(i)}"></span>${esc(n)}<span class="sx ${s==='F'?'f':'m'}">${s}</span><button class="rm" data-rm="${i}" aria-label="Remove ${n}"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></span>`;
   }).join('')||'<span class="empty">No tickers — add a name above.</span>';
   // chart
   if(!tickers.length){$('#chartBox').innerHTML='';$('#statsTbl').innerHTML='';$('#usmap').innerHTML='';$('#stRows').innerHTML='';$('#mapHd').textContent='State distribution';return;}
