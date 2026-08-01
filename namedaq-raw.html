@@ -14,7 +14,9 @@
   /* movement: green = heating up, red = cooling off (arrows, deltas, boards) */
   --gain:#7de8a8; --gain-soft:rgba(125,232,168,.12);
   --loss:#ff8a80; --loss-soft:rgba(255,138,128,.12);
-  --gold:#ffd166; --gold-soft:rgba(255,209,102,.10);
+  /* neutral accent (replaces the old gold) — color is reserved for data */
+  --accent:#eef1f7; --accent-soft:rgba(238,241,247,.07);
+  --gold:var(--accent); --gold-soft:var(--accent-soft);
   --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
   --sans:'IBM Plex Sans',-apple-system,Segoe UI,sans-serif;
   --disp:'Space Grotesk',var(--sans);
@@ -52,9 +54,9 @@ svg text{font-family:var(--mono)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .nav-list{margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--dim);text-decoration:none;letter-spacing:.06em;padding:7px 4px;flex-shrink:0}
 .nav-list:hover{color:var(--ink)}
-.nav-pro{margin-left:var(--s3);background:var(--gold);color:#141414;font-family:var(--mono);font-size:11.5px;font-weight:600;padding:7px 14px;text-decoration:none;letter-spacing:.06em;flex-shrink:0}
-.nav-pro:hover{filter:brightness(1.08)}
-.nav-menu{margin-left:var(--s3);width:34px;height:30px;background:transparent;border:1px solid var(--line2);cursor:pointer;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;flex-shrink:0;padding:0}
+.nav-pro{margin-left:var(--s3);background:var(--gold);color:#141414;font-family:var(--mono);font-size:11.5px;font-weight:600;padding:7px 14px;text-decoration:none;letter-spacing:.06em;flex-shrink:0;border-radius:7px}
+.nav-pro:hover{filter:brightness(.94)}
+.nav-menu{margin-left:var(--s3);width:34px;height:30px;background:transparent;border:1px solid var(--line2);cursor:pointer;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;flex-shrink:0;padding:0;border-radius:7px}
 .nav-menu span{display:block;width:16px;height:1.5px;background:var(--dim)}
 .nav-menu:hover span{background:var(--ink)}
 .nav-menu[aria-expanded="true"] span{background:var(--gold)}
@@ -69,7 +71,7 @@ svg text{font-family:var(--mono)}
 .hero{padding:var(--s7) 0 var(--s6);border-bottom:1px solid var(--line);background:
   radial-gradient(1200px 500px at 80% -10%,rgba(255,100,168,.07),transparent 60%),
   radial-gradient(1000px 500px at 10% 110%,rgba(88,184,255,.07),transparent 60%)}
-.kicker{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;margin-bottom:var(--s3)}
+.kicker{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:var(--s3)}
 .hero h1{font-size:clamp(38px,6vw,68px);font-weight:700;letter-spacing:-.015em;max-width:18ch}
 .hero .sub{color:var(--dim);font-size:19px;max-width:58ch;margin-top:var(--s4)}
 .stat-row{display:flex;gap:var(--s3);flex-wrap:wrap;margin-top:var(--s5)}
@@ -82,7 +84,7 @@ svg text{font-family:var(--mono)}
 /* ---------- sections ---------- */
 section{padding:var(--s7) 0;border-bottom:1px solid var(--line)}
 section.alt{background:var(--bg2)}
-.eyebrow{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:var(--s2)}
+.eyebrow{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:var(--s2)}
 section h2{font-size:clamp(26px,3.4vw,40px);letter-spacing:-.01em;margin-bottom:var(--s3);max-width:24ch}
 .lede{color:var(--dim);font-size:18px}
 
@@ -112,13 +114,13 @@ section.alt .panel{background:var(--bg3)}
 .dyn-tip .yrs{color:var(--dim)}
 
 details.deeper{border:1px solid var(--line);background:var(--bg2);margin-top:var(--s3);max-width:68ch}
-details.deeper summary{cursor:pointer;padding:12px var(--s3);font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.05em;color:var(--gold)}
+details.deeper summary{cursor:pointer;padding:12px var(--s3);font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.05em;color:var(--dim)}
 details.deeper[open] summary{border-bottom:1px solid var(--line)}
 details.deeper .body{padding:var(--s3);color:var(--dim);font-size:15.5px}
 details.deeper .body p:last-child{margin-bottom:0}
 details.deeper .body ul{margin:0 0 var(--s3);padding-left:22px}
 details.deeper .body li{margin:3px 0}
-details.deeper .body h4{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:20px 0 8px}
+details.deeper .body h4{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:20px 0 8px}
 
 /* ---------- time machine ---------- */
 .tm{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);margin-top:var(--s4)}
@@ -190,37 +192,30 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .meme .cap{font-size:13px;color:var(--dim);line-height:1.5}
 
 /* ---------- terminal ---------- */
-.term{border:1px solid var(--line2);background:#0a0d15;box-shadow:0 0 0 4px rgba(255,209,102,.04);margin-top:var(--s4)}
-.term-top{display:flex;gap:var(--s3);align-items:center;padding:var(--s3);border-bottom:1px solid var(--line);flex-wrap:wrap}
-.term-top .prompt{font-family:var(--mono);color:var(--gold);font-weight:600}
-.term-search{position:relative;flex:1;min-width:220px}
-#q{width:100%;background:var(--bg3);border:1px solid var(--line2);color:var(--ink);font-family:var(--mono);font-size:16px;padding:10px 14px;letter-spacing:.03em}
-#q:focus{outline:2px solid var(--gold);outline-offset:-1px}
+.term{border:1px solid var(--line2);background:#0a0d15;box-shadow:0 0 0 4px rgba(238,241,247,.04);margin-top:var(--s4)}
+.term-top{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:var(--s3);border-bottom:1px solid var(--line)}
+.term-searchrow{display:flex;width:100%;align-items:stretch}
+.term-search{position:relative;flex:1;min-width:0}
+#q{width:100%;background:var(--bg3);border:1px solid var(--line2);border-right:0;color:var(--ink);font-family:var(--mono);font-size:16px;padding:11px 14px;letter-spacing:.03em;border-radius:7px 0 0 7px}
+#q:focus{outline:none;border-color:var(--accent)}
+.term-searchrow .btn{border-radius:0 7px 7px 0;flex-shrink:0}
 .sugg{position:absolute;top:100%;left:0;right:0;background:var(--bg3);border:1px solid var(--line2);border-top:0;z-index:20;max-height:280px;overflow:auto}
 .sugg button{display:flex;justify-content:space-between;width:100%;background:none;border:0;color:var(--ink);font-family:var(--mono);font-size:14px;padding:9px 14px;cursor:pointer;text-align:left}
-.sugg button:hover,.sugg button.sel{background:var(--gold-soft)}
+.sugg button:hover,.sugg button.sel{background:var(--accent-soft)}
 .sugg .s-sx{color:var(--faint);font-size:11px}
-.btn{background:var(--gold);border:0;color:#141414;font-family:var(--mono);font-size:13.5px;font-weight:600;padding:11px 22px;cursor:pointer;letter-spacing:.05em}
-.btn:hover{filter:brightness(1.08)}
+.btn{background:var(--accent);border:1px solid var(--accent);color:#0b0e16;font-family:var(--mono);font-size:13px;font-weight:600;padding:10px 20px;cursor:pointer;letter-spacing:.04em;border-radius:7px;transition:filter .12s,border-color .12s,color .12s}
+.btn:hover{filter:brightness(.94)}
 .btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--dim)}
-.btn.ghost:hover{color:var(--ink);border-color:var(--faint)}
-.chip{background:transparent;border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);font-size:12px;padding:4px 10px;cursor:pointer}
-.chip:hover{color:var(--ink);border-color:var(--gold)}
-/* mobile terminal top: search on its own row, action buttons split evenly (placed after base rules to win source-order ties) */
-@media (max-width:560px){
-  .term-top{gap:10px}
-  .term-top .prompt{display:none}
-  .term-search{flex:1 1 100%;min-width:0;max-width:none}
-  .term-top .btn{flex:1 1 0;padding:11px 8px}
-  .term-top a.btn{display:none}
-}
+.btn.ghost:hover{color:var(--ink);border-color:var(--faint);filter:none}
+.chip{background:transparent;border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);font-size:12px;padding:4px 10px;cursor:pointer;border-radius:5px}
+.chip:hover{color:var(--ink);border-color:var(--accent)}
 .term-body{padding:var(--s3)}
 .quote-hd{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s2)}
 .quote-hd .sym{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.1em}
 .quote-hd .name{font-family:var(--disp);font-size:34px;font-weight:700;letter-spacing:.01em}
 .quote-hd .pill{font-family:var(--mono);font-size:16px;font-weight:600;padding:2px 10px;border-radius:3px}
 .q-mean{font-family:var(--mono);font-size:12.5px;color:var(--dim);margin:2px 0 6px;line-height:1.6}
-.q-mean .lbl{color:var(--gold);font-size:10.5px;letter-spacing:.1em;margin-right:8px}
+.q-mean .lbl{color:var(--dim);font-size:10.5px;letter-spacing:.1em;margin-right:8px}
 .q-mean .src{color:var(--faint);font-size:10px;margin-left:8px;letter-spacing:.06em}
 .pill.up{background:var(--gain-soft);color:var(--gain)}
 .pill.down{background:var(--loss-soft);color:var(--loss)}
@@ -259,12 +254,12 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .nat-card{border:1px solid var(--line);background:var(--bg3);padding:var(--s3)}
 .nat-card .nh{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}
 .nat-card .nn{font-family:var(--disp);font-size:17px;font-weight:700}
-.nat-card .npk{font-family:var(--mono);font-size:11px;color:var(--gold)}
+.nat-card .npk{font-family:var(--mono);font-size:11px;color:var(--dim)}
 .minimap{display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(8,1fr);gap:2px;aspect-ratio:11/8}
 .minimap .mt{border-radius:1px;background:#0c0f18;min-width:0}
 .nat-card .ncap{font-family:var(--sans);font-size:12.5px;color:var(--dim);line-height:1.5;margin:0 0 12px}
 .nat-scale{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:var(--s3)}
-.nat-scale .bar{height:9px;width:120px;border-radius:2px;background:linear-gradient(90deg,#1a1f2e,#8a6a1f,var(--gold))}
+.nat-scale .bar{height:9px;width:120px;border-radius:2px;background:linear-gradient(90deg,#1a1f2e,#6b7690,var(--accent))}
 
 /* ---------- unisex desk ---------- */
 .uni-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:var(--s4);margin-top:var(--s4)}
@@ -296,7 +291,7 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .rules{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);margin-top:var(--s4)}
 @media (max-width:860px){.rules{grid-template-columns:1fr}}
 .rule{border:1px solid var(--line);background:var(--bg2);padding:var(--s3) var(--s4)}
-.rule h3{font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:var(--s2)}
+.rule h3{font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:var(--s2)}
 .rule p{color:var(--dim);font-size:15px;margin:0}
 /* sex badges — global, colored; placed last to win over local gray .sx rules */
 .sx{font-family:var(--mono);font-size:10px;border:1px solid var(--line2);padding:0 4px;border-radius:2px}
@@ -462,12 +457,12 @@ footer a{color:var(--dim)}
     </div>
     <div class="boards">
       <div class="panel board">
-        <div class="panel-hd"><span class="t" style="color:var(--gold)">Momentum screen · rising every year since 2021</span></div>
+        <div class="panel-hd"><span class="t">Momentum screen · rising every year since 2021</span></div>
         <div style="overflow-x:auto"><table id="tblPenny" aria-label="Penny stock momentum picks"></table></div>
         <div class="board-cap">Raw babies per year, not per-million — at this size, rates round to dust. Click a name to chart it.</div>
       </div>
       <div class="panel board">
-        <div class="panel-hd"><span class="t" style="color:var(--gold)">Pennies that mooned · 2014 → 2024</span></div>
+        <div class="panel-hd"><span class="t">Pennies that mooned · 2014 → 2024</span></div>
         <div style="overflow-x:auto"><table id="tblMoon" aria-label="Penny names that became popular"></table></div>
         <div class="board-cap" id="pennyRisk"></div>
       </div>
@@ -498,14 +493,14 @@ footer a{color:var(--dim)}
     <p class="prose lede">6,224 names are listed here — every name that reached 150 babies in a single year since 1880, plus the penny desk’s momentum picks. Type one and pull its full price history.</p>
     <div class="term">
       <div class="term-top">
-        <span class="prompt mono">NMDQ&gt;</span>
-        <div class="term-search">
-          <input id="q" type="search" placeholder="Type a name…" autocomplete="off" spellcheck="false" aria-label="Search a name">
-          <div class="sugg" id="sugg" hidden></div>
+        <div class="term-searchrow">
+          <div class="term-search">
+            <input id="q" type="search" placeholder="Type a name…" autocomplete="off" spellcheck="false" aria-label="Search a name">
+            <div class="sugg" id="sugg" hidden></div>
+          </div>
+          <button class="btn" id="goBtn">GET QUOTE</button>
         </div>
-        <button class="btn" id="goBtn">GET QUOTE</button>
         <button class="btn ghost" id="luckyBtn">RANDOM</button>
-        <a class="btn ghost" href="terminal.html" style="text-decoration:none">PRO MODE ↗</a>
       </div>
       <div class="term-body" id="termBody">
         <div class="term-msg">Awaiting ticker… try your own name, your kid’s, or your grandma’s.</div>
@@ -553,14 +548,14 @@ footer a{color:var(--dim)}
     </div>
     <div class="uni-grid">
       <div class="panel">
-        <div class="panel-hd"><span class="t" style="color:var(--gold)">The balance board · 2024</span>
+        <div class="panel-hd"><span class="t">The balance board · 2024</span>
           <span class="legend"><span><span class="sw" style="background:var(--cool-line)"></span>Boys</span><span><span class="sw" style="background:var(--hot-line)"></span>Girls</span></span>
         </div>
         <div id="uniTop"></div>
         <div class="board-cap">Gold line = a perfect 50/50 split. Names given to 500+ babies in 2024 with at least a 30–70 split.</div>
       </div>
       <div class="panel">
-        <div class="panel-hd"><span class="t" style="color:var(--gold)">One-way trades</span></div>
+        <div class="panel-hd"><span class="t">One-way trades</span></div>
         <div id="uniFlips"></div>
         <div class="board-cap">Each row shows the boy/girl split in 1940–60 → in 2004–24; the gold tick is 50/50. The flip almost never runs the other way: once a name reads as a girls’ name, parents stop choosing it for boys and it rarely returns. Leslie, Ashley, and Shannon made the same trip in earlier decades.</div>
       </div>
@@ -693,15 +688,15 @@ function chart(series,opts){
   (o.annots||[]).forEach(a=>{
     if(a.vline){
       const x=X(a.x);
-      g+=`<line x1="${x}" y1="${P.t}" x2="${x}" y2="${o.h-P.b}" stroke="${a.color||'#ffd166'}" stroke-dasharray="4 4" stroke-opacity=".55"/>`;
+      g+=`<line x1="${x}" y1="${P.t}" x2="${x}" y2="${o.h-P.b}" stroke="${a.color||'#eef1f7'}" stroke-dasharray="4 4" stroke-opacity=".55"/>`;
       const anch=a.anchor||((a.x-o.x0)/(o.x1-o.x0)>.6?'end':'start');
       const ty=a.labelBottom?o.h-P.b-8:P.t+11;
-      if(a.label)g+=`<text x="${x+(anch==='end'?-5:5)}" y="${ty}" font-size="10.5" fill="${a.color||'#ffd166'}" text-anchor="${anch}">${a.label}</text>`;
+      if(a.label)g+=`<text x="${x+(anch==='end'?-5:5)}" y="${ty}" font-size="10.5" fill="${a.color||'#eef1f7'}" text-anchor="${anch}">${a.label}</text>`;
       return;
     }
-    if(!a.nodot)g+=`<circle cx="${X(a.x)}" cy="${Y(a.y)}" r="3.5" fill="${a.color||'#ffd166'}"/>`;
+    if(!a.nodot)g+=`<circle cx="${X(a.x)}" cy="${Y(a.y)}" r="3.5" fill="${a.color||'#eef1f7'}"/>`;
     const ax=X(a.x)+(a.dx||8),ay=Y(a.y)+(a.dy||-8);
-    g+=`<text x="${ax}" y="${ay}" font-size="11" fill="${a.color||'#ffd166'}" text-anchor="${a.anchor||'start'}">${a.label}</text>`;
+    g+=`<text x="${ax}" y="${ay}" font-size="11" fill="${a.color||'#eef1f7'}" text-anchor="${a.anchor||'start'}">${a.label}</text>`;
   });
   return `<svg viewBox="0 0 ${o.w} ${o.h}" xmlns="http://www.w3.org/2000/svg" role="img" data-x0="${o.x0}" data-x1="${o.x1}" data-ytop="${ytop}" data-w="${o.w}" data-h="${o.h}" data-pl="${P.l}" data-pr="${P.r}" data-pt="${P.t}" data-pb="${P.b}">${g}</svg>`;
 }
@@ -871,7 +866,7 @@ renderBoards('30');
   const P=ND.penny;if(!P)return;
   const pspark=ser=>{const max=Math.max(...ser)||1;let d='';
     ser.forEach((v,i)=>{d+=(d?'L':'M')+(i/(ser.length-1)*80).toFixed(1)+' '+(22-v/max*20).toFixed(1);});
-    return `<svg class="spark" width="84" height="24" viewBox="0 0 84 24" aria-hidden="true"><path d="${d}" style="stroke:var(--gold)"/></svg>`;};
+    return `<svg class="spark" width="84" height="24" viewBox="0 0 84 24" aria-hidden="true"><path d="${d}" style="stroke:var(--gain)"/></svg>`;};
   $('#tblPenny').innerHTML=`<thead><tr><th></th><th>Name</th><th style="text-align:right">2021→2024</th><th style="text-align:right">×</th><th>’15–’24</th></tr></thead><tbody>`+
     P.picks.map((p,i)=>`<tr><td style="color:var(--faint)">${i+1}</td><td><span class="nm" data-open="${p.n}|${p.s}">${esc(p.n)}</span><span class="sx ${p.s==='F'?'f':'m'}">${p.s}</span></td><td class="num" style="color:var(--dim)">${p.c21} → ${p.c24}</td><td class="d" style="color:var(--gain)">×${p.x}</td><td>${pspark(p.ser)}</td></tr>`).join('')+'</tbody>';
   $('#tblMoon').innerHTML=`<thead><tr><th></th><th>Name</th><th style="text-align:right">2014</th><th style="text-align:right">2024</th><th style="text-align:right">×</th></tr></thead><tbody>`+
@@ -893,7 +888,7 @@ $('#memes').innerHTML=MEMES.map((m,idx)=>{
   const c=counts(m.n,m.s)||[];
   const seg=[];for(let y=m.y0;y<=m.y1;y++)seg.push(c[y-Y0]||0);
   const vals=new Array(YRS).fill(0);seg.forEach((v,j)=>vals[m.y0-Y0+j]=v);
-  const sv=chart([{vals,color:'#ffd166',width:2,fill:'rgba(255,209,102,.08)'}],{w:340,h:120,x0:m.y0,x1:m.y1,pad:{l:40,r:22,t:8,b:20},yFmt:v=>v>=1000?(v/1000)+'k':v});
+  const sv=chart([{vals,color:'#eef1f7',width:2,fill:'rgba(238,241,247,.08)'}],{w:340,h:120,x0:m.y0,x1:m.y1,pad:{l:40,r:22,t:8,b:20},yFmt:v=>v>=1000?(v/1000)+'k':v});
   return `<button class="meme" data-open="${m.n}|${m.s}"><span class="hd"><span class="nm">${m.n.toUpperCase()} <span class="sx ${m.s==='F'?'f':'m'}">${m.s}</span></span><span class="tag ${m.tag}">${m.tag==='spike'?'▲ spike':'▼ crash'}</span></span>${sv}<span class="cap">${m.cap}</span></button>`;
 }).join('');
 
@@ -1076,7 +1071,7 @@ OK:[3,6],LA:[4,6],MS:[5,6],AL:[6,6],GA:[7,6],
 HI:[0,7],TX:[3,7],FL:[9,7]};
 // categorical palette for the map — deliberately avoids the exact hot-pink/cool-blue
 // used for rising/falling so the two encodings don't read as one
-const PAL=['#ffd166','#c792ea','#7fd8e8','#ffab70','#8be9b5','#ff8fbe','#6fa8dc','#f47a7a'];
+const PAL=['#eef1f7','#c792ea','#7fd8e8','#ffab70','#8be9b5','#ff8fbe','#6fa8dc','#f47a7a'];
 let mapSex='F',selSt=null;
 function renderMap(){
   const top=ND.states.top;
@@ -1113,7 +1108,7 @@ renderMap();
       const[c,r]=GRID[st];const lift=item.sd[st];
       let style='',title=(FULL[st]||st)+': under 5 births — not listed';
       if(lift){const a=Math.max(.12,Math.min(1,lift/8));
-        style=`background:rgba(255,209,102,${a.toFixed(2)})`;
+        style=`background:rgba(238,241,247,${a.toFixed(2)})`;
         title=`${FULL[st]||st}: ×${lift} national rate`;}
       return `<span class="mt" style="grid-column:${c+1};grid-row:${r+1};${style}" title="${title}"></span>`;
     }).join('');
@@ -1126,12 +1121,12 @@ renderMap();
 (function(){
   const U=ND.unisex;if(!U)return;
   $('#uniChart').innerHTML=chart(
-    [{vals:U.share,color:'#ffd166',width:2.2,fill:'rgba(255,209,102,.07)'}],
+    [{vals:U.share,color:'#eef1f7',width:2.2,fill:'rgba(238,241,247,.07)'}],
     {h:280,yFmt:v=>v+'%',annots:[
       {x:1950,y:U.share[1950-Y0],label:'a century near 2%',dy:-22,anchor:'middle'},
       {x:2024,y:U.share[Y1-Y0],label:'2024: 6.0%',anchor:'end',dx:-10,dy:-14},
     ]});
-  attachScrub($('#uniChart'),[{vals:U.share,color:'#ffd166'}],
+  attachScrub($('#uniChart'),[{vals:U.share,color:'#eef1f7'}],
     yr=>`<b>${yr}</b> · ${U.share[yr-Y0].toFixed(2)}% of babies had a shared name`);
   $('#uniTop').innerHTML=U.top.map(u=>
     `<div class="urow"><span class="nm" data-open="${u.n}|${u.f>=u.m?'F':'M'}">${esc(u.n)}</span><span class="usplit" title="${100-u.pctF}% boys · ${u.pctF}% girls"><span class="m" style="width:${100-u.pctF}%"></span><span class="f" style="width:${u.pctF}%"></span></span><span class="pf">${u.pctF}% F</span><span class="tt">${fmt(u.t)}</span></div>`).join('');

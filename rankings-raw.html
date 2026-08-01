@@ -10,7 +10,7 @@
   --ink:#e9edf5; --dim:#a3adc2; --faint:#6b7690;
   --hot:#ff64a8; --hot-ink:#ffa8cd; --hot-soft:rgba(255,100,168,.10); --hot-line:rgba(255,100,168,.45);
   --cool:#58b8ff; --cool-ink:#9fd4ff; --cool-soft:rgba(88,184,255,.10); --cool-line:rgba(88,184,255,.45);
-  --gold:#ffd166; --gold-soft:rgba(255,209,102,.10);
+  --accent:#eef1f7; --accent-soft:rgba(238,241,247,.07); --gold:var(--accent); --gold-soft:var(--accent-soft);
   --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
   --sans:'IBM Plex Sans',-apple-system,Segoe UI,sans-serif;
   --disp:'Space Grotesk',var(--sans);
@@ -22,20 +22,32 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font
 .wrap{max-width:1000px;margin:0 auto;padding:0 var(--s4)}
 .mono{font-family:var(--mono)}
 
-.topbar{border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:0;z-index:40}
-.topbar-in{max-width:1000px;margin:0 auto;padding:12px var(--s4);display:flex;align-items:center;gap:var(--s3)}
-.brand{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:.06em;display:flex;align-items:center;gap:10px}
-.brand .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse 2s ease-in-out infinite}
+.nav{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line)}
+.nav-in{position:relative;max-width:1000px;margin:0 auto;padding:10px var(--s4);display:flex;align-items:center;gap:var(--s4)}
+.brand{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:.06em;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
+.brand .dot{width:8px;height:8px;border-radius:50%;background:var(--gain);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.back{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--dim);text-decoration:none;letter-spacing:.04em}
-.back:hover{color:var(--ink)}
+.nav-list{margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--dim);text-decoration:none;letter-spacing:.06em;padding:7px 4px;flex-shrink:0}
+.nav-list:hover,.nav-list.active{color:var(--ink)}
+.nav-pro{margin-left:var(--s3);background:var(--accent);color:#0b0e16;font-family:var(--mono);font-size:11.5px;font-weight:600;padding:7px 14px;text-decoration:none;letter-spacing:.06em;flex-shrink:0;border-radius:7px}
+.nav-pro:hover{filter:brightness(.94)}
+.nav-menu{margin-left:var(--s3);width:34px;height:30px;background:transparent;border:1px solid var(--line2);cursor:pointer;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;flex-shrink:0;padding:0;border-radius:7px}
+.nav-menu span{display:block;width:16px;height:1.5px;background:var(--dim)}
+.nav-menu:hover span{background:var(--ink)}
+.nav-menu[aria-expanded="true"] span{background:var(--accent)}
+.nav-toc{position:absolute;right:var(--s4);top:100%;margin-top:6px;background:var(--bg2);border:1px solid var(--line2);min-width:230px;padding:6px;box-shadow:0 10px 34px rgba(0,0,0,.5);display:flex;flex-direction:column;z-index:60}
+.nav-toc[hidden]{display:none}
+.nav-toc a{font-family:var(--mono);font-size:12.5px;color:var(--dim);text-decoration:none;padding:8px 10px;letter-spacing:.03em}
+.nav-toc a:hover{color:var(--ink);background:var(--bg3)}
+.toc-div{height:1px;background:var(--line);margin:5px 8px}
+@media (max-width:640px){.nav-list{display:none}.nav-pro{display:none}}
 
 header.hd{padding:var(--s5) 0 var(--s4);border-bottom:1px solid var(--line)}
-.kicker{font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;margin-bottom:10px}
+.kicker{font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:10px}
 h1{font-family:var(--disp);font-size:clamp(28px,4vw,42px);font-weight:700;letter-spacing:-.01em;margin:0}
 .sub{color:var(--dim);margin-top:var(--s3);max-width:60ch}
 
-.controls{display:flex;gap:var(--s3);align-items:center;flex-wrap:wrap;position:sticky;top:46px;background:var(--bg);z-index:30;padding:14px 0;border-bottom:1px solid var(--line)}
+.controls{display:flex;gap:var(--s3);align-items:center;flex-wrap:wrap;position:sticky;top:50px;background:var(--bg);z-index:30;padding:14px 0;border-bottom:1px solid var(--line)}
 .toggle{display:inline-flex;border:1px solid var(--line2);font-family:var(--mono);font-size:13px;font-weight:600}
 .toggle button{background:transparent;border:0;color:var(--dim);padding:9px 20px;cursor:pointer;font:inherit;letter-spacing:.05em;display:flex;align-items:center;gap:8px}
 .toggle button.on.f{background:var(--hot);color:#141414}
@@ -46,7 +58,7 @@ h1{font-family:var(--disp);font-size:clamp(28px,4vw,42px);font-weight:700;letter
 .count{font-family:var(--mono);font-size:12px;color:var(--faint);margin-left:auto}
 
 .tbl{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:14px;margin-bottom:80px}
-.tbl thead th{position:sticky;top:113px;background:var(--bg);text-align:right;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--line2);z-index:5}
+.tbl thead th{position:sticky;top:118px;background:var(--bg);text-align:right;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--line2);z-index:5}
 .tbl thead th:nth-child(2){text-align:left}
 .tbl td{padding:7px 12px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
 .tbl td.rk{color:var(--faint);width:64px}
@@ -60,12 +72,36 @@ h1{font-family:var(--disp);font-size:clamp(28px,4vw,42px);font-weight:700;letter
 .more{display:block;width:100%;text-align:center;background:var(--bg2);border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);font-size:13px;padding:14px;cursor:pointer;margin:var(--s4) 0 80px}
 .more:hover{color:var(--ink);border-color:var(--gold)}
 .empty{font-family:var(--mono);color:var(--dim);padding:var(--s5) 0;text-align:center}
+@media (max-width:560px){
+  .tbl{font-size:13px}
+  .tbl td,.tbl thead th{padding:7px 8px}
+  .tbl td.cum,.tbl thead th:nth-child(5){display:none}
+  .tbl td.rk{width:46px}
+}
 </style>
 
-<div class="topbar"><div class="topbar-in">
-  <span class="brand"><span class="dot"></span>NMDQ</span>
-  <a class="back" href="index.html">← BACK TO THE MARKET REPORT</a>
-</div></div>
+<nav class="nav" aria-label="Sections">
+  <div class="nav-in">
+    <a class="brand" href="index.html"><span class="dot"></span>NMDQ · THE NURSERY EXCHANGE</a>
+    <a class="nav-list active" href="rankings.html">2024 FULL LIST</a>
+    <a class="nav-pro" href="terminal.html">PRO TERMINAL</a>
+    <button class="nav-menu" id="menuBtn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+  <div class="nav-toc" id="navToc" hidden>
+    <a href="index.html#fundamentals">§1 · Market fundamentals</a>
+    <a href="index.html#board">§2 · The big board</a>
+    <a href="index.html#penny">§3 · The penny desk</a>
+    <a href="index.html#events">§4 · The event desk</a>
+    <a href="index.html#terminal">§5 · The quote terminal</a>
+    <a href="index.html#states">§6 · Regional exchanges</a>
+    <a href="index.html#unisex">§7 · The unisex desk</a>
+    <a href="index.html#longview">§8 · The long view</a>
+    <a href="index.html#prospectus">§9 · Prospectus</a>
+    <div class="toc-div"></div>
+    <a href="rankings.html">Every name of 2024 →</a>
+    <a href="terminal.html">Pro terminal →</a>
+  </div>
+</nav>
 
 <div class="wrap">
   <header class="hd">
@@ -95,6 +131,15 @@ h1{font-family:var(--disp);font-size:clamp(28px,4vw,42px);font-weight:700;letter
 <script>
 (function(){
 'use strict';
+(function(){
+  const btn=document.getElementById('menuBtn'),toc=document.getElementById('navToc');
+  if(!btn||!toc)return;
+  const set=open=>{toc.hidden=!open;btn.setAttribute('aria-expanded',open?'true':'false');};
+  btn.addEventListener('click',e=>{e.stopPropagation();set(toc.hidden);});
+  toc.addEventListener('click',e=>{if(e.target.closest('a'))set(false);});
+  document.addEventListener('click',e=>{if(!e.target.closest('.nav'))set(false);});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')set(false);});
+})();
 const RK=window.RK;if(!RK){document.body.insertAdjacentHTML('beforeend','<p style="padding:2em;font-family:monospace">Rankings payload missing.</p>');return;}
 const $=s=>document.querySelector(s);
 const fmt=n=>n.toLocaleString('en-US');
