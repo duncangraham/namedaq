@@ -443,33 +443,18 @@ footer a{color:var(--dim)}
   </div>
 </section>
 
-<section id="volatility" class="alt">
+<section id="events" class="alt">
   <div class="wrap">
-    <div class="eyebrow">§4 · The volatility desk</div>
-    <h2>Steady blue chips, jumpy small caps</h2>
-    <div class="prose">
-      <p class="lede">Some names trade like treasury bonds: James has stayed within a narrow band for a century. Others swing 50% in a single year — usually because a telenovela premiered, a reality-TV star trended, or a song charted.</p>
-      <p>We score volatility the way finance does: the standard deviation of a name’s year-over-year moves since 1995, among names with a steady public listing. The jumpiest names in America are almost all tied to Spanish-language television — Allisson (after actress Allisson Lozz), Litzy, Marely, Yulissa — plus Talan, a spike minted by MTV’s <i>Laguna Beach</i> in 2005.</p>
-    </div>
-    <div class="vol-grid">
-      <div class="panel">
-        <div class="panel-hd"><span class="t" style="color:var(--gold)">Most volatile · 1995–2024</span></div>
-        <div class="vlist" id="volList"></div>
-        <div class="board-cap">σ = standard deviation of year-over-year moves. σ 0.70 means a typical year swings the name’s rate by roughly 70%.</div>
-      </div>
-      <div class="panel">
-        <div class="panel-hd"><span class="t" style="color:var(--gold)">Steadiest blue chips · 1995–2024</span></div>
-        <div class="vlist" id="blueList"></div>
-        <p style="font-family:var(--mono);font-size:12px;color:var(--dim);margin:10px 0 0">Among names averaging 800+ per million. All eight are boys’ classics — girls’ names churn faster at every tier. Steady means predictable, not growing: chart any of these and you’ll see a glacier, melting a few percent a year as the market de-concentrates — that story is <a href="#longview">the great fragmentation</a>.</p>
-      </div>
-    </div>
+    <div class="eyebrow">§4 · The event desk</div>
+    <h2>Names the news moved</h2>
+    <p class="prose lede">Most names drift. A few get shoved — a song hits, a show premieres, a scandal leads the newscast — and the birth records answer within months. These are the market’s sharpest single-event moves.</p>
 
-    <h3 style="font-size:22px;margin-top:var(--s6)">Six legendary trades</h3>
-    <p class="prose" style="color:var(--dim);margin-top:var(--s2)">Real events, real prices. Click any card to open the full chart in the terminal.</p>
+    <h3 style="font-size:22px;margin-top:var(--s5)">Six legendary trades</h3>
+    <p class="prose" style="margin-top:var(--s2)">Real events, real prices. Click any card to open the full chart in the terminal.</p>
     <div class="memes" id="memes"></div>
 
     <h3 id="celebrity" style="font-size:22px;margin-top:var(--s6)">The celebrity ticker</h3>
-    <p class="prose" style="color:var(--dim);margin-top:var(--s2)">One famous person can move this market overnight. Each chart marks the event — a breakout, a premiere, a death — with a dashed line; what follows is the trade.</p>
+    <p class="prose" style="margin-top:var(--s2)">One famous person can move this market overnight. Each chart marks the event — a breakout, a premiere, a death — with a dashed line; what follows is the trade.</p>
     <div class="memes" id="celebs"></div>
   </div>
 </section>
@@ -546,7 +531,7 @@ footer a{color:var(--dim)}
       <div class="panel">
         <div class="panel-hd"><span class="t" style="color:var(--gold)">One-way trades</span></div>
         <div id="uniFlips"></div>
-        <div class="board-cap">Each row shows the boy/girl split in 1940–60 → in 2004–24; the gold tick is 50/50. The trade almost never runs the other way: once a boys’ name goes majority-girl, parents of boys sell and don’t come back. Leslie, Ashley, and Shannon made the same trip in earlier decades.</div>
+        <div class="board-cap">Each row shows the boy/girl split in 1940–60 → in 2004–24; the gold tick is 50/50. The flip almost never runs the other way: once a name reads as a girls’ name, parents stop choosing it for boys and it rarely returns. Leslie, Ashley, and Shannon made the same trip in earlier decades.</div>
       </div>
     </div>
 
@@ -852,16 +837,6 @@ renderBoards('30');
     P.winners.map((w,i)=>`<tr><td style="color:var(--faint)">${i+1}</td><td><span class="nm" data-open="${w.n}|${w.s}">${esc(w.n)}</span><span class="sx ${w.s==='F'?'f':'m'}">${w.s}</span></td><td class="num" style="color:var(--dim)">${fmt(w.c14)}</td><td class="num">${fmt(w.c24)}</td><td class="d" style="color:var(--gain)">×${w.x}</td></tr>`).join('')+'</tbody>';
   const b=P.base;
   $('#pennyRisk').innerHTML=`Mandatory risk disclosure: of the ${fmt(b.universe)} names trading between 5 and 50 babies in 2014, <b style="color:var(--ink)">${b.hit}</b> (${(b.hit/b.universe*100).toFixed(2)}%) ever reached 500 — and ${fmt(b.dead)} (${Math.round(b.dead/b.universe*100)}%) were delisted entirely by 2024. Most penny names stay penny names.`;
-})();
-
-// ---- volatility lists ----
-(function(){
-  const maxSd=ND.volatile[0].sd;
-  $('#volList').innerHTML=ND.volatile.map((v,i)=>
-    `<div class="vrow"><span class="rk">${i+1}</span><span class="nm" data-open="${v.n}|${v.s}">${esc(v.n)}</span><span class="sx ${v.s==='F'?'f':'m'}">${v.s}</span><span class="meter"><i style="width:${(v.sd/maxSd*100).toFixed(0)}%"></i></span><span class="sd">σ ${v.sd.toFixed(2)}</span></div>`).join('');
-  const maxB=Math.max(...ND.blueChips.map(b=>b.sd));
-  $('#blueList').innerHTML=ND.blueChips.map((v,i)=>
-    `<div class="vrow"><span class="rk">${i+1}</span><span class="nm" data-open="${v.n}|${v.s}">${esc(v.n)}</span><span class="sx ${v.s==='F'?'f':'m'}">${v.s}</span><span class="meter"><i style="width:${(v.sd/maxB*100).toFixed(0)}%;background:var(--gold)"></i></span><span class="sd">σ ${v.sd.toFixed(2)}</span></div>`).join('');
 })();
 
 // ---- six legendary trades ----
