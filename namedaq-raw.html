@@ -193,8 +193,6 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .btn:hover{filter:brightness(1.08)}
 .btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--dim)}
 .btn.ghost:hover{color:var(--ink);border-color:var(--faint)}
-.chips{display:flex;gap:8px;flex-wrap:wrap;padding:10px var(--s3);border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px;align-items:center}
-.chips .lbl{color:var(--faint);letter-spacing:.06em}
 .chip{background:transparent;border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);font-size:12px;padding:4px 10px;cursor:pointer}
 .chip:hover{color:var(--ink);border-color:var(--gold)}
 .term-body{padding:var(--s3)}
@@ -475,7 +473,6 @@ footer a{color:var(--dim)}
         <button class="btn ghost" id="luckyBtn">RANDOM</button>
         <a class="btn ghost" href="terminal.html" style="text-decoration:none">PRO MODE ↗</a>
       </div>
-      <div class="chips"></div>
       <div class="term-body" id="termBody">
         <div class="term-msg">Awaiting ticker… try your own name, your kid’s, or your grandma’s.</div>
       </div>
@@ -1014,12 +1011,6 @@ document.addEventListener('click',e=>{if(!e.target.closest('.term-search'))sugg.
 $('#goBtn').addEventListener('click',()=>tryOpen(q.value,false));
 $('#luckyBtn').addEventListener('click',()=>{
   const n=allNames[Math.floor(Math.random()*allNames.length)];q.value=n;tryOpen(n,false);});
-// trending chips
-(function(){
-  const trend=['Olivia','Liam','Theodore','Luna','Mateo','Jessica','Michael','Wrenley','Khaleesi'];
-  $('.chips').insertAdjacentHTML('beforeend',trend.map(n=>`<button class="chip" data-chip="${n}">${n}</button>`).join(''));
-  $('.chips').addEventListener('click',e=>{const b=e.target.closest('[data-chip]');if(b){q.value=b.dataset.chip;tryOpen(b.dataset.chip,false);}});
-})();
 // global click-to-chart; celebrity cards pass their event markers along
 document.addEventListener('click',e=>{
   const el=e.target.closest('[data-open]');if(!el)return;
