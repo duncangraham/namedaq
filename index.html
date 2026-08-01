@@ -53,7 +53,7 @@ svg text{font-family:var(--mono)}
 .nav{position:sticky;top:0;z-index:50;background:rgba(5,5,5,.90);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 .nav-in{position:relative}
 .nav-in{max-width:var(--max);margin:0 auto;padding:10px var(--s4);display:flex;align-items:center;gap:14px}
-.brand{font-family:var(--disp);font-weight:400;font-size:18px;letter-spacing:.06em;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
+.brand{font-family:var(--disp);font-weight:400;font-size:18px;letter-spacing:.01em;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
 .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--gain);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .nav-list{margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--dim);text-decoration:none;letter-spacing:.06em;padding:7px 4px;flex-shrink:0}
@@ -86,15 +86,14 @@ svg text{font-family:var(--mono)}
 .stat.boy .v{color:var(--cool)} .stat.girl .v{color:var(--hot)}
 
 /* ---------- sections ---------- */
-section{padding:var(--s7) 0;border-bottom:1px solid var(--line)}
-section.alt{background:var(--bg2)}
+section{padding:var(--s7) 0;background:linear-gradient(180deg,#242727,#050505)}
+section.alt{background:linear-gradient(180deg,#242727,#050505)}
 .eyebrow{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:var(--s2)}
 section h2{font-size:clamp(24px,3vw,33px);letter-spacing:-.015em;margin-bottom:var(--s3);max-width:24ch}
 .lede{color:var(--dim);font-size:18px}
 
 /* ---------- panels & charts ---------- */
 .panel{border:1px solid var(--line);background:var(--bg2);padding:var(--s4);border-radius:var(--r)}
-section.alt .panel{background:var(--bg3)}
 .panel-hd{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s3)}
 .panel-hd .t{font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
 .chart-box{width:100%;overflow-x:auto;position:relative}
@@ -311,7 +310,7 @@ footer a{color:var(--dim)}
 
 <nav class="nav" aria-label="Sections">
   <div class="nav-in">
-    <a class="brand" href="#top"><span class="dot"></span>NMDQ · THE NURSERY EXCHANGE</a>
+    <a class="brand" href="#top"><span class="dot"></span>Baby Names Exchange</a>
     <a class="nav-list" href="rankings.html">2024 FULL LIST</a>
     <a class="nav-pro" href="terminal.html">PRO TERMINAL</a>
     <button class="nav-menu" id="menuBtn" aria-label="Open menu" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></button>
