@@ -45,6 +45,7 @@ svg text{font-family:var(--mono)}
 
 /* ---------- nav ---------- */
 .nav{position:sticky;top:0;z-index:50;background:rgba(11,14,22,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-in{position:relative}
 .nav-in{max-width:var(--max);margin:0 auto;padding:10px var(--s4);display:flex;align-items:center;gap:var(--s4)}
 .brand{font-family:var(--disp);font-weight:700;font-size:18px;letter-spacing:.06em;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
 .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--gain);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
@@ -53,7 +54,16 @@ svg text{font-family:var(--mono)}
 .nav-list:hover{color:var(--ink)}
 .nav-pro{margin-left:var(--s3);background:var(--gold);color:#141414;font-family:var(--mono);font-size:11.5px;font-weight:600;padding:7px 14px;text-decoration:none;letter-spacing:.06em;flex-shrink:0}
 .nav-pro:hover{filter:brightness(1.08)}
-@media (max-width:520px){.nav-list{display:none}}
+.nav-menu{margin-left:var(--s3);width:34px;height:30px;background:transparent;border:1px solid var(--line2);cursor:pointer;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;flex-shrink:0;padding:0}
+.nav-menu span{display:block;width:16px;height:1.5px;background:var(--dim)}
+.nav-menu:hover span{background:var(--ink)}
+.nav-menu[aria-expanded="true"] span{background:var(--gold)}
+.nav-toc{position:absolute;right:var(--s4);top:100%;margin-top:6px;background:var(--bg2);border:1px solid var(--line2);min-width:230px;padding:6px;box-shadow:0 10px 34px rgba(0,0,0,.5);display:flex;flex-direction:column;z-index:60}
+.nav-toc[hidden]{display:none}
+.nav-toc a{font-family:var(--mono);font-size:12.5px;color:var(--dim);text-decoration:none;padding:8px 10px;letter-spacing:.03em}
+.nav-toc a:hover{color:var(--ink);background:var(--bg3)}
+.toc-div{height:1px;background:var(--line);margin:5px 8px}
+@media (max-width:640px){.nav-list{display:none}.nav-pro{display:none}}
 
 /* ---------- hero ---------- */
 .hero{padding:var(--s7) 0 var(--s6);border-bottom:1px solid var(--line);background:
@@ -83,6 +93,7 @@ section.alt .panel{background:var(--bg3)}
 .panel-hd .t{font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
 .chart-box{width:100%;overflow-x:auto;position:relative}
 .chart-box svg{display:block;width:100%;height:auto;min-width:560px}
+@media (max-width:600px){.chart-box svg{min-width:0}}
 .scrub-tip{position:absolute;top:6px;display:none;pointer-events:none;background:var(--bg3);border:1px solid var(--line2);font-family:var(--mono);font-size:11.5px;line-height:1.7;padding:6px 10px;white-space:nowrap;z-index:5}
 .scrub-tip b{color:var(--gold)}
 .legend{display:flex;gap:var(--s3);flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--dim)}
@@ -195,6 +206,14 @@ input[type=range]{flex:1;min-width:220px;accent-color:var(--gold);height:28px;cu
 .btn.ghost:hover{color:var(--ink);border-color:var(--faint)}
 .chip{background:transparent;border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);font-size:12px;padding:4px 10px;cursor:pointer}
 .chip:hover{color:var(--ink);border-color:var(--gold)}
+/* mobile terminal top: search on its own row, action buttons split evenly (placed after base rules to win source-order ties) */
+@media (max-width:560px){
+  .term-top{gap:10px}
+  .term-top .prompt{display:none}
+  .term-search{flex:1 1 100%;min-width:0;max-width:none}
+  .term-top .btn{flex:1 1 0;padding:11px 8px}
+  .term-top a.btn{display:none}
+}
 .term-body{padding:var(--s3)}
 .quote-hd{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s2)}
 .quote-hd .sym{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.1em}
@@ -296,6 +315,21 @@ footer a{color:var(--dim)}
     <a class="brand" href="#top"><span class="dot"></span>NMDQ · THE NURSERY EXCHANGE</a>
     <a class="nav-list" href="rankings.html">2024 FULL LIST</a>
     <a class="nav-pro" href="terminal.html">PRO TERMINAL</a>
+    <button class="nav-menu" id="menuBtn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+  <div class="nav-toc" id="navToc" hidden>
+    <a href="#fundamentals">§1 · Market fundamentals</a>
+    <a href="#board">§2 · The big board</a>
+    <a href="#penny">§3 · The penny desk</a>
+    <a href="#events">§4 · The event desk</a>
+    <a href="#terminal">§5 · The quote terminal</a>
+    <a href="#states">§6 · Regional exchanges</a>
+    <a href="#unisex">§7 · The unisex desk</a>
+    <a href="#longview">§8 · The long view</a>
+    <a href="#prospectus">§9 · Prospectus</a>
+    <div class="toc-div"></div>
+    <a href="rankings.html">Every name of 2024 →</a>
+    <a href="terminal.html">Pro terminal →</a>
   </div>
 </nav>
 
@@ -609,6 +643,16 @@ footer a{color:var(--dim)}
 <script>
 (function(){
 'use strict';
+// header table-of-contents menu
+(function(){
+  const btn=document.getElementById('menuBtn'),toc=document.getElementById('navToc');
+  if(!btn||!toc)return;
+  const set=open=>{toc.hidden=!open;btn.setAttribute('aria-expanded',open?'true':'false');};
+  btn.addEventListener('click',e=>{e.stopPropagation();set(toc.hidden);});
+  toc.addEventListener('click',e=>{if(e.target.closest('a'))set(false);});
+  document.addEventListener('click',e=>{if(!e.target.closest('.nav'))set(false);});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')set(false);});
+})();
 const ND=window.ND; if(!ND){document.body.insertAdjacentHTML('afterbegin','<p style="padding:2em;font-family:monospace">Data payload missing — rebuild with inject.mjs</p>');return;}
 const Y0=1880,Y1=2024,YRS=Y1-Y0+1;
 const $=s=>document.querySelector(s);
