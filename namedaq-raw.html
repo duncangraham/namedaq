@@ -324,7 +324,8 @@ footer a{color:var(--dim)}
     <a href="#states">§6 · Regional exchanges</a>
     <a href="#unisex">§7 · The unisex desk</a>
     <a href="#longview">§8 · The long view</a>
-    <a href="#prospectus">§9 · Prospectus</a>
+    <a href="#listings">§9 · Listings &amp; delistings</a>
+    <a href="#prospectus">§10 · Prospectus</a>
     <div class="toc-div"></div>
     <a href="rankings.html">Every name of 2024 <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
     <a href="terminal.html">Pro terminal <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
@@ -618,9 +619,36 @@ footer a{color:var(--dim)}
   </div>
 </section>
 
+<section id="listings">
+  <div class="wrap">
+    <div class="eyebrow">§9 · Listings &amp; delistings</div>
+    <h2>IPOs and bankruptcies</h2>
+    <p class="prose lede">A name crossing the SSA’s 5-baby floor for the first time is an IPO; a name that drops below it and falls off the tape is delisted. In 2024 the market minted <b>6,316</b> new listings — <b>1,349</b> of them names never recorded in 145 years — and delisted <b>6,215</b>. Out of ~31,000 listed names, roughly a fifth turns over at the edges every year.</p>
+    <div class="panel" style="margin-top:var(--s4)">
+      <div class="panel-hd"><span class="t">New listings vs. delistings per year · 1881–2024</span>
+        <span class="legend"><span><span class="sw" style="background:var(--gain)"></span>IPOs</span><span><span class="sw" style="background:var(--loss)"></span>Delistings</span></span>
+      </div>
+      <div class="chart-box" id="listChart"></div>
+      <div class="board-cap">When the green line runs above the red, the market is net-growing. The 1980s–2000s surge is the great fragmentation minting names faster than they die.</div>
+    </div>
+    <div class="boards">
+      <div class="panel board hot-b">
+        <div class="panel-hd"><span class="t">Biggest IPOs · 2024 debuts</span></div>
+        <div style="overflow-x:auto"><table id="tblIpo" aria-label="Biggest name debuts of 2024"></table></div>
+        <div class="board-cap">IPOs enter near the floor by definition — none debut large. ★ = never recorded before, anywhere in 145 years.</div>
+      </div>
+      <div class="panel board cool-b">
+        <div class="panel-hd"><span class="t">Bankruptcies · fallen giants</span></div>
+        <div style="overflow-x:auto"><table id="tblBankrupt" aria-label="Once-common names now delisted"></table></div>
+        <div class="board-cap">Once-common names now dark for 8+ years. These are rare — most delistings are failed recent coinages, not fallen classics.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="prospectus" style="border-bottom:0">
   <div class="wrap">
-    <div class="eyebrow">§9 · Prospectus &amp; fine print</div>
+    <div class="eyebrow">§10 · Prospectus &amp; fine print</div>
     <h2>How this data works</h2>
     <div class="rules">
       <div class="rule"><h3>Source</h3><p>The SSA’s public baby-names files: national counts from 1880, state counts from 1910, updated each May. This page uses the 2024 release. <a href="https://www.ssa.gov/oact/babynames/">ssa.gov/oact/babynames</a>. Name origins draw on <a href="https://en.wiktionary.org/">Wiktionary</a> (CC BY-SA 4.0), plus NAMEDAQ spelling-matches and desk notes.</p></div>
@@ -1154,6 +1182,24 @@ renderMap();
     {vals:ND.effNames.F,color:'#ff64a8',width:2},
   ],{h:280,yFmt:v=>fmt(v)});
 })();
+
+// ---- listings & delistings (IPOs / bankruptcies) ----
+(function(){
+  const L=ND.listings;if(!L)return;
+  $('#listChart').innerHTML=chart([
+    {vals:L.ipoByYear,color:'#7de8a8',width:2},
+    {vals:L.delistByYear,color:'#ff8a80',width:2},
+  ],{h:280,x0:1881,x1:Y1,yFmt:v=>fmt(v),annots:[
+    {x:2007,y:Math.max(L.ipoByYear[2007-Y0],L.delistByYear[2007-Y0]),label:'peak churn',dy:-10,anchor:'end',dx:-6,nodot:true},
+  ]});
+  attachScrub($('#listChart'),[{vals:L.ipoByYear,color:'#7de8a8'},{vals:L.delistByYear,color:'#ff8a80'}],
+    yr=>`<b>${yr}</b> · <span style="color:var(--gain)">${fmt(L.ipoByYear[yr-Y0])} IPOs</span> · <span style="color:var(--loss)">${fmt(L.delistByYear[yr-Y0])} delisted</span>`);
+  $('#tblIpo').innerHTML='<thead><tr><th></th><th>Name</th><th style="text-align:right">2024 debut</th><th></th></tr></thead><tbody>'+
+    L.debuts.map((d,i)=>`<tr><td style="color:var(--faint)">${i+1}</td><td><span class="nm" data-open="${d.n}|${d.s}">${esc(d.n)}</span><span class="sx ${d.s==='F'?'f':'m'}">${d.s}</span></td><td class="d">${fmt(d.c)}</td><td style="color:var(--accent)" title="${d.ever?'never recorded before':''}">${d.ever?'★':''}</td></tr>`).join('')+'</tbody>';
+  $('#tblBankrupt').innerHTML='<thead><tr><th></th><th>Name</th><th style="text-align:right">Peak</th><th style="text-align:right">Delisted</th></tr></thead><tbody>'+
+    L.fallen.map((f,i)=>`<tr><td style="color:var(--faint)">${i+1}</td><td><span class="nm" data-open="${f.n}|${f.s}">${esc(f.n)}</span><span class="sx ${f.s==='F'?'f':'m'}">${f.s}</span></td><td class="num" style="color:var(--dim)">${fmt(f.peak)} · ${f.peakY}</td><td class="d">${f.lastY}</td></tr>`).join('')+'</tbody>';
+})();
+
 scrollChartsEnd();
 })();
 </script>

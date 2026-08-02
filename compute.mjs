@@ -300,6 +300,45 @@ const nature = NATURE.map(n => {
   return { n, tot: natCount, cap: NAT_CAP[n], top: top.slice(0, 3), sd: lifts };
 });
 
+// ---------- listings & delistings (IPOs / bankruptcies) ----------
+// a name is "listed" in year i when its count is >0 (SSA only publishes >=5)
+const ipoByYear = new Int32Array(YEARS), delistByYear = new Int32Array(YEARS);
+for (let i = 1; i < YEARS; i++) {
+  let ipo = 0, del = 0;
+  for (const arr of series.values()) {
+    const cur = arr[i] > 0, prev = arr[i - 1] > 0;
+    if (cur && !prev) ipo++;
+    if (!cur && prev) del++;
+  }
+  ipoByYear[i] = ipo; delistByYear[i] = del;
+}
+// 2024 debuts (IPOs): listed in 2024, not in 2023
+const debuts = [];
+let ipo2024 = 0, neverBefore2024 = 0, delist2024 = 0;
+for (const [key, arr] of series) {
+  if (arr[I24] > 0 && arr[I24 - 1] === 0) {
+    ipo2024++;
+    let first = 0; while (arr[first] === 0) first++;
+    const ever = first === I24;
+    if (ever) neverBefore2024++;
+    debuts.push({ n: key.slice(0, -2), s: key.slice(-1), c: arr[I24], ever });
+  }
+  if (arr[I24] === 0 && arr[I24 - 1] > 0) delist2024++;
+}
+debuts.sort((a, b) => b.c - a.c);
+// bankruptcies: once-big names now dark for 8+ years (last listed <= 2016)
+const fallen = [];
+for (const [key, arr] of series) {
+  let peak = 0, peakY = 0, yearsListed = 0;
+  for (let i = 0; i < YEARS; i++) { if (arr[i] > peak) { peak = arr[i]; peakY = Y0 + i; } if (arr[i] > 0) yearsListed++; }
+  if (peak < 700 || yearsListed < 20) continue; // established name, not a one-year data blip
+  let last = YEARS - 1; while (last >= 0 && arr[last] === 0) last--;
+  const lastY = Y0 + last;
+  if (lastY <= 2016) fallen.push({ n: key.slice(0, -2), s: key.slice(-1), peak, peakY, lastY });
+}
+fallen.sort((a, b) => b.peak - a.peak);
+console.log('2024 IPOs:', ipo2024, '· never-before:', neverBefore2024, '· delistings:', delist2024, '· fallen giants:', fallen.length);
+
 // ---------- lookup DB ----------
 // include names whose peak yearly count >= 150 (either sex entry separate)
 let dbNames = 0, dbEntries = {};
@@ -350,6 +389,12 @@ const out = {
   tapeDown: tape.slice(-20).reverse().map(t => ({ n: t.key.split('|')[0], s: t.key.slice(-1), p: t.pct })),
   states: { top: stateTop, distinctive },
   nature,
+  listings: {
+    ipoByYear: Array.from(ipoByYear), delistByYear: Array.from(delistByYear),
+    ipo2024, neverBefore2024, delist2024,
+    debuts: debuts.slice(0, 12),
+    fallen: fallen.slice(0, 12),
+  },
   unisex: { share: uniShare, top: uniTop.slice(0, 12), flips: uniFlips.slice(0, 8) },
   penny,
   db: dbEntries,
